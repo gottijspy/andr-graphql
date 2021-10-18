@@ -15,11 +15,29 @@ export class Tx {
   txHash: string
 
   @Field()
-  sender: string
+  token_id: string
 
-  @Field()
-  recipient: string
+  @Field({ nullable: true })
+  sender?: string
+
+  @Field({ nullable: true })
+  amount?: string
+
+  @Field({ nullable: true })
+  purchaser?: string
+
+  @Field({ nullable: true })
+  operator?: string
+
+  @Field({ nullable: true })
+  spender?: string
+
+  @Field({ nullable: true })
+  recipient?: string
 
   @Field()
   datetime: Date
+
+  @Field()
+  operate: string
 }

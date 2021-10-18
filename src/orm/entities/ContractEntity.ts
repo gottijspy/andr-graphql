@@ -1,9 +1,9 @@
 import { Entity, PrimaryColumn, CreateDateColumn, Column, Index } from 'typeorm'
 import { ContractType } from 'types'
-import { HaveFactoryAndMaybeToken } from './HaveFactoryAndMaybeToken'
+import { HaveFactory } from './HaveFactory'
 
 @Entity('contract')
-export class ContractEntity extends HaveFactoryAndMaybeToken {
+export class ContractEntity extends HaveFactory {
   constructor(options: Partial<ContractEntity>) {
     super()
     Object.assign(this, options)

@@ -22,7 +22,7 @@ export async function getLatestBlockHeight(): Promise<number> {
     return result?.LastSyncedHeight
 }
 
-export async function getTxs(start: number, end: number, limit = 100): Promise<TxInfo[]> {
+export async function getTxs(start: number, end: number): Promise<TxInfo[]> {
     const response = await mantle.request(
       gql`query($range: [Int!]!) {
         Blocks(Height_range: $range) {
@@ -38,7 +38,6 @@ export async function getTxs(start: number, end: number, limit = 100): Promise<T
             RawLog
             Logs {
               MsgIndex
-              Log
               Events {
                 Type
                 Attributes {

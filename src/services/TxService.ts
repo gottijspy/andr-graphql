@@ -14,14 +14,14 @@ export class TxService {
     }
 
     async getHistory(
-        sender: string,
+        token_id: string,
         offset: number,
         limit: number,
         repo = this.repo
       ): Promise<TxEntity[]> {
         let qb = repo
           .createQueryBuilder()
-          .where('sender = :sender', { sender })
+          .where('token_id = :token_id', { token_id })
           .skip(offset)
           .take(limit)
           .orderBy('id', 'DESC')

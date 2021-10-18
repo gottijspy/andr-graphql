@@ -30,23 +30,30 @@ import {
     txHash: string
 
     @Column()
-    @Index()
     token_id: string
 
-    @Column()
-    sender: string
+    @Column({ nullable: true })
+    operator?: string
+
+    @Column({ nullable: true })
+    sender?: string
+
+    @Column({ nullable: true })
+    purchaser?: string
+
+    @Column({ nullable: true })
+    spender?: string
+
+    @Column({ nullable: true })
+    recipient?: string
+
+    @Column({ nullable: true })
+    amount?: string
 
     @Column()
-    recipient: string
+    operate: string
 
     @Column()
     @Index()
     datetime: Date
-
-    @ManyToOne((type) => ContractEntity, { onDelete: 'CASCADE', nullable: true })
-    @JoinColumn({ name: 'contract_id' })
-    contract?: ContractEntity
-
-    @Column({ nullable: true })
-    contractId?: number
 }

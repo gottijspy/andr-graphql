@@ -67,12 +67,13 @@ export class FactoryService {
         factoryId,
         symbol,
         name,
-        minter
+        minter,
+        token
       })
 
       const entities = [
         asset,
-        new ContractEntity({ address: token, type: ContractType.TOKEN, factoryId, asset }),
+        new ContractEntity({ address: token, type: ContractType.TOKEN, factoryId }),
       ]
 
       logger.info(`new token: ${symbol}`)

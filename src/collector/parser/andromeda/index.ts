@@ -42,6 +42,7 @@ export async function parseAndromedaMsg(
       args.contract = contract
       args.contractEvent = event
       args.sender = event.sender
+      console.log("contract_type:"+contract.type);
 
       switch (contract.type) {
         case ContractType.FACTORY:

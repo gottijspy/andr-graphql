@@ -15,7 +15,7 @@ export async function getCollectedBlock(): Promise<BlockEntity> {
       latestBlockFromDB ||
       new BlockEntity({
         chainId: config.TERRA_CHAIN_ID,
-        height: config.START_BLOCK_HEIGHT,
+        height: config.START_BLOCK_HEIGHT - 1,
       })
     )
 }

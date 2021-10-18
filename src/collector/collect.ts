@@ -5,6 +5,7 @@ import { errorHandler } from 'lib/error'
 import { getCollectedBlock, updateBlock } from './block'
 import { BlockEntity } from 'orm'
 import { parseTxs } from './parser'
+import config from 'config'
 
 export async function collect(now: number): Promise<void> {
     let latestHeight = await getLatestBlockHeight().catch(async (error) => {
@@ -16,8 +17,12 @@ export async function collect(now: number): Promise<void> {
     if (!latestHeight || !collectedBlock || collectedBlock.height >= latestHeight) {
         return
     }
+    // const collectedHeight = config.START_BLOCK_HEIGHT -1;
     const collectedHeight = collectedBlock.height
-    const txs = await getTxs(collectedHeight + 1, latestHeight, 100).catch(errorHandler)
+
+    console.log("BlockNumber:"+ (collectedHeight + 1));
+
+    const txs = await getTxs(collectedHeight + 1, collectedHeight + 1).catch(errorHandler)
     if (!txs || txs.length < 1) {
         await bluebird.delay(500)
         return
