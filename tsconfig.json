@@ -1,20 +1,33 @@
 {
-   "compilerOptions": {
-     "target": "es2017",
-     "module": "commonjs",
-     "lib": ["es2017", "esnext.asynciterable"],
-     "allowJs": false,
-     "emitDecoratorMetadata": true,
-     "experimentalDecorators": true,
-     "resolveJsonModule": true,
-     "skipLibCheck": true,
-     "outDir": "dist",
-     "sourceMap": true,
-     "baseUrl": "src",
-     "sourceRoot": "src",
-     "typeRoots": [
-       "./node_modules/@types"
-     ]
-   }
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "lib": ["es2019", "esnext"],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    //"strictBindCallApply": false,
+    //"forceConsistentCasingInFileNames": false
+    //"allowJs": false,
+    //"resolveJsonModule": true,
+    // "sourceRoot": "src",
+    // "typeRoots": [
+    //   "./node_modules/@types"
+    // ]
+  }
 }
- 

@@ -1,0 +1,40 @@
+{
+  "name": "andromeda-graph",
+  "version": "1.0.0",
+  "description": "andromeda graph",
+  "main": "index.js",
+  "scripts": {
+    "collect": "node -r ts-node/register/transpile-only -r tsconfig-paths/register src/collector/main.ts",
+    "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "@sentry/node": "^6.13.2",
+    "@terra-money/terra.js": "^2.0.14",
+    "@types/node": "^16.10.2",
+    "apollo-server": "^3.3.0",
+    "apollo-server-koa": "^3.3.0",
+    "bluebird": "^3.7.2",
+    "date-fns-timezone": "^0.1.4",
+    "dotenv": "^10.0.0",
+    "graphql": "^15.6.1",
+    "graphql-request": "^3.5.0",
+    "koa": "^2.13.3",
+    "koa-body": "^4.2.0",
+    "koa-helmet": "^6.1.0",
+    "koa-joi-controllers": "^1.2.3",
+    "koa-router": "^10.1.1",
+    "lodash": "^4.17.21",
+    "pg": "^8.7.1",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.2.1",
+    "tsconfig-paths": "^3.11.0",
+    "type-graphql": "^1.1.1",
+    "typedi": "^0.10.0",
+    "typeorm": "^0.2.38",
+    "typeorm-typedi-extensions": "^0.4.1",
+    "typescript": "^4.4.3"
+  }
+}

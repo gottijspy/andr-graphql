@@ -1,25 +1,43 @@
-import * as bluebird from 'bluebird'
-import { errorHandler } from 'lib/error'
-import * as logger from 'lib/logger'
-import { validateConfig } from 'config'
-import { initORM } from 'orm'
-import { initServer, initAndromeda } from 'loaders'
+import { Logger as NestLogger, ValidationPipe } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { NestFactory } from '@nestjs/core'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import * as compression from 'compression'
+import * as helmet from 'helmet'
+import * as hpp from 'hpp'
+import { Logger } from 'nestjs-pino'
+import { AppModule } from './app.module'
 
-bluebird.config({ longStackTraces: true, warnings: { wForgottenReturn: false } })
-global.Promise = bluebird as any // eslint-disable-line
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true })
+  const configService = app.get(ConfigService)
+  const port = parseInt(configService.get<string>('PORT', ''), 10)
+  const env = configService.get<string>('NODE_ENV', 'production')
+  const playground = configService.get<string>('GRAPHQL_PLAYGROUND', 'false') === 'true'
+  const helmetOptions = {
+    frameguard: false,
+    dnsPrefetchControl: {
+      allow: true,
+    },
+    contentSecurityPolicy: env === 'production' && !playground ? undefined : false,
+  }
 
-async function main(): Promise<void> {
-    logger.info('Initialize andromeda-graph')
+  app.useLogger(app.get(Logger))
 
-    validateConfig()
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      validationError: {
+        target: false,
+        value: false,
+      },
+    }),
+  )
+  app.use([compression(), helmet(helmetOptions), hpp()])
 
-    await initORM()
+  await app.listen(port)
 
-    await initAndromeda()
-
-    await initServer()
-
+  NestLogger.log(`App listening on port http://localhost:${port}/`)
 }
-if (require.main === module) {
-    main().catch(errorHandler)
-}
+
+bootstrap()

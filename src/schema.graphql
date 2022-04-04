@@ -1,0 +1,764 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  account_number: Int!
+  address: String!
+  public_key: PublicKeyUnion
+  sequence: Int!
+}
+
+type AggregateExchangeRatePrevote {
+  hash: String!
+  submit_block: Int!
+  voter: String!
+}
+
+type AggregateExchangeRateVote {
+  exchange_rate_tuples: [Coin!]!
+  voter: String!
+}
+
+scalar Anything
+
+type ApplicationVersion {
+  build_deps: [String!]!
+  build_tags: String!
+  client_name: String!
+  commit: String!
+  go: String!
+  name: String!
+  server_name: String!
+  version: String!
+}
+
+type Auth {
+  accountInfo(address: String!, height: Float): Account!
+}
+
+type AuthorizationGrant {
+  authorization: AuthorizationUnion!
+  expiration: String!
+}
+
+union AuthorizationUnion = GenericAuthorization | SendAuthorization | StakeAuthorization
+
+type Bank {
+  balance(address: String!, height: Float): [Coin!]!
+  total(height: Float): [Coin!]!
+}
+
+type Block {
+  data: BlockData!
+  evidence: Evidence!
+  header: Header!
+  last_commit: LastCommit!
+}
+
+type BlockData {
+  txs: [String!]
+}
+
+type BlockId {
+  hash: String!
+  parts: Parts!
+}
+
+type BlockInfo {
+  block: Block!
+  block_id: BlockId!
+}
+
+type CodeInfo {
+  code_creator: String!
+  code_hash: String!
+}
+
+type Coin {
+  amount: String!
+  denom: String!
+}
+
+input CoinInput {
+  amount: String!
+  denom: String!
+}
+
+type CommissionRates {
+  max_change_rate: String!
+  max_rate: String!
+  rate: String!
+}
+
+type CommunityPoolSpendContent implements ProposalContent {
+  amount: [Coin!]!
+  description: String!
+  recipient: String!
+  title: String!
+}
+
+type ContractInfo {
+  address: String!
+  admin: String
+  code_id: Int!
+  init_msg: JSON!
+  owner: String!
+}
+
+type DelegateValidator {
+  address: String!
+  proposer_priority: String!
+  pub_key: String!
+  voting_power: String!
+}
+
+type Delegation {
+  balance: Coin!
+  delegator_address: String!
+  shares: String!
+  validator_address: String!
+}
+
+type DenomTrace {
+  base_denom: String!
+  path: String!
+}
+
+type DenomTraces {
+  denom_traces: [DenomTrace!]!
+  pagination: Pagination!
+}
+
+type DepositParams {
+  max_deposit_period: Int!
+  min_deposit: [Coin!]!
+}
+
+type Distribution {
+  communityPool(height: Float): [Coin!]!
+  parameters(height: Float): DistributionParams!
+  rewards(delegator: String!, height: Float): Rewards!
+  withdrawAddress(delegator: String!, height: Float): String!
+}
+
+type DistributionParams {
+  base_proposer_reward: String
+  bonus_proposer_reward: String
+  community_tax: String
+  withdraw_addr_enabled: Boolean
+}
+
+input Event {
+  key: String!
+  value: String!
+}
+
+type Evidence {
+  evidence: String
+}
+
+type GenericAuthorization {
+  msg: String!
+}
+
+type Gov {
+  depositParameters(height: Float): DepositParams!
+  deposits(height: Float, proposalId: Int!): [MsgDeposit!]!
+  parameters(height: Float): GovParams!
+  proposal(height: Float, proposalId: Int!): Proposal!
+  proposals(height: Float): [Proposal!]!
+  proposer(height: Float, proposalId: Int!): String!
+  tally(height: Float, proposalId: Int!): Tally!
+  tallyParameters(height: Float): TallyParams!
+  votes(height: Float, proposalId: Int!): [MsgVote!]!
+  votingParameters(height: Float): VotingParams!
+}
+
+type GovParams {
+  deposit_params: DepositParams
+  tally_params: TallyParams
+  voting_params: VotingParams
+}
+
+type Header {
+  app_hash: String!
+  chain_id: String!
+  consensus_hash: String!
+  data_hash: String!
+  evidence_hash: String!
+  height: String!
+  last_block_id: BlockId!
+  last_commit_hash: String!
+  last_results_hash: String!
+  next_validators_hash: String!
+  proposer_address: String!
+  time: String!
+  validators_hash: String!
+  version: Version!
+}
+
+type Ibc {
+  denomTrace(hash: String!): DenomTrace!
+  denomTraces(options: PaginationOptions!): DenomTraces!
+  parameters(height: Float): IbcParams!
+}
+
+type IbcParams {
+  receive_enabled: Boolean!
+  send_enabled: Boolean!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type LastCommit {
+  block_id: BlockId!
+  height: String!
+  round: String!
+  signatures: [Signature!]!
+}
+
+type LegacyAminoMultisigPublicKey {
+  public_keys: [SimplePublicKey!]!
+  threshold: Float!
+}
+
+type Market {
+  parameters(height: Float): MarketParams!
+  swapRate(askDenom: String!, height: Float, offerCoin: CoinInput!): Coin!
+  terraPoolDelta(height: Float): String!
+}
+
+type MarketParams {
+  base_pool: String
+  min_stability_spread: String
+  pool_recovery_period: Int
+}
+
+type Mint {
+  annualProvisions(height: Float): String!
+  inflation(height: Float): String!
+  parameters(height: Float): MintingParams!
+}
+
+type MintingParams {
+  blocks_per_year: Int
+  goal_bonded: String
+  inflation_max: String
+  inflation_min: String
+  inflation_rate_change: String
+  mint_denom: String
+}
+
+type MsgDeposit {
+  amount: [Coin!]!
+  depositor: String!
+  proposal_id: Int!
+}
+
+type MsgVote {
+  options: [WeightedVoteOption!]!
+  proposal_id: Int!
+  voter: String!
+}
+
+type Msgauth {
+  grants(grantee: String!, granter: String!, height: Float, msgType: String): [AuthorizationGrant!]!
+}
+
+type NodeInfo {
+  application_version: ApplicationVersion!
+  channels: String!
+  id: ID!
+  listen_addr: String!
+  moniker: String!
+  network: String!
+  other: OtherInfo!
+  protocol_version: ProtocolVersion!
+  version: String!
+}
+
+type Oracle {
+  activeDenoms(height: Float): [String!]!
+  aggregatePrevote(height: Float, validator: String!): AggregateExchangeRatePrevote!
+  aggregateVote(height: Float, validator: String!): AggregateExchangeRateVote!
+  exchangeRate(denom: String!, height: Float): Coin
+  exchangeRates(height: Float): [Coin!]!
+  feederAddress(height: Float, validator: String!): String!
+  misses(height: Float, validator: String!): Int!
+  parameters(height: Float): OracleParams!
+}
+
+type OracleParams {
+  min_valid_per_window: String
+  reward_band: String
+  reward_distribution_window: Int
+  slash_fraction: String
+  slash_window: Int
+  vote_period: Int
+  vote_threshold: String
+  whitelist: [OracleWhitelist!]
+}
+
+type OracleWhitelist {
+  name: String!
+  tobin_tax: String!
+}
+
+enum OrderBy {
+  ORDER_BY_ASC
+  ORDER_BY_DESC
+}
+
+type OtherInfo {
+  rpc_address: String!
+  tx_index: String!
+}
+
+type Pagination {
+  next_key: String
+  total: Int!
+}
+
+input PaginationOptions {
+  count_total: String!
+  key: String!
+  limit: String!
+  offset: String!
+  order_by: OrderBy!
+  reverse: String!
+}
+
+type ParameterChangeContent implements ProposalContent {
+  changes: [ParameterChanges!]
+  description: String!
+  title: String!
+}
+
+type ParameterChanges {
+  key: String!
+  subspace: String!
+  value: String!
+}
+
+type Parts {
+  hash: String!
+  total: String!
+}
+
+type PolicyConstraints {
+  cap: Coin!
+  change_max: String!
+  rate_max: String!
+  rate_min: String!
+}
+
+type Proposal {
+  content: ProposalContentUnion!
+  deposit_end_time: String!
+  final_tally_result: Tally!
+  id: ID!
+  status: ProposalStatus!
+  submit_time: String!
+  total_deposit: [Coin!]!
+  voting_end_time: String!
+  voting_start_time: String!
+}
+
+interface ProposalContent {
+  description: String!
+  title: String!
+}
+
+union ProposalContentUnion = CommunityPoolSpendContent | ParameterChangeContent | RewardWeightUpdateContent | TaxRateUpdateContent | TextContent
+
+enum ProposalStatus {
+  DepositPeriod
+  Failed
+  Passed
+  Rejected
+  VotingPeriod
+}
+
+type ProtoAuthInfo {
+  fee: ProtoFee!
+  signer_infos: [ProtoSignerInfos!]!
+}
+
+type ProtoCoin {
+  amount: String!
+  denom: String!
+}
+
+type ProtoFee {
+  amount: [ProtoCoin!]!
+  gas_limit: String!
+  granter: String!
+  payer: String!
+}
+
+type ProtoSignerInfos {
+  mode_info: Anything!
+  public_key: Anything!
+  sequence: String!
+}
+
+type ProtoTx {
+  auth_info: ProtoAuthInfo!
+  body: ProtoTxBody!
+  signatures: [String!]!
+}
+
+type ProtoTxBody {
+  memo: String!
+  messages: [Anything!]!
+  timeout_height: Float!
+}
+
+type ProtocolVersion {
+  app: String!
+  block: String!
+  p2p: String!
+}
+
+union PublicKeyUnion = LegacyAminoMultisigPublicKey | SimplePublicKey | ValConsPublicKey
+
+type Query {
+  auth: Auth!
+  bank: Bank!
+  distribution: Distribution!
+  gov: Gov!
+  ibc: Ibc!
+  market: Market!
+  mint: Mint!
+  msgauth: Msgauth!
+  oracle: Oracle!
+  ping: String!
+  slashing: Slashing!
+  staking: Staking!
+  tendermint: Tendermint!
+  treasury: Treasury!
+  tx: Tx!
+  utils: Utils!
+  wasm: Wasm!
+}
+
+type Redelegation {
+  delegator_address: String!
+  entries: [RedelegationEntry!]!
+  validator_dst_address: String!
+  validator_src_address: String!
+}
+
+type RedelegationEntry {
+  balance: String!
+  completion_time: String!
+  creation_height: Int!
+  initial_balance: String!
+  shares_dst: String!
+}
+
+type RewardItem {
+  reward: [Coin!]!
+  validator_address: String!
+}
+
+type RewardWeightUpdateContent implements ProposalContent {
+  description: String!
+  reward_weight: String!
+  title: String!
+}
+
+type Rewards {
+  rewards: [RewardItem!]!
+  total: [Coin!]!
+}
+
+type ScheduleEntry {
+  end_time: String!
+  ratio: String!
+  start_time: String!
+}
+
+type SendAuthorization {
+  spend_limit: [Coin!]!
+}
+
+type Signature {
+  block_id_flag: Int!
+  signature: String!
+  timestamp: String!
+  validator_address: String!
+}
+
+type SigningInfo {
+  address: String!
+  index_offset: Int!
+  jailed_until: String!
+  missed_blocks_counter: Int!
+  start_height: Int!
+  tombstoned: Boolean!
+}
+
+type SimplePublicKey {
+  key: String!
+}
+
+type Slashing {
+  parameters(height: Float): SlashingParams!
+  signingInfos(height: Float): [SigningInfo!]!
+}
+
+type SlashingParams {
+  downtime_jail_duration: String
+  min_signed_per_window: String
+  signed_blocks_window: Int
+  slash_fraction_double_sign: String
+  slash_fraction_downtime: String
+}
+
+type StakeAuthorization {
+  allow_list: StakeAuthorizationValidators
+  authorization_type: Float!
+  deny_list: StakeAuthorizationValidators
+  max_tokens: Coin
+}
+
+type StakeAuthorizationValidators {
+  addresses: [String!]!
+}
+
+type Staking {
+  bondedValidators(delegator: String!, height: Float): [Validator!]!
+  delegation(delegator: String!, height: Float, validator: String!): Delegation
+  delegations(delegator: String, height: Float, validator: String): [Delegation!]!
+  parameters(height: Float): StakingParams!
+  pool(height: Float): StakingPool!
+  redelegations(delegator: String!, validatorDst: String, validatorSrc: String): [Redelegation!]!
+  unbondingDelegation(delegator: String, height: Float, validator: String): UnbondingDelegation
+  unbondingDelegations(delegator: String, height: Float, validator: String): [UnbondingDelegation!]!
+  validator(height: Float, validator: String!): Validator
+  validators(height: Float): [Validator!]!
+}
+
+type StakingParams {
+  bond_denom: String
+  historical_entries: Int
+  max_entries: Int
+  max_validators: Int
+  unbonding_time: String
+}
+
+type StakingPool {
+  bonded_tokens: Coin!
+  not_bonded_tokens: Coin!
+}
+
+type StdFee {
+  amount: [Coin!]!
+  gas: Float!
+}
+
+type StdSignature {
+  pub_key: PublicKeyUnion
+  signature: String!
+}
+
+type Tally {
+  abstain: Int!
+  no: Int!
+  no_with_veto: Int!
+  yes: Int!
+}
+
+type TallyParams {
+  quorum: String!
+  threshold: String!
+  veto_threshold: String!
+}
+
+type TaxRateUpdateContent implements ProposalContent {
+  description: String!
+  tax_rate: String!
+  title: String!
+}
+
+type Tendermint {
+  blockInfo(height: Int): BlockInfo!
+  nodeInfo: NodeInfo!
+  syncing: Boolean!
+  validatorSet(height: Int): ValidatorSet!
+}
+
+type TextContent implements ProposalContent {
+  description: String!
+  title: String!
+}
+
+type Treasury {
+  parameters(denom: String!, height: Float): TreasuryParams!
+  rewardWeight(denom: String!, height: Float): String!
+  seigniorageProceeds(denom: String!, height: Float): Coin!
+  taxCap(denom: String!, height: Float): Coin!
+  taxProceeds(denom: String!, height: Float): [Coin!]!
+  taxRate(denom: String!, height: Float): String!
+}
+
+type TreasuryParams {
+  mining_increment: String
+  reward_policy: PolicyConstraints
+  seigniorage_burden_target: String
+  tax_policy: PolicyConstraints
+  window_long: Int
+  window_probation: Int
+  window_short: Int
+}
+
+type Tx {
+  byHeight(height: Float!): [TxInfo!]!
+  search(options: TxSearchOptions!): TxSearchResult!
+  txInfo(txHash: String!): TxInfo!
+}
+
+type TxEventKV {
+  key: String!
+  value: String
+}
+
+type TxEventLog {
+  attributes: [TxEventKV!]!
+  type: String!
+}
+
+type TxInfo {
+  code: Int
+  codespace: String
+  gas_used: Int!
+  gas_wanted: Int!
+  height: Int!
+  logs: [TxLog!]
+  raw_log: String
+  timestamp: String!
+  tx: ProtoTx!
+  txhash: String!
+}
+
+type TxLog {
+  events: [TxEventLog!]!
+  log: String
+  msg_index: Int
+}
+
+input TxSearchOptions {
+  events: [Event!]!
+  limit: Int!
+  page: Int!
+}
+
+type TxSearchResult {
+  pagination: Pagination!
+  txs: [TxInfo!]!
+}
+
+type UnbondingDelegation {
+  delegator_address: String!
+  entries: [UnbondingDelegationEntry!]!
+  validator_address: String!
+}
+
+type UnbondingDelegationEntry {
+  balance: String!
+  completion_time: String!
+  creation_height: Int!
+  initial_balance: String!
+}
+
+type Utils {
+  calculateTax(coin: CoinInput!, height: Float): Coin!
+  validatorsWithVotingPower: [ValidatorVotingPower!]!
+}
+
+type ValConsPublicKey {
+  key: String!
+}
+
+type Validator {
+  commission: ValidatorCommission!
+  consensus_pubkey: ValConsPublicKey!
+  delegator_shares: String!
+  description: ValidatorDescription!
+  jailed: Boolean!
+  min_self_delegation: String!
+  operator_address: String!
+  status: Int!
+  tokens: String!
+  unbonding_height: Int!
+  unbonding_time: String!
+}
+
+type ValidatorCommission {
+  commission_rates: CommissionRates!
+  update_time: String!
+}
+
+type ValidatorDescription {
+  details: String!
+  identity: String!
+  moniker: String!
+  security_contact: String!
+  website: String!
+}
+
+type ValidatorSet {
+  block_height: String!
+  validators: [DelegateValidator!]!
+}
+
+type ValidatorVotingPower {
+  proposer_priority: Int!
+  validator: Validator!
+  voting_power: Int!
+}
+
+type Version {
+  app: String!
+  block: String!
+}
+
+type VestingSchedule {
+  denom: String!
+  schedules: [ScheduleEntry!]!
+}
+
+enum VoteOption {
+  Abstain
+  Empty
+  No
+  NoWithVeto
+  Yes
+}
+
+type VotingParams {
+  voting_period: Int!
+}
+
+type Wasm {
+  codeInfo(codeID: Int!, height: Float): CodeInfo!
+  contractInfo(contractAddress: String!, height: Float!): ContractInfo!
+  contractQuery(contractAddress: String!, height: Float, query: JSON!): Anything!
+  parameters(height: Float): WasmParams!
+}
+
+type WasmParams {
+  max_contract_gas: Int
+  max_contract_msg_size: Int
+  max_contract_size: Int
+}
+
+type WeightedVoteOption {
+  option: VoteOption!
+  weight: String!
+}
