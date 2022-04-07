@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { AndrModule } from './andr-module.model'
 
 @InputType()
-export class AdoSearchOptions {
+export class AndrSearchOptions {
   @Field(() => Int)
   limit!: number
 
