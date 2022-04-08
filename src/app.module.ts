@@ -6,7 +6,18 @@ import { LoggerModule } from 'nestjs-pino'
 import { TerraModule } from 'nestjs-terra'
 import { join } from 'path'
 import pino from 'pino'
-import { AdoModule } from './ado/ado.module'
+import { AddressListAdoModule } from './ado-address-list/address-list-ado.module'
+import { AuctionAdoModule } from './ado-auction/auction-ado.module'
+import { CrowdfundAdoModule } from './ado-crowdfund/crowdfund-ado.module'
+import { MissionAdoModule } from './ado-mission/mission-ado.module'
+import { OffersAdoModule } from './ado-offers/offers-ado.module'
+import { PrimitiveAdoModule } from './ado-primitive/primitive-ado.module'
+import { RatesAdoModule } from './ado-rates/rates-ado.module'
+import { ReceiptAdoModule } from './ado-receipt/receipt-ado.module'
+import { SplitterAdoModule } from './ado-splitter/splitter-ado.module'
+import { TimelockAdoModule } from './ado-timelock/timelock-ado.module'
+import { TokenAdoModule } from './ado-token/token-ado.module'
+import { registerAdoEnums } from './ado/enums'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
 import { AuthModule } from './auth/auth.module'
@@ -64,7 +75,8 @@ import { WasmModule } from './wasm/wasm.module'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        registerEnums() // register enums graphql
+        registerEnums() // register enums graphql (Terra)
+        registerAdoEnums() // register enums graphql (ADO)
 
         return {
           sortSchema: config.get<string>('GRAPHQL_SORT_SCHEMA', 'true') === 'true',
@@ -108,7 +120,17 @@ import { WasmModule } from './wasm/wasm.module'
     TxModule,
     UtilsModule,
     IbcModule,
-    AdoModule,
+    TokenAdoModule,
+    TimelockAdoModule,
+    AddressListAdoModule,
+    AuctionAdoModule,
+    ReceiptAdoModule,
+    OffersAdoModule,
+    PrimitiveAdoModule,
+    SplitterAdoModule,
+    RatesAdoModule,
+    MissionAdoModule,
+    CrowdfundAdoModule,
   ],
   providers: [AppResolver, AnythingScalar],
 })

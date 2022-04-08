@@ -9,26 +9,14 @@ type Account {
   sequence: Int!
 }
 
-type Ado {
-  adoType: AdoType!
+type AddressListAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  isInclusive: Boolean!
   modules: [AndrModule!]
-  operators: [String!]
-  owner(address: String!): String!
+  operators: [String!]!
   primitiveContract: String
-}
-
-enum AdoType {
-  AddressList
-  AdoOffers
-  Auction
-  Crowdfund
-  Mission
-  Primitive
-  Rates
-  Receipt
-  Splitter
-  Timelock
-  Token
 }
 
 type AggregateExchangeRatePrevote {
@@ -46,6 +34,40 @@ type AndrAddress {
   identifier: String!
 }
 
+type AndrAddressPercent {
+  percent: Float!
+  recipient: AndrRecipient!
+}
+
+type AndrCW20Coin {
+  address: String!
+  amount: Int!
+}
+
+type AndrLogo {
+  data: String!
+  link: String!
+  mimeType: String!
+}
+
+type AndrMarketingInfo {
+  description: String
+  logo: AndrLogo
+  marketing: String
+  project: String
+}
+
+type AndrMinterResponse {
+  cap: Int
+  minter: String!
+}
+
+type AndrMissionComponent {
+  adoType: String!
+  instantiateMsg: String!
+  name: String!
+}
+
 type AndrModule {
   address: AndrAddress!
   isMutable: Boolean!
@@ -59,6 +81,24 @@ enum AndrModuleType {
   Receipt
 }
 
+type AndrRateInfo {
+  description: String!
+  isAdditive: Boolean!
+  rate: AndrRateType!
+  receivers: [AndrRecipient!]!
+}
+
+enum AndrRateType {
+  External
+  Flat
+  Percent
+}
+
+type AndrRecipient {
+  address: AndrAddress!
+  msg: String
+}
+
 scalar Anything
 
 type ApplicationVersion {
@@ -70,6 +110,26 @@ type ApplicationVersion {
   name: String!
   server_name: String!
   version: String!
+}
+
+type AuctionAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  auctionId: Int!
+  coinDenom: String!
+  end_time: String!
+  highBidderAddr: AndrAddress!
+  highBidderAmount: Int!
+  isCancelled: Boolean!
+  modules: [AndrModule!]
+  operators: [String!]
+  owner: String!
+  primitiveContract: String
+  start_time: String!
+  tokenAddress: String!
+  tokenId: String!
+  whitelist: [AndrAddress!]
 }
 
 type Auth {
@@ -86,6 +146,15 @@ union AuthorizationUnion = GenericAuthorization | SendAuthorization | StakeAutho
 type Bank {
   balance(address: String!, height: Float): [Coin!]!
   total(height: Float): [Coin!]!
+}
+
+interface BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String
 }
 
 type Block {
@@ -143,6 +212,16 @@ type ContractInfo {
   code_id: Int!
   init_msg: JSON!
   owner: String!
+}
+
+type CrowdfundAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String!
+  tokenAddress: AndrAddress!
 }
 
 type DelegateValidator {
@@ -292,6 +371,17 @@ type MintingParams {
   mint_denom: String
 }
 
+type MissionAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  mission: [AndrMissionComponent!]!
+  modules: [AndrModule!]
+  name: String!
+  operators: [String!]!
+  primitiveContract: String!
+}
+
 type MsgDeposit {
   amount: [Coin!]!
   depositor: String!
@@ -318,6 +408,16 @@ type NodeInfo {
   other: OtherInfo!
   protocol_version: ProtocolVersion!
   version: String!
+}
+
+type OffersAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  andrCW721Contract: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String
 }
 
 type Oracle {
@@ -395,6 +495,15 @@ type PolicyConstraints {
   rate_min: String!
 }
 
+type PrimitiveAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  modules: [AndrModule!]
+  operators: [String!]!
+  primitiveContract: String
+}
+
 type Proposal {
   content: ProposalContentUnion!
   deposit_end_time: String!
@@ -466,24 +575,54 @@ type ProtocolVersion {
 union PublicKeyUnion = LegacyAminoMultisigPublicKey | SimplePublicKey | ValConsPublicKey
 
 type Query {
-  ado: Ado!
+  adresslistado: AddressListAdo!
+  auctionado: AuctionAdo!
   auth: Auth!
   bank: Bank!
+  crowdfundado: CrowdfundAdo!
   distribution: Distribution!
   gov: Gov!
   ibc: Ibc!
   market: Market!
   mint: Mint!
+  missionado: MissionAdo!
   msgauth: Msgauth!
+  offersado: OffersAdo!
   oracle: Oracle!
   ping: String!
+  primitiveado: PrimitiveAdo!
+  ratesado: RatesAdo!
+  receiptado: ReceiptAdo!
   slashing: Slashing!
+  splitterado: SplitterAdo!
   staking: Staking!
   tendermint: Tendermint!
+  timelockado: TimelockAdo!
+  tokenado: TokenAdo!
   treasury: Treasury!
   tx: Tx!
   utils: Utils!
   wasm: Wasm!
+}
+
+type RatesAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String
+  rates: [AndrRateInfo!]
+}
+
+type ReceiptAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  minter: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String
 }
 
 type Redelegation {
@@ -558,6 +697,16 @@ type SlashingParams {
   signed_blocks_window: Int
   slash_fraction_double_sign: String
   slash_fraction_downtime: String
+}
+
+type SplitterAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String
+  recipients: [AndrAddressPercent!]
 }
 
 type StakeAuthorization {
@@ -636,6 +785,30 @@ type Tendermint {
 type TextContent implements ProposalContent {
   description: String!
   title: String!
+}
+
+type TimelockAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  modules: [AndrModule!]
+  operators: [String!]
+  primitiveContract: String
+}
+
+type TokenAdo implements BaseAdo {
+  adoId: String!
+  adoName: String!
+  adoType: String!
+  decimals: Int!
+  initial_balances: [AndrCW20Coin!]!
+  marketing: AndrMarketingInfo
+  mint: AndrMinterResponse
+  modules: [AndrModule!]
+  name: String!
+  operators: [String!]
+  primitiveContract: String!
+  symbol: String!
 }
 
 type Treasury {
