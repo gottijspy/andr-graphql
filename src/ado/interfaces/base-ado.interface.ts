@@ -1,4 +1,5 @@
 import { Field, InterfaceType } from '@nestjs/graphql'
+import { AnythingScalar } from 'src/anything.scalar'
 import { AndrModule } from '../common/models'
 
 export interface IBaseAdo {
@@ -29,4 +30,7 @@ export abstract class BaseAdo {
 
   @Field(() => [AndrModule], { nullable: true })
   modules?: Promise<AndrModule[]>
+
+  @Field(() => AnythingScalar)
+  contractQuery?: Promise<any>
 }

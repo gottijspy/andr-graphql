@@ -1,14 +1,14 @@
 import { Query, Resolver } from '@nestjs/graphql'
-import { SplitterAdo } from './models'
-import { SplitterAdoService } from './splitter-ado.service'
+import { AnchorAdoService } from './anchor-ado.service'
+import { AnchorAdo } from './models'
 
-@Resolver(SplitterAdo)
-export class SplitterAdoResolver {
-  constructor(private readonly splitterAdoService: SplitterAdoService) {}
+@Resolver(AnchorAdo)
+export class AnchorAdoResolver {
+  constructor(private readonly anchorAdoService: AnchorAdoService) {}
 
-  @Query(() => SplitterAdo)
-  public async splitter(): Promise<SplitterAdo> {
-    return this.splitterAdoService.instance()
+  @Query(() => AnchorAdo)
+  public async anchor(): Promise<AnchorAdo> {
+    return this.anchorAdoService.instance()
   }
 
   // @ResolveField(() => String)

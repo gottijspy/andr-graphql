@@ -7,7 +7,7 @@ export class CrowdfundAdoResolver {
   constructor(private readonly crowdfundAdoService: CrowdfundAdoService) {}
 
   @Query(() => CrowdfundAdo)
-  public async crowdfundado(): Promise<CrowdfundAdo> {
+  public async crowdfund(): Promise<CrowdfundAdo> {
     return this.crowdfundAdoService.instance()
   }
 

@@ -7,7 +7,7 @@ export class AddressListAdoResolver {
   constructor(private readonly addressListAdoService: AddressListAdoService) {}
 
   @Query(() => AddressListAdo)
-  public async adresslistado(): Promise<AddressListAdo> {
+  public async addresslist(): Promise<AddressListAdo> {
     return await this.addressListAdoService.instance()
     //return {} as AddressListAdo
   }

@@ -1,14 +1,14 @@
 import { Query, Resolver } from '@nestjs/graphql'
-import { SplitterAdo } from './models'
-import { SplitterAdoService } from './splitter-ado.service'
+import { VaultAdo } from './models'
+import { VaultAdoService } from './vault-ado.service'
 
-@Resolver(SplitterAdo)
-export class SplitterAdoResolver {
-  constructor(private readonly splitterAdoService: SplitterAdoService) {}
+@Resolver(VaultAdo)
+export class VaultAdoResolver {
+  constructor(private readonly vaultAdoService: VaultAdoService) {}
 
-  @Query(() => SplitterAdo)
-  public async splitter(): Promise<SplitterAdo> {
-    return this.splitterAdoService.instance()
+  @Query(() => VaultAdo)
+  public async vault(): Promise<VaultAdo> {
+    return this.vaultAdoService.instance()
   }
 
   // @ResolveField(() => String)

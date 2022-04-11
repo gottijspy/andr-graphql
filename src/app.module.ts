@@ -7,37 +7,39 @@ import { TerraModule } from 'nestjs-terra'
 import { join } from 'path'
 import pino from 'pino'
 import { AddressListAdoModule } from './ado-address-list/address-list-ado.module'
+import { AnchorAdoModule } from './ado-anchor/anchor-ado.module'
 import { AuctionAdoModule } from './ado-auction/auction-ado.module'
 import { CrowdfundAdoModule } from './ado-crowdfund/crowdfund-ado.module'
 import { MissionAdoModule } from './ado-mission/mission-ado.module'
-import { OffersAdoModule } from './ado-offers/offers-ado.module'
+import { AdoOffersModule } from './ado-offers/offers-ado.module'
 import { PrimitiveAdoModule } from './ado-primitive/primitive-ado.module'
 import { RatesAdoModule } from './ado-rates/rates-ado.module'
 import { ReceiptAdoModule } from './ado-receipt/receipt-ado.module'
 import { SplitterAdoModule } from './ado-splitter/splitter-ado.module'
 import { TimelockAdoModule } from './ado-timelock/timelock-ado.module'
 import { TokenAdoModule } from './ado-token/token-ado.module'
+import { VaultAdoModule } from './ado-vault/vault-ado.module'
 import { registerAdoEnums } from './ado/enums'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
-import { AuthModule } from './auth/auth.module'
-import { BankModule } from './bank/bank.module'
+//import { AuthModule } from './auth/auth.module'
+//import { BankModule } from './bank/bank.module'
 import { registerEnums } from './common/enums'
-import { DistributionModule } from './distribution/distribution.module'
+//import { DistributionModule } from './distribution/distribution.module'
 import { validate } from './env.validation'
-import { GovModule } from './gov/gov.module'
-import { IbcModule } from './ibc/ibc.module'
-import { MarketModule } from './market/market.module'
-import { MintModule } from './mint/mint.module'
-import { MsgauthModule } from './msgauth/msgauth.module'
-import { OracleModule } from './oracle/oracle.module'
-import { SlashingModule } from './slashing/slashing.module'
-import { StakingModule } from './staking/staking.module'
-import { TendermintModule } from './tendermint/tendermint.module'
-import { TreasuryModule } from './treasury/treasury.module'
-import { TxModule } from './tx/tx.module'
-import { UtilsModule } from './utils/utils.module'
-import { WasmModule } from './wasm/wasm.module'
+// import { GovModule } from './gov/gov.module'
+// import { IbcModule } from './ibc/ibc.module'
+// import { MarketModule } from './market/market.module'
+// import { MintModule } from './mint/mint.module'
+// import { MsgauthModule } from './msgauth/msgauth.module'
+// import { OracleModule } from './oracle/oracle.module'
+// import { SlashingModule } from './slashing/slashing.module'
+// import { StakingModule } from './staking/staking.module'
+// import { TendermintModule } from './tendermint/tendermint.module'
+// import { TreasuryModule } from './treasury/treasury.module'
+// import { TxModule } from './tx/tx.module'
+// import { UtilsModule } from './utils/utils.module'
+// import { WasmModule } from './wasm/wasm.module'
 
 @Module({
   imports: [
@@ -104,33 +106,35 @@ import { WasmModule } from './wasm/wasm.module'
         }
       },
     }),
-    AuthModule,
-    BankModule,
-    DistributionModule,
-    GovModule,
-    MarketModule,
-    MintModule,
-    MsgauthModule,
-    OracleModule,
-    SlashingModule,
-    StakingModule,
-    TendermintModule,
-    TreasuryModule,
-    WasmModule,
-    TxModule,
-    UtilsModule,
-    IbcModule,
+    // AuthModule,
+    // BankModule,
+    // DistributionModule,
+    // GovModule,
+    // MarketModule,
+    // MintModule,
+    // MsgauthModule,
+    // OracleModule,
+    // SlashingModule,
+    // StakingModule,
+    // TendermintModule,
+    // TreasuryModule,
+    // WasmModule,
+    // TxModule,
+    // UtilsModule,
+    // IbcModule,
+    AddressListAdoModule,
+    AdoOffersModule,
+    AnchorAdoModule,
+    AuctionAdoModule,
+    CrowdfundAdoModule,
+    MissionAdoModule,
+    PrimitiveAdoModule,
+    RatesAdoModule,
+    ReceiptAdoModule,
+    SplitterAdoModule,
     TokenAdoModule,
     TimelockAdoModule,
-    AddressListAdoModule,
-    AuctionAdoModule,
-    ReceiptAdoModule,
-    OffersAdoModule,
-    PrimitiveAdoModule,
-    SplitterAdoModule,
-    RatesAdoModule,
-    MissionAdoModule,
-    CrowdfundAdoModule,
+    VaultAdoModule,
   ],
   providers: [AppResolver, AnythingScalar],
 })

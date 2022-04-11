@@ -7,7 +7,7 @@ export class ReceiptAdoResolver {
   constructor(private readonly receiptAdoService: ReceiptAdoService) {}
 
   @Query(() => ReceiptAdo)
-  public async receiptado(): Promise<ReceiptAdo> {
+  public async receipt(): Promise<ReceiptAdo> {
     return this.receiptAdoService.instance()
   }
 

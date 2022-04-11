@@ -7,7 +7,7 @@ export class RatesAdoResolver {
   constructor(private readonly ratesAdoService: RatesAdoService) {}
 
   @Query(() => RatesAdo)
-  public async ratesado(): Promise<RatesAdo> {
+  public async rates(): Promise<RatesAdo> {
     return this.ratesAdoService.instance()
   }
 

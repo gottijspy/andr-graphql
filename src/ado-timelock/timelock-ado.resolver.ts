@@ -7,7 +7,7 @@ export class TimelockAdoResolver {
   constructor(private readonly timelockAdoService: TimelockAdoService) {}
 
   @Query(() => TimelockAdo)
-  public async timelockado(): Promise<TimelockAdo> {
+  public async timelock(): Promise<TimelockAdo> {
     return this.timelockAdoService.instance()
   }
 

@@ -7,7 +7,7 @@ export class MissionAdoResolver {
   constructor(private readonly missionAdoService: MissionAdoService) {}
 
   @Query(() => MissionAdo)
-  public async missionado(): Promise<MissionAdo> {
+  public async mission(): Promise<MissionAdo> {
     return this.missionAdoService.instance()
   }
 

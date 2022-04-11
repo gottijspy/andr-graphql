@@ -7,7 +7,7 @@ export class PrimitiveAdoResolver {
   constructor(private readonly primitiveAdoService: PrimitiveAdoService) {}
 
   @Query(() => PrimitiveAdo)
-  public async primitiveado(): Promise<PrimitiveAdo> {
+  public async primitive(): Promise<PrimitiveAdo> {
     return this.primitiveAdoService.instance()
   }
 

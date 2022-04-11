@@ -32,6 +32,10 @@ export enum AndrRateType {
   External = 'ADORate',
 }
 
+export enum AndrStrategyType {
+  Anchor = 'Anchor',
+}
+
 export function registerAdoEnums() {
   registerEnumType(AdoType, {
     name: 'AdoType',
@@ -47,5 +51,9 @@ export function registerAdoEnums() {
 
   registerEnumType(AndrRateType, {
     name: 'AndrRateType',
+  })
+
+  registerEnumType(AndrStrategyType, {
+    name: 'AndrStrategyType',
   })
 }

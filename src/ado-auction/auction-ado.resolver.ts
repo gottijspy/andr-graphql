@@ -7,7 +7,7 @@ export class AuctionAdoResolver {
   constructor(private readonly auctionAdoService: AuctionAdoService) {}
 
   @Query(() => AuctionAdo)
-  public async auctionado(): Promise<AuctionAdo> {
+  public async auction(): Promise<AuctionAdo> {
     return await this.auctionAdoService.instance()
   }
 

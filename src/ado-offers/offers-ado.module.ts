@@ -5,4 +5,4 @@ import { OffersAdoService } from './offers-ado.service'
 @Module({
   providers: [OffersAdoResolver, OffersAdoService],
 })
-export class OffersAdoModule {}
+export class AdoOffersModule {}

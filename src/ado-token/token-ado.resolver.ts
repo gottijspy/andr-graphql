@@ -7,7 +7,7 @@ export class TokenAdoResolver {
   constructor(private readonly tokenAdoService: TokenAdoService) {}
 
   @Query(() => TokenAdo)
-  public async tokenado(): Promise<TokenAdo> {
+  public async token(): Promise<TokenAdo> {
     return this.tokenAdoService.instance()
   }
 
