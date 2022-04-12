@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { AndrMissionComponent } from 'src/ado/common/models'
-import { BaseAdo } from 'src/ado/interfaces'
+import { BaseAdo } from 'src/ado-common/interfaces'
+import { AndrMissionComponent } from 'src/ado-common/models'
 
 @ObjectType({
   implements: () => [BaseAdo],
@@ -10,16 +10,10 @@ export class MissionAdo implements BaseAdo {
   adoId!: string
 
   @Field()
-  adoName!: string
-
-  @Field()
   adoType!: string
 
   // @Field()
   // readonly adoType = AdoType.Mission
-
-  @Field()
-  primitiveContract!: string
 
   @Field(() => [String])
   operators!: string[]
@@ -29,4 +23,7 @@ export class MissionAdo implements BaseAdo {
 
   @Field()
   name!: string
+
+  @Field()
+  primitiveContract!: string
 }

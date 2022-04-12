@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { AndrYieldStrategy } from 'src/ado/common/models'
-import { BaseAdo } from 'src/ado/interfaces'
+import { BaseAdo } from 'src/ado-common/interfaces'
+import { AndrYieldStrategy } from 'src/ado-common/models'
 
 @ObjectType({
   implements: () => [BaseAdo],
@@ -9,9 +9,6 @@ import { BaseAdo } from 'src/ado/interfaces'
 export class VaultAdo implements BaseAdo {
   @Field()
   adoId!: string
-
-  @Field()
-  adoName!: string
 
   @Field()
   adoType!: string // = AdoType.Token

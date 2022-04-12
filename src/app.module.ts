@@ -9,17 +9,18 @@ import pino from 'pino'
 import { AddressListAdoModule } from './ado-address-list/address-list-ado.module'
 import { AnchorAdoModule } from './ado-anchor/anchor-ado.module'
 import { AuctionAdoModule } from './ado-auction/auction-ado.module'
+import { registerAdoEnums } from './ado-common/enums'
 import { CrowdfundAdoModule } from './ado-crowdfund/crowdfund-ado.module'
+import { CW20TokenAdoModule } from './ado-cw20-token/cw20-token-ado.module'
 import { MissionAdoModule } from './ado-mission/mission-ado.module'
+import { NftCollectibleAdoModule } from './ado-nft-collectible/nft-collectible-ado.module'
 import { AdoOffersModule } from './ado-offers/offers-ado.module'
 import { PrimitiveAdoModule } from './ado-primitive/primitive-ado.module'
 import { RatesAdoModule } from './ado-rates/rates-ado.module'
 import { ReceiptAdoModule } from './ado-receipt/receipt-ado.module'
 import { SplitterAdoModule } from './ado-splitter/splitter-ado.module'
 import { TimelockAdoModule } from './ado-timelock/timelock-ado.module'
-import { TokenAdoModule } from './ado-token/token-ado.module'
 import { VaultAdoModule } from './ado-vault/vault-ado.module'
-import { registerAdoEnums } from './ado/enums'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
 //import { AuthModule } from './auth/auth.module'
@@ -127,12 +128,13 @@ import { validate } from './env.validation'
     AnchorAdoModule,
     AuctionAdoModule,
     CrowdfundAdoModule,
+    CW20TokenAdoModule,
     MissionAdoModule,
+    NftCollectibleAdoModule,
     PrimitiveAdoModule,
     RatesAdoModule,
     ReceiptAdoModule,
     SplitterAdoModule,
-    TokenAdoModule,
     TimelockAdoModule,
     VaultAdoModule,
   ],

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { AndrAddressPercent, AndrModule } from 'src/ado/common/models'
-import { BaseAdo } from 'src/ado/interfaces'
+import { BaseAdo } from 'src/ado-common/interfaces'
+import { AndrAddressPercent, AndrModule } from 'src/ado-common/models'
 
 @ObjectType({
   implements: () => [BaseAdo],
@@ -8,9 +8,6 @@ import { BaseAdo } from 'src/ado/interfaces'
 export class SplitterAdo implements BaseAdo {
   @Field()
   adoId!: string
-
-  @Field()
-  adoName!: string
 
   @Field()
   adoType!: string

@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { BaseAdo } from 'src/ado/interfaces'
+import { BaseAdo } from 'src/ado-common/interfaces'
 
 @ObjectType({
   implements: () => [BaseAdo],
@@ -7,9 +7,6 @@ import { BaseAdo } from 'src/ado/interfaces'
 export class AddressListAdo implements BaseAdo {
   @Field()
   adoId!: string
-
-  @Field()
-  adoName!: string
 
   @Field()
   adoType!: string

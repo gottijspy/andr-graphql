@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { AndrRateInfo } from 'src/ado/common/models'
-import { BaseAdo } from 'src/ado/interfaces'
+import { BaseAdo } from 'src/ado-common/interfaces'
+import { AndrRateInfo } from 'src/ado-common/models'
 
 @ObjectType({
   implements: () => [BaseAdo],
@@ -10,14 +10,11 @@ export class RatesAdo implements BaseAdo {
   adoId!: string
 
   @Field()
-  adoName!: string
-
-  @Field()
   adoType!: string
 
   // @Field()
   // readonly adoType = AdoType.Rates
 
-  @Field(() => [AndrRateInfo], { nullable: true })
-  rates?: Promise<AndrRateInfo[]>
+  @Field(() => [AndrRateInfo])
+  rates!: Promise<AndrRateInfo[]>
 }

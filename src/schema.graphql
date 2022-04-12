@@ -4,7 +4,6 @@
 
 type AddressListAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   isInclusive: Boolean!
@@ -13,9 +12,22 @@ type AddressListAdo implements BaseAdo {
   primitiveContract: String
 }
 
+enum AdoType {
+  AddressList
+  AdoOffers
+  Auction
+  Crowdfund
+  Mission
+  Primitive
+  Rates
+  Receipt
+  Splitter
+  Timelock
+  Token
+}
+
 type AnchorAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]
@@ -56,7 +68,7 @@ type AndrMinterResponse {
 }
 
 type AndrMissionComponent {
-  adoType: String!
+  adoType: AdoType!
   instantiateMsg: String!
   name: String!
 }
@@ -98,14 +110,13 @@ enum AndrStrategyType {
 
 type AndrYieldStrategy {
   address: String!
-  strategy_type: AndrStrategyType!
+  strategyType: AndrStrategyType!
 }
 
 scalar Anything
 
 type AuctionAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   auctionId: Int!
   coinDenom: String!
@@ -126,12 +137,26 @@ type AuctionAdo implements BaseAdo {
 
 interface BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]
   operators: [String!]
   primitiveContract: String
+}
+
+type CW20TokenAdo implements BaseAdo {
+  adoId: String!
+  adoType: String!
+  contractQuery: Anything!
+  decimals: Int!
+  initial_balances: [AndrCW20Coin!]!
+  marketing: AndrMarketingInfo
+  mint: AndrMinterResponse
+  modules: [AndrModule!]
+  name: String!
+  operators: [String!]
+  primitiveContract: String
+  symbol: String!
 }
 
 type Coin {
@@ -152,8 +177,8 @@ type CommissionRates {
 
 type CrowdfundAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
+  canMintAfterSale: Boolean!
   contractQuery: Anything!
   modules: [AndrModule!]
   operators: [String!]
@@ -168,7 +193,6 @@ type DepositParams {
 
 type MissionAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   mission: [AndrMissionComponent!]!
@@ -178,9 +202,20 @@ type MissionAdo implements BaseAdo {
   primitiveContract: String!
 }
 
+type NftCollectibleAdo implements BaseAdo {
+  adoId: String!
+  adoType: String!
+  contractQuery: Anything!
+  minter: AndrAddress!
+  modules: [AndrModule!]
+  name: String!
+  operators: [String!]
+  primitiveContract: String
+  symbol: String!
+}
+
 type OffersAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   andrCW721Contract: String!
   contractQuery: Anything!
@@ -209,7 +244,6 @@ type PolicyConstraints {
 
 type PrimitiveAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]
@@ -223,31 +257,30 @@ type Query {
   anchor: AnchorAdo!
   auction: AuctionAdo!
   crowdfund: CrowdfundAdo!
+  cw20token: CW20TokenAdo!
   mission: MissionAdo!
+  nftcollectible: NftCollectibleAdo!
   ping: String!
   primitive: PrimitiveAdo!
   rates: RatesAdo!
   receipt: ReceiptAdo!
   splitter: SplitterAdo!
   timelock: TimelockAdo!
-  token: TokenAdo!
   vault: VaultAdo!
 }
 
 type RatesAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]
   operators: [String!]
   primitiveContract: String
-  rates: [AndrRateInfo!]
+  rates: [AndrRateInfo!]!
 }
 
 type ReceiptAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   minter: String!
@@ -262,7 +295,6 @@ type SimplePublicKey {
 
 type SplitterAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]
@@ -283,28 +315,11 @@ type TallyParams {
 
 type TimelockAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]
   operators: [String!]
   primitiveContract: String
-}
-
-type TokenAdo implements BaseAdo {
-  adoId: String!
-  adoName: String!
-  adoType: String!
-  contractQuery: Anything!
-  decimals: Int!
-  initial_balances: [AndrCW20Coin!]!
-  marketing: AndrMarketingInfo
-  mint: AndrMinterResponse
-  modules: [AndrModule!]
-  name: String!
-  operators: [String!]
-  primitiveContract: String!
-  symbol: String!
 }
 
 type ValConsPublicKey {
@@ -326,7 +341,6 @@ type ValidatorDescription {
 
 type VaultAdo implements BaseAdo {
   adoId: String!
-  adoName: String!
   adoType: String!
   contractQuery: Anything!
   modules: [AndrModule!]

@@ -1,14 +1,14 @@
 import { Query, Resolver } from '@nestjs/graphql'
-import { TokenAdo } from './models'
-import { TokenAdoService } from './token-ado.service'
+import { CW20TokenAdoService } from './cw20-token-ado.service'
+import { CW20TokenAdo } from './models'
 
-@Resolver(TokenAdo)
-export class TokenAdoResolver {
-  constructor(private readonly tokenAdoService: TokenAdoService) {}
+@Resolver(CW20TokenAdo)
+export class CW20TokenAdoResolver {
+  constructor(private readonly cw20tokenAdoService: CW20TokenAdoService) {}
 
-  @Query(() => TokenAdo)
-  public async token(): Promise<TokenAdo> {
-    return this.tokenAdoService.instance()
+  @Query(() => CW20TokenAdo)
+  public async cw20token(): Promise<CW20TokenAdo> {
+    return this.cw20tokenAdoService.instance()
   }
 
   // @ResolveField(() => String)

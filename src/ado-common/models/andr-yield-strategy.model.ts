@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { AndrStrategyType } from 'src/ado/enums'
+import { AndrStrategyType } from 'src/ado-common/enums'
 
 @ObjectType()
 export class AndrYieldStrategy {
   @Field(() => AndrStrategyType)
-  strategy_type!: string
+  strategyType!: string
 
   @Field()
   address!: string

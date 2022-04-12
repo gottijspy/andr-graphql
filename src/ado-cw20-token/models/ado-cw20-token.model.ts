@@ -1,23 +1,20 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql'
-import { AndrCW20Coin, AndrMarketingInfo, AndrMinterResponse, AndrModule } from 'src/ado/common/models'
-import { BaseAdo } from 'src/ado/interfaces'
+import { BaseAdo } from 'src/ado-common/interfaces'
+import { AndrCW20Coin, AndrMarketingInfo, AndrMinterResponse, AndrModule } from 'src/ado-common/models'
 
 @ObjectType({
   implements: () => [BaseAdo],
 })
 @ObjectType()
-export class TokenAdo implements BaseAdo {
+export class CW20TokenAdo implements BaseAdo {
   @Field()
   adoId!: string
 
   @Field()
-  adoName!: string
-
-  @Field()
   adoType!: string // = AdoType.Token
 
-  @Field()
-  primitiveContract!: string
+  // @Field()
+  // primitiveContract!: string
 
   @Field()
   name!: string

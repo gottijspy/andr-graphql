@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { AndrRateType } from 'src/ado/enums'
+import { AndrRateType } from 'src/ado-common/enums'
 import { AndrRecipient } from './andr-recipient.model'
 
 @ObjectType()
