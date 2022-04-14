@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Account {
+  account_number: Int!
+  address: String!
+  public_key: PublicKeyUnion
+  sequence: Int!
+}
+
 type AddressListAdo implements BaseAdo {
   adoId: String!
   adoType: String!
@@ -26,6 +33,11 @@ enum AdoType {
   Token
 }
 
+type AllNftInfo {
+  access: NftOwnerInfo!
+  info: NftInfo!
+}
+
 type AnchorAdo implements BaseAdo {
   adoId: String!
   adoType: String!
@@ -47,6 +59,17 @@ type AndrAddressPercent {
 type AndrCW20Coin {
   address: String!
   amount: Int!
+}
+
+type AndrExpiration {
+  expirationType: AndrExpirationType!
+  expirationValue: String!
+}
+
+enum AndrExpirationType {
+  AtHeight
+  AtTime
+  Never
 }
 
 type AndrLogo {
@@ -86,6 +109,11 @@ enum AndrModuleType {
   Receipt
 }
 
+enum AndrOrderBy {
+  Asc
+  Desc
+}
+
 type AndrRateInfo {
   description: String!
   isAdditive: Boolean!
@@ -104,6 +132,12 @@ type AndrRecipient {
   msg: String
 }
 
+input AndrSearchOptions {
+  limit: Int = 10
+  orderBy: AndrOrderBy = Asc
+  startAfter: Int = 0
+}
+
 enum AndrStrategyType {
   Anchor
 }
@@ -115,13 +149,24 @@ type AndrYieldStrategy {
 
 scalar Anything
 
+type Auction {
+  auctionIds(tokenAddress: String!, tokenId: String!): [Int!]!
+  auctionInfo(options: AndrSearchOptions, tokenAddress: String!): AuctionInfo!
+  auctionState(auctionId: Float!): AuctionAdo!
+  bids(auctionId: Float!, options: AndrSearchOptions): [Bid!]!
+  isOperator: Boolean!
+  latestAuctionState(tokenAddress: String!, tokenId: String!): AuctionAdo!
+  operators: [String!]!
+  owner: String!
+}
+
 type AuctionAdo implements BaseAdo {
   adoId: String!
   adoType: String!
   auctionId: Int!
   coinDenom: String!
   contractQuery: Anything!
-  end_time: String!
+  endTime: AndrExpiration!
   highBidderAddr: AndrAddress!
   highBidderAmount: Int!
   isCancelled: Boolean!
@@ -129,10 +174,20 @@ type AuctionAdo implements BaseAdo {
   operators: [String!]
   owner: String!
   primitiveContract: String
-  start_time: String!
+  startTime: AndrExpiration!
   tokenAddress: String!
   tokenId: String!
   whitelist: [AndrAddress!]
+}
+
+type AuctionInfo {
+  auctionIds: [Int!]!
+  tokenAddress: String!
+  tokenId: String!
+}
+
+type Auth {
+  accountInfo(address: String!, height: Float): Account!
 }
 
 interface BaseAdo {
@@ -142,6 +197,12 @@ interface BaseAdo {
   modules: [AndrModule!]
   operators: [String!]
   primitiveContract: String
+}
+
+type Bid {
+  amount: Int!
+  bidder: String!
+  timestamp: String!
 }
 
 type CW20TokenAdo implements BaseAdo {
@@ -157,6 +218,11 @@ type CW20TokenAdo implements BaseAdo {
   operators: [String!]
   primitiveContract: String
   symbol: String!
+}
+
+type CodeInfo {
+  code_creator: String!
+  code_hash: String!
 }
 
 type Coin {
@@ -175,6 +241,14 @@ type CommissionRates {
   rate: String!
 }
 
+type ContractInfo {
+  address: String!
+  admin: String
+  code_id: Int!
+  init_msg: JSON!
+  owner: String!
+}
+
 type CrowdfundAdo implements BaseAdo {
   adoId: String!
   adoType: String!
@@ -191,6 +265,16 @@ type DepositParams {
   min_deposit: [Coin!]!
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type LegacyAminoMultisigPublicKey {
+  public_keys: [SimplePublicKey!]!
+  threshold: Float!
+}
+
 type MissionAdo implements BaseAdo {
   adoId: String!
   adoType: String!
@@ -202,26 +286,53 @@ type MissionAdo implements BaseAdo {
   primitiveContract: String!
 }
 
-type NftCollectibleAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  minter: AndrAddress!
-  modules: [AndrModule!]
+type NFT {
+  allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo!
+  allTokens(options: AndrSearchOptions): [String!]!
+  approvals(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]!
+  contractInfo: NftContractInfo!
+  isOperator: Boolean!
+  minter: String!
+  nftInfo(tokenId: String!): NftInfo!
+  numTokens: Int!
+  operators: [String!]!
+  owner: String!
+  ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo!
+  tokens(options: AndrSearchOptions, owner: String!): [String!]!
+}
+
+type NftApproval {
+  expires: AndrExpiration!
+  spender: String!
+}
+
+type NftContractInfo {
   name: String!
-  operators: [String!]
-  primitiveContract: String
   symbol: String!
 }
 
-type OffersAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  andrCW721Contract: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String
+type NftInfo {
+  extension: Anything!
+  tokenUri: String!
+}
+
+type NftOwnerInfo {
+  approvals: [NftApproval!]!
+  owner: String!
+}
+
+type OfferInfo {
+  denom: String!
+  expiration: AndrExpiration!
+  offerAmount: Int!
+  purchaser: String!
+  remainingAmount: Int!
+  taxAmount: Int!
+}
+
+type Offers {
+  allOffers(options: AndrSearchOptions!, purchaser: String!): [OfferInfo!]!
+  offer(tokenId: String!): OfferInfo!
 }
 
 type OracleWhitelist {
@@ -251,15 +362,18 @@ type PrimitiveAdo implements BaseAdo {
   primitiveContract: String
 }
 
+union PublicKeyUnion = LegacyAminoMultisigPublicKey | SimplePublicKey | ValConsPublicKey
+
 type Query {
   addresslist: AddressListAdo!
-  adooffers: OffersAdo!
   anchor: AnchorAdo!
-  auction: AuctionAdo!
+  auction: Auction!
+  auth: Auth!
   crowdfund: CrowdfundAdo!
   cw20token: CW20TokenAdo!
   mission: MissionAdo!
-  nftcollectible: NftCollectibleAdo!
+  nft: NFT!
+  offers: Offers!
   ping: String!
   primitive: PrimitiveAdo!
   rates: RatesAdo!
@@ -267,6 +381,7 @@ type Query {
   splitter: SplitterAdo!
   timelock: TimelockAdo!
   vault: VaultAdo!
+  wasm: Wasm!
 }
 
 type RatesAdo implements BaseAdo {
@@ -287,6 +402,12 @@ type ReceiptAdo implements BaseAdo {
   modules: [AndrModule!]
   operators: [String!]
   primitiveContract: String
+}
+
+type ScheduleEntry {
+  end_time: String!
+  ratio: String!
+  start_time: String!
 }
 
 type SimplePublicKey {
@@ -349,6 +470,11 @@ type VaultAdo implements BaseAdo {
   strategies: [AndrYieldStrategy!]!
 }
 
+type VestingSchedule {
+  denom: String!
+  schedules: [ScheduleEntry!]!
+}
+
 enum VoteOption {
   Abstain
   Empty
@@ -359,6 +485,19 @@ enum VoteOption {
 
 type VotingParams {
   voting_period: Int!
+}
+
+type Wasm {
+  codeInfo(codeID: Int!, height: Float): CodeInfo!
+  contractInfo(contractAddress: String!, height: Float!): ContractInfo!
+  contractQuery(contractAddress: String!, height: Float, query: JSON!): Anything!
+  parameters(height: Float): WasmParams!
+}
+
+type WasmParams {
+  max_contract_gas: Int
+  max_contract_msg_size: Int
+  max_contract_size: Int
 }
 
 type WeightedVoteOption {

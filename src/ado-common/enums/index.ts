@@ -14,11 +14,22 @@ export enum AdoType {
   Crowdfund = 'Crowdfund',
 }
 
+export enum AndrExpirationType {
+  AtHeight = 'AtHeight',
+  AtTime = 'AtTime',
+  Never = 'Never',
+}
+
 export enum AndrModuleType {
   Rates = 'rates',
   Offers = 'offers',
   AddressList = 'address_list',
   Receipt = 'receipt',
+}
+
+export enum AndrOrderBy {
+  Asc = 'Asc',
+  Desc = 'Desc',
 }
 
 export enum AndrRecipientType {
@@ -41,8 +52,16 @@ export function registerAdoEnums() {
     name: 'AdoType',
   })
 
+  registerEnumType(AndrExpirationType, {
+    name: 'AndrExpirationType',
+  })
+
   registerEnumType(AndrModuleType, {
     name: 'AndrModuleType',
+  })
+
+  registerEnumType(AndrOrderBy, {
+    name: 'AndrOrderBy',
   })
 
   registerEnumType(AndrRecipientType, {
