@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { BaseAdo } from 'src/ado-common/interfaces'
-import { AndrAddress, AndrExpiration } from 'src/ado-common/models'
+import { AndrAddress, AndrExpiration } from 'src/ado-common/types'
 
 /*
 The Auction ADO is a smart contract that allows performing auctions on NFT tokens. 

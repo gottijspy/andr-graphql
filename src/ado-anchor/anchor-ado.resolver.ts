@@ -1,23 +1,31 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AnchorAdoService } from './anchor-ado.service'
-import { AnchorAdo } from './models'
+import { AnchorQuery } from './types'
 
-@Resolver(AnchorAdo)
+@Resolver(AnchorQuery)
 export class AnchorAdoResolver {
   constructor(private readonly anchorAdoService: AnchorAdoService) {}
 
-  @Query(() => AnchorAdo)
-  public async anchor(): Promise<AnchorAdo> {
-    return this.anchorAdoService.instance()
+  @Query(() => AnchorQuery)
+  public async anchor(@Args('contractAddress') contractAddress: string): Promise<AnchorQuery> {
+    return { contractAddress: contractAddress } as AnchorQuery
   }
 
-  // @ResolveField(() => String)
-  // public async primitiveContract(@Args('address') address: string): Promise<string> {
-  //   return await this.tokenAdoService.primitiveContract(address);
-  // }
+  @ResolveField(() => String)
+  public async owner(@Parent() anchor: AnchorQuery): Promise<string> {
+    return this.anchorAdoService.owner(anchor.contractAddress)
+  }
 
-  // @ResolveField(() => AdoSearchResult)
-  // public async search(@Args('options') options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   return this.adoService.search(options)
-  // }
+  @ResolveField(() => [String])
+  public async operators(@Parent() anchor: AnchorQuery): Promise<string[]> {
+    return this.anchorAdoService.operators(anchor.contractAddress)
+  }
+
+  @ResolveField(() => Boolean)
+  public async isOperator(
+    @Parent() anchor: AnchorQuery,
+    @Args('operatorAddress') operatorAddress: string,
+  ): Promise<boolean> {
+    return this.anchorAdoService.isOperator(anchor.contractAddress, operatorAddress)
+  }
 }

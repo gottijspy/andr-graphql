@@ -1,85 +1,103 @@
-import { Args, Int, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Int, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AndrSearchOptions } from 'src/ado-common/models'
-import { AllNftInfo, NFT, NftApproval, NftContractInfo, NftInfo, NftOwnerInfo } from './models'
-//import { NftCollectibleAdoService } from './nft-collectible-ado.service'
+import { NftCollectibleAdoService } from './nft-collectible-ado.service'
+import { AllNftInfo, NftQuery, NftApproval, NftContractInfo, NftInfo, NftOwnerInfo } from './types'
 
-@Resolver(NFT)
+@Resolver(NftQuery)
 export class NftCollectibleAdoResolver {
-  //constructor(private readonly nftCollectibleAdoService: NftCollectibleAdoService) {}
+  constructor(private readonly nftCollectibleAdoService: NftCollectibleAdoService) {}
 
-  @Query(() => NFT)
-  public async nft(): Promise<NFT> {
-    return {} as NFT
+  @Query(() => NftQuery)
+  public async nft(@Args('contractAddress') contractAddress: string): Promise<NftQuery> {
+    return { contractAddress: contractAddress } as NftQuery
+  }
+
+  @ResolveField(() => String)
+  public async owner(@Parent() nft: NftQuery): Promise<string> {
+    return this.nftCollectibleAdoService.owner(nft.contractAddress)
+  }
+
+  @ResolveField(() => [String])
+  public async operators(@Parent() nft: NftQuery): Promise<string[]> {
+    return this.nftCollectibleAdoService.operators(nft.contractAddress)
+  }
+
+  @ResolveField(() => Boolean)
+  public async isOperator(@Parent() nft: NftQuery, @Args('operatorAddress') operatorAddress: string): Promise<boolean> {
+    return this.nftCollectibleAdoService.isOperator(nft.contractAddress, operatorAddress)
+  }
+
+  @ResolveField(() => String)
+  public async minter(@Parent() nft: NftQuery): Promise<string> {
+    return this.nftCollectibleAdoService.minter(nft.contractAddress)
   }
 
   @ResolveField(() => NftOwnerInfo)
   public async ownerOf(
+    @Parent() nft: NftQuery,
     @Args('tokenId') tokenId: string,
     @Args('includeExpired') includeExpired: boolean,
   ): Promise<NftOwnerInfo> {
-    return {} as NftOwnerInfo
+    return this.nftCollectibleAdoService.ownerOf(nft.contractAddress, tokenId, includeExpired)
   }
 
   @ResolveField(() => [NftApproval])
-  public async approvals(
+  public async approvedForAll(
+    @Parent() nft: NftQuery,
     @Args('owner') owner: string,
     @Args('includeExpired') includeExpired: boolean,
     @Args('options', { nullable: true }) options: AndrSearchOptions,
   ): Promise<NftApproval[]> {
-    return [] as NftApproval[]
+    return this.nftCollectibleAdoService.approvedForAll(nft.contractAddress, owner, includeExpired, options)
+  }
+
+  @ResolveField(() => Int)
+  public async numTokens(@Parent() nft: NftQuery): Promise<number> {
+    return this.nftCollectibleAdoService.numTokens(nft.contractAddress)
   }
 
   @ResolveField(() => NftInfo)
-  public async nftInfo(@Args('tokenId') tokenId: string): Promise<NftInfo> {
-    return {} as NftInfo
+  public async nftInfo(@Parent() nft: NftQuery, @Args('tokenId') tokenId: string): Promise<NftInfo> {
+    return this.nftCollectibleAdoService.nftInfo(nft.contractAddress, tokenId)
   }
 
   @ResolveField(() => AllNftInfo)
   public async allNftInfo(
+    @Parent() nft: NftQuery,
     @Args('tokenId') tokenId: string,
     @Args('includeExpired') includeExpired: boolean,
   ): Promise<AllNftInfo> {
-    return {} as AllNftInfo
+    return this.nftCollectibleAdoService.allNftInfo(nft.contractAddress, tokenId, includeExpired)
   }
 
   @ResolveField(() => [String])
   public async tokens(
+    @Parent() nft: NftQuery,
     @Args('owner') owner: string,
     @Args('options', { nullable: true }) options: AndrSearchOptions,
   ): Promise<string[]> {
-    return [] as string[]
+    return this.nftCollectibleAdoService.tokens(nft.contractAddress, owner, options)
   }
 
+  // @ResolveField(() => [String])
+  // public async tokens(
+  //   @Args('owner') owner: string,
+  //   @Args('options', { nullable: true }) options: AndrSearchOptions,
+  // ): Promise<string[]> {
+  //   return [] as string[]
+  // }
+
   @ResolveField(() => [String])
-  public async allTokens(@Args('options', { nullable: true }) options: AndrSearchOptions): Promise<string[]> {
-    return [] as string[]
+  public async allTokens(
+    @Parent() nft: NftQuery,
+    @Args('options', { nullable: true }) options: AndrSearchOptions,
+  ): Promise<string[]> {
+    return this.nftCollectibleAdoService.allTokens(nft.contractAddress, options)
   }
 
   //Missing @Args: Open-endded query?
   @ResolveField(() => NftContractInfo)
-  public async contractInfo(): Promise<NftContractInfo> {
-    return {} as NftContractInfo
+  public async contractInfo(@Parent() nft: NftQuery): Promise<NftContractInfo> {
+    return this.nftCollectibleAdoService.contractInfo(nft.contractAddress)
   }
-
-  //Missing @Args: Open-endded query?
-  @ResolveField(() => String)
-  public async minter(): Promise<string> {
-    return ''
-  }
-
-  //Missing @Args: Open-endded query?
-  @ResolveField(() => Int)
-  public async numTokens(): Promise<number> {
-    return 0
-  }
-
-  // @ResolveField(() => String)
-  // public async primitiveContract(@Args('address') address: string): Promise<string> {
-  //   return await this.tokenAdoService.primitiveContract(address);
-  // }
-
-  // @ResolveField(() => AdoSearchResult)
-  // public async search(@Args('options') options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   return this.adoService.search(options)
-  // }
 }

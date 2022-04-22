@@ -2,35 +2,26 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Account {
-  account_number: Int!
+type ADORate {
   address: String!
-  public_key: PublicKeyUnion
-  sequence: Int!
+  key: String!
 }
 
-type AddressListAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  isInclusive: Boolean!
-  modules: [AndrModule!]
+type AddressListQuery {
+  contractAddress: String!
+  includesAddress(address: String!): AddressListResponse!
+  isOperator(operatorAddress: String!): Boolean!
   operators: [String!]!
-  primitiveContract: String
+  owner: String!
 }
 
-enum AdoType {
-  AddressList
-  AdoOffers
-  Auction
-  Crowdfund
-  Mission
-  Primitive
-  Rates
-  Receipt
-  Splitter
-  Timelock
-  Token
+type AddressListResponse {
+  included: Boolean!
+}
+
+type AddressPercent {
+  percent: String!
+  recipient: AndrRecipient!
 }
 
 type AllNftInfo {
@@ -38,22 +29,20 @@ type AllNftInfo {
   info: NftInfo!
 }
 
-type AnchorAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String!
+type AnchorQuery {
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
+}
+
+type AndrADORecipient {
+  address: AndrAddress!
+  msg: String
 }
 
 type AndrAddress {
   identifier: String!
-}
-
-type AndrAddressPercent {
-  percent: Float!
-  recipient: AndrRecipient!
 }
 
 type AndrCW20Coin {
@@ -62,14 +51,8 @@ type AndrCW20Coin {
 }
 
 type AndrExpiration {
-  expirationType: AndrExpirationType!
-  expirationValue: String!
-}
-
-enum AndrExpirationType {
-  AtHeight
-  AtTime
-  Never
+  at_height: Int
+  at_time: String
 }
 
 type AndrLogo {
@@ -90,12 +73,6 @@ type AndrMinterResponse {
   minter: String!
 }
 
-type AndrMissionComponent {
-  adoType: AdoType!
-  instantiateMsg: String!
-  name: String!
-}
-
 type AndrModule {
   address: AndrAddress!
   isMutable: Boolean!
@@ -114,37 +91,15 @@ enum AndrOrderBy {
   Desc
 }
 
-type AndrRateInfo {
-  description: String!
-  isAdditive: Boolean!
-  rate: AndrRateType!
-  receivers: [AndrRecipient!]!
-}
-
-enum AndrRateType {
-  External
-  Flat
-  Percent
-}
-
 type AndrRecipient {
-  address: AndrAddress!
-  msg: String
+  a_d_o: AndrADORecipient
+  addr: String
 }
 
 input AndrSearchOptions {
   limit: Int = 10
   orderBy: AndrOrderBy = Asc
   startAfter: Int = 0
-}
-
-enum AndrStrategyType {
-  Anchor
-}
-
-type AndrYieldStrategy {
-  address: String!
-  strategyType: AndrStrategyType!
 }
 
 scalar Anything
@@ -184,10 +139,6 @@ type AuctionInfo {
   auctionIds: [Int!]!
   tokenAddress: String!
   tokenId: String!
-}
-
-type Auth {
-  accountInfo(address: String!, height: Float): Account!
 }
 
 interface BaseAdo {
@@ -249,15 +200,29 @@ type ContractInfo {
   owner: String!
 }
 
-type CrowdfundAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  canMintAfterSale: Boolean!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String!
-  tokenAddress: AndrAddress!
+type CrowdfundConfig {
+  can_mint_after_sale: Boolean!
+  token_address: AndrAddress!
+}
+
+type CrowdfundQuery {
+  config: CrowdfundConfig!
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
+  state: CrowdfundState!
+}
+
+type CrowdfundState {
+  amount_sold: Int!
+  amount_to_send: Int!
+  amount_transferred: Int!
+  expiration: AndrExpiration!
+  max_amount_per_wallet: Int!
+  min_tokens_sold: Int!
+  price: Coin!
+  recipient: AndrRecipient!
 }
 
 type DepositParams {
@@ -270,35 +235,26 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type LegacyAminoMultisigPublicKey {
-  public_keys: [SimplePublicKey!]!
-  threshold: Float!
-}
-
-type MissionAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  mission: [AndrMissionComponent!]!
-  modules: [AndrModule!]
+type MissionComponent {
+  ado_type: String!
+  instantiate_msg: String!
   name: String!
-  operators: [String!]!
-  primitiveContract: String!
 }
 
-type NFT {
-  allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo!
-  allTokens(options: AndrSearchOptions): [String!]!
-  approvals(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]!
-  contractInfo: NftContractInfo!
-  isOperator: Boolean!
-  minter: String!
-  nftInfo(tokenId: String!): NftInfo!
-  numTokens: Int!
+type MissionConfig {
+  name: String!
+  owner: String!
+}
+
+type MissionQuery {
+  config: MissionConfig!
+  contractAddress: String!
+  getAddress(name: String!): String!
+  getAddresses: [String!]!
+  getComponents: [MissionComponent!]!
+  isOperator(operatorAddress: String!): Boolean!
   operators: [String!]!
   owner: String!
-  ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo!
-  tokens(options: AndrSearchOptions, owner: String!): [String!]!
 }
 
 type NftApproval {
@@ -313,7 +269,7 @@ type NftContractInfo {
 
 type NftInfo {
   extension: Anything!
-  tokenUri: String!
+  tokenUri: String
 }
 
 type NftOwnerInfo {
@@ -321,7 +277,23 @@ type NftOwnerInfo {
   owner: String!
 }
 
-type OfferInfo {
+type NftQuery {
+  allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo!
+  allTokens(options: AndrSearchOptions): [String!]!
+  approvedForAll(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]!
+  contractAddress: String!
+  contractInfo: NftContractInfo!
+  isOperator(operatorAddress: String!): Boolean!
+  minter: String!
+  nftInfo(tokenId: String!): NftInfo!
+  numTokens: Int!
+  operators: [String!]!
+  owner: String!
+  ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo!
+  tokens(options: AndrSearchOptions, owner: String!): [String!]!
+}
+
+type OfferResponse {
   denom: String!
   expiration: AndrExpiration!
   offerAmount: Int!
@@ -330,9 +302,10 @@ type OfferInfo {
   taxAmount: Int!
 }
 
-type Offers {
-  allOffers(options: AndrSearchOptions!, purchaser: String!): [OfferInfo!]!
-  offer(tokenId: String!): OfferInfo!
+type OffersQuery {
+  allOffers(options: AndrSearchOptions!, purchaser: String!): [OfferResponse!]!
+  contractAddress: String!
+  offer(tokenId: String!): OfferResponse!
 }
 
 type OracleWhitelist {
@@ -346,6 +319,10 @@ type ParameterChanges {
   value: String!
 }
 
+type PercentRate {
+  decimal: Float!
+}
+
 type PolicyConstraints {
   cap: Coin!
   change_max: String!
@@ -353,45 +330,51 @@ type PolicyConstraints {
   rate_min: String!
 }
 
-type PrimitiveAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
+type PrimitiveQuery {
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
   operators: [String!]!
-  primitiveContract: String
+  owner: String!
 }
 
-union PublicKeyUnion = LegacyAminoMultisigPublicKey | SimplePublicKey | ValConsPublicKey
-
 type Query {
-  addresslist: AddressListAdo!
-  anchor: AnchorAdo!
+  addresslist(contractAddress: String!): AddressListQuery!
+  anchor(contractAddress: String!): AnchorQuery!
   auction: Auction!
-  auth: Auth!
-  crowdfund: CrowdfundAdo!
+  crowdfund(contractAddress: String!): CrowdfundQuery!
   cw20token: CW20TokenAdo!
-  mission: MissionAdo!
-  nft: NFT!
-  offers: Offers!
+  mission(contractAddress: String!): MissionQuery!
+  nft(contractAddress: String!): NftQuery!
+  offers(contractAddress: String!): OffersQuery!
   ping: String!
-  primitive: PrimitiveAdo!
-  rates: RatesAdo!
+  primitive(contractAddress: String!): PrimitiveQuery!
+  rates(contractAddress: String!): RatesQuery!
   receipt: ReceiptAdo!
-  splitter: SplitterAdo!
+  splitter(contractAddress: String!): SplitterQuery!
   timelock: TimelockAdo!
-  vault: VaultAdo!
+  vault(contractAddress: String!): VaultQuery!
   wasm: Wasm!
 }
 
-type RatesAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String
-  rates: [AndrRateInfo!]!
+type Rate {
+  external: ADORate!
+  flat: Coin!
+  percent: PercentRate!
+}
+
+type RateInfo {
+  description: String!
+  is_additive: Boolean!
+  rate: Rate!
+  receivers: [AndrRecipient!]!
+}
+
+type RatesQuery {
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
+  payments: [RateInfo!]!
 }
 
 type ReceiptAdo implements BaseAdo {
@@ -404,24 +387,21 @@ type ReceiptAdo implements BaseAdo {
   primitiveContract: String
 }
 
-type ScheduleEntry {
-  end_time: String!
-  ratio: String!
-  start_time: String!
-}
-
 type SimplePublicKey {
   key: String!
 }
 
-type SplitterAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String
-  recipients: [AndrAddressPercent!]
+type Splitter {
+  locked: Boolean!
+  recipients: [AddressPercent!]!
+}
+
+type SplitterQuery {
+  config: Splitter!
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
 }
 
 type StakeAuthorizationValidators {
@@ -460,19 +440,11 @@ type ValidatorDescription {
   website: String!
 }
 
-type VaultAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String
-  strategies: [AndrYieldStrategy!]!
-}
-
-type VestingSchedule {
-  denom: String!
-  schedules: [ScheduleEntry!]!
+type VaultQuery {
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
 }
 
 enum VoteOption {

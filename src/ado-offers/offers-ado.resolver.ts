@@ -1,50 +1,28 @@
-import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AndrExpirationType } from 'src/ado-common/enums'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AndrSearchOptions } from 'src/ado-common/models'
-import { OfferInfo, Offers } from './models'
-//import { OffersAdoService } from './offers-ado.service'
+import { OffersAdoService } from './offers-ado.service'
+import { OfferResponse, OffersQuery } from './types'
 
-@Resolver(Offers)
+@Resolver(OffersQuery)
 export class OffersAdoResolver {
-  //constructor(private readonly offersAdoService: OffersAdoService) {}
+  constructor(private readonly offersAdoService: OffersAdoService) {}
 
-  @Query(() => Offers)
-  public async offers(): Promise<Offers> {
-    return {} as Offers
+  @Query(() => OffersQuery)
+  public async offers(@Args('contractAddress') contractAddress: string): Promise<OffersQuery> {
+    return { contractAddress: contractAddress } as OffersQuery
   }
 
-  @ResolveField(() => OfferInfo)
-  public async offer(@Args('tokenId') tokenId: string): Promise<OfferInfo> {
-    return {
-      denom: 'uusd',
-      offerAmount: 1000,
-      remainingAmount: 997,
-      taxAmount: 2,
-      expiration: {
-        expirationType: AndrExpirationType.AtHeight,
-        expirationValue: '500',
-      },
-      purchaser: 'terra1...',
-    } as OfferInfo
+  @ResolveField(() => OfferResponse)
+  public async offer(@Parent() offer: OffersQuery, @Args('tokenId') tokenId: string): Promise<OfferResponse> {
+    return this.offersAdoService.offer(offer.contractAddress, tokenId)
   }
 
-  @ResolveField(() => [OfferInfo])
+  @ResolveField(() => [OfferResponse])
   public async allOffers(
+    @Parent() offer: OffersQuery,
     @Args('purchaser') purchaser: string,
     @Args('options') options: AndrSearchOptions,
-  ): Promise<OfferInfo[]> {
-    return [
-      {
-        denom: 'uusd',
-        offerAmount: 1000,
-        remainingAmount: 997,
-        taxAmount: 2,
-        expiration: {
-          expirationType: AndrExpirationType.AtHeight,
-          expirationValue: '500',
-        },
-        purchaser: 'terra1...',
-      },
-    ] as OfferInfo[]
+  ): Promise<OfferResponse[]> {
+    return this.offersAdoService.allOffers(offer.contractAddress, purchaser, options)
   }
 }

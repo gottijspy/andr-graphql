@@ -1,23 +1,36 @@
-import { Query, Resolver } from '@nestjs/graphql'
-import { SplitterAdo } from './models'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { SplitterAdoService } from './splitter-ado.service'
+import { Splitter, SplitterQuery } from './types'
 
-@Resolver(SplitterAdo)
+@Resolver(SplitterQuery)
 export class SplitterAdoResolver {
   constructor(private readonly splitterAdoService: SplitterAdoService) {}
 
-  @Query(() => SplitterAdo)
-  public async splitter(): Promise<SplitterAdo> {
-    return this.splitterAdoService.instance()
+  @Query(() => SplitterQuery)
+  public async splitter(@Args('contractAddress') contractAddress: string): Promise<SplitterQuery> {
+    return { contractAddress: contractAddress } as SplitterQuery
   }
 
-  // @ResolveField(() => String)
-  // public async primitiveContract(@Args('address') address: string): Promise<string> {
-  //   return await this.tokenAdoService.primitiveContract(address);
-  // }
+  @ResolveField(() => String)
+  public async owner(@Parent() splitter: SplitterQuery): Promise<string> {
+    return this.splitterAdoService.owner(splitter.contractAddress)
+  }
 
-  // @ResolveField(() => AdoSearchResult)
-  // public async search(@Args('options') options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   return this.adoService.search(options)
-  // }
+  @ResolveField(() => [String])
+  public async operators(@Parent() splitter: SplitterQuery): Promise<string[]> {
+    return this.splitterAdoService.operators(splitter.contractAddress)
+  }
+
+  @ResolveField(() => Boolean)
+  public async isOperator(
+    @Parent() splitter: SplitterQuery,
+    @Args('operatorAddress') operatorAddress: string,
+  ): Promise<boolean> {
+    return this.splitterAdoService.isOperator(splitter.contractAddress, operatorAddress)
+  }
+
+  @ResolveField(() => Splitter)
+  public async config(@Parent() splitter: SplitterQuery): Promise<Splitter> {
+    return this.splitterAdoService.config(splitter.contractAddress)
+  }
 }

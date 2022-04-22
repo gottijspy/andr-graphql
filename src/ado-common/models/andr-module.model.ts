@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { AndrModuleType } from 'src/ado-common/enums'
-import { AndrAddress } from './andr-address.model'
+import { AndrAddress } from '../types'
 
 @ObjectType()
 export class AndrModule {

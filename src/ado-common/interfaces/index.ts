@@ -1,3 +1,3 @@
-export { IBaseAdo } from './base-ado.interface'
 export { BaseAdo } from './base-ado.interface'
-export { BaseAndrQuery } from './base-andr-query.model'
+export { AndrQuery } from './andr-query.interface'
+export { BaseQuery } from './base-query.interface'

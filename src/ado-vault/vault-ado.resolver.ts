@@ -1,23 +1,31 @@
-import { Query, Resolver } from '@nestjs/graphql'
-import { VaultAdo } from './models'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { VaultQuery } from './types'
 import { VaultAdoService } from './vault-ado.service'
 
-@Resolver(VaultAdo)
+@Resolver(VaultQuery)
 export class VaultAdoResolver {
   constructor(private readonly vaultAdoService: VaultAdoService) {}
 
-  @Query(() => VaultAdo)
-  public async vault(): Promise<VaultAdo> {
-    return this.vaultAdoService.instance()
+  @Query(() => VaultQuery)
+  public async vault(@Args('contractAddress') contractAddress: string): Promise<VaultQuery> {
+    return { contractAddress: contractAddress } as VaultQuery
   }
 
-  // @ResolveField(() => String)
-  // public async primitiveContract(@Args('address') address: string): Promise<string> {
-  //   return await this.tokenAdoService.primitiveContract(address);
-  // }
+  @ResolveField(() => String)
+  public async owner(@Parent() vault: VaultQuery): Promise<string> {
+    return this.vaultAdoService.owner(vault.contractAddress)
+  }
 
-  // @ResolveField(() => AdoSearchResult)
-  // public async search(@Args('options') options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   return this.adoService.search(options)
-  // }
+  @ResolveField(() => [String])
+  public async operators(@Parent() vault: VaultQuery): Promise<string[]> {
+    return this.vaultAdoService.operators(vault.contractAddress)
+  }
+
+  @ResolveField(() => Boolean)
+  public async isOperator(
+    @Parent() vault: VaultQuery,
+    @Args('operatorAddress') operatorAddress: string,
+  ): Promise<boolean> {
+    return this.vaultAdoService.isOperator(vault.contractAddress, operatorAddress)
+  }
 }

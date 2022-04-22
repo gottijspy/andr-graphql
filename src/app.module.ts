@@ -23,7 +23,7 @@ import { TimelockAdoModule } from './ado-timelock/timelock-ado.module'
 import { VaultAdoModule } from './ado-vault/vault-ado.module'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
-import { AuthModule } from './auth/auth.module'
+//import { AuthModule } from './auth/auth.module'
 //import { BankModule } from './bank/bank.module'
 import { registerEnums } from './common/enums'
 //import { DistributionModule } from './distribution/distribution.module'
@@ -107,7 +107,7 @@ import { WasmModule } from './wasm/wasm.module'
         }
       },
     }),
-    AuthModule,
+    //AuthModule,
     // BankModule,
     // DistributionModule,
     // GovModule,

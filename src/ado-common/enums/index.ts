@@ -14,6 +14,7 @@ export enum AdoType {
   Crowdfund = 'Crowdfund',
 }
 
+//ERR: TS enums vs Rust enums
 export enum AndrExpirationType {
   AtHeight = 'AtHeight',
   AtTime = 'AtTime',
@@ -37,6 +38,7 @@ export enum AndrRecipientType {
   ADO = 'ADO',
 }
 
+//ERR: TS enums vs Rust enums
 export enum AndrRateType {
   Flat = 'Coin',
   Percent = 'PercentRate',

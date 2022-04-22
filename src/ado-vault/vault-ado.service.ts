@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { VaultAdo } from './models'
-//import { AdoSearchOptions, AdoSearchResult } from './models'
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
+import { InjectLCDClient, LCDClient } from 'nestjs-terra'
+import { AndrQueryService } from 'src/ado-common/models'
 
 @Injectable()
-export class VaultAdoService {
-  public async instance(): Promise<VaultAdo> {
-    return {} as VaultAdo
+export class VaultAdoService extends AndrQueryService {
+  constructor(
+    @InjectPinoLogger(VaultAdoService.name)
+    protected readonly logger: PinoLogger,
+    @InjectLCDClient()
+    protected readonly lcdService: LCDClient,
+  ) {
+    super(logger, lcdService)
   }
-  // public async search(options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   throw new Error('Method not implemented.')
-  // }
 }

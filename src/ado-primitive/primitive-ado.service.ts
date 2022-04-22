@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { PrimitiveAdo } from './models'
-//import { AdoSearchOptions, AdoSearchResult } from './models'
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
+import { InjectLCDClient, LCDClient } from 'nestjs-terra'
+import { AndrQueryService } from 'src/ado-common/models'
 
 @Injectable()
-export class PrimitiveAdoService {
-  public async instance(): Promise<PrimitiveAdo> {
-    return {} as PrimitiveAdo
+export class PrimitiveAdoService extends AndrQueryService {
+  constructor(
+    @InjectPinoLogger(PrimitiveAdoService.name)
+    protected readonly logger: PinoLogger,
+    @InjectLCDClient()
+    protected readonly lcdService: LCDClient,
+  ) {
+    super(logger, lcdService)
   }
-  // public async search(options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   throw new Error('Method not implemented.')
-  // }
 }

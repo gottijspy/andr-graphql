@@ -1,9 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { BaseAndrQuery } from 'src/ado-common/interfaces'
+import { AndrQuery } from 'src/ado-common/interfaces'
 import { AuctionAdo, AuctionInfo, Bid } from '.'
 
 @ObjectType()
-export class Auction implements BaseAndrQuery {
+export class Auction implements AndrQuery {
   @Field(() => AuctionAdo)
   latestAuctionState!: Promise<AuctionAdo>
 
