@@ -50,6 +50,16 @@ type AndrCW20Coin {
   amount: Int!
 }
 
+type AndrCoin {
+  amount: String!
+  denom: String!
+}
+
+input AndrCoinInput {
+  amount: String!
+  denom: String!
+}
+
 type AndrExpiration {
   at_height: Int
   at_time: String
@@ -221,7 +231,7 @@ type CrowdfundState {
   expiration: AndrExpiration!
   max_amount_per_wallet: Int!
   min_tokens_sold: Int!
-  price: Coin!
+  price: AndrCoin!
   recipient: AndrRecipient!
 }
 
@@ -358,7 +368,7 @@ type Query {
 
 type Rate {
   external: ADORate!
-  flat: Coin!
+  flat: AndrCoin!
   percent: PercentRate!
 }
 
