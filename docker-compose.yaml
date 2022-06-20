@@ -1,11 +1,11 @@
 
 version: '3.7'
 services:
-  hive-graph:
+  andromeda-graph:
     build:
       context: .
     networks:
-      - hive-graph-network
+      - andromeda-graph-network
     ports:
       - 8085:8085
     command: npm run start:dev
@@ -13,4 +13,4 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
 networks:
-  hive-graph-network:
+  andromeda-graph-network:
