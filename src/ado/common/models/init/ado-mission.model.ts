@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { AppComponent } from 'src/ado/app/types/app.response'
 import { BaseAdo } from 'src/ado/common/interfaces'
-import { MissionComponent } from 'src/ado/mission/types/mission.response'
 
 @ObjectType({
   implements: () => [BaseAdo],
@@ -13,13 +13,13 @@ export class MissionAdo implements BaseAdo {
   adoType!: string
 
   // @Field()
-  // readonly adoType = AdoType.Mission
+  // readonly adoType = AdoType.App
 
   @Field(() => [String])
   operators!: string[]
 
-  @Field(() => [MissionComponent])
-  mission!: Promise<MissionComponent[]>
+  @Field(() => [AppComponent])
+  app!: Promise<AppComponent[]>
 
   @Field()
   name!: string

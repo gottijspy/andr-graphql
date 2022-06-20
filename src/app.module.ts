@@ -8,11 +8,11 @@ import { join } from 'path'
 import pino from 'pino'
 import { AddressListAdoModule } from './ado/address-list/address-list.module'
 import { AnchorAdoModule } from './ado/anchor/anchor.module'
+import { AppAdoModule } from './ado/app/app.module'
 import { AuctionAdoModule } from './ado/auction/auction.module'
-import { registerAdoEnums } from './ado/common/enums'
+import { registerEnums } from './ado/common/enums'
 import { CrowdfundAdoModule } from './ado/crowdfund/crowdfund.module'
 import { CW20TokenAdoModule } from './ado/cw20-token/cw20-token.module'
-import { MissionAdoModule } from './ado/mission/mission.module'
 import { NftCollectibleAdoModule } from './ado/nft/nft.module'
 import { AdoOffersModule } from './ado/offers/offers.module'
 import { PrimitiveAdoModule } from './ado/primitive/primitive.module'
@@ -23,11 +23,12 @@ import { TimelockAdoModule } from './ado/timelock/timelock.module'
 import { VaultAdoModule } from './ado/vault/vault.module'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
+import { CosmModule } from './cosm'
 //import { AuthModule } from './auth/auth.module'
 //import { BankModule } from './bank/bank.module'
 //import { DistributionModule } from './distribution/distribution.module'
 import { validate } from './env.validation'
-import { registerEnums } from './terra/common/enums'
+//import { registerEnums } from './terra/common/enums'
 // import { GovModule } from './gov/gov.module'
 // import { IbcModule } from './ibc/ibc.module'
 // import { MarketModule } from './market/market.module'
@@ -40,7 +41,7 @@ import { registerEnums } from './terra/common/enums'
 // import { TreasuryModule } from './treasury/treasury.module'
 // import { TxModule } from './tx/tx.module'
 // import { UtilsModule } from './utils/utils.module'
-import { WasmModule } from './terra/wasm/wasm.module'
+//import { WasmModule } from './terra/wasm/wasm.module'
 
 @Module({
   imports: [
@@ -78,8 +79,7 @@ import { WasmModule } from './terra/wasm/wasm.module'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        registerEnums() // register enums graphql (Terra)
-        registerAdoEnums() // register enums graphql (ADO)
+        registerEnums() // register enums graphql
 
         return {
           sortSchema: config.get<string>('GRAPHQL_SORT_SCHEMA', 'true') === 'true',
@@ -87,6 +87,20 @@ import { WasmModule } from './terra/wasm/wasm.module'
           playground: config.get<string>('GRAPHQL_PLAYGROUND', 'false') === 'true',
           autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
           introspection: config.get<string>('GRAPHQL_INTROSPECTION', 'true') === 'true',
+        }
+      },
+    }),
+    CosmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const RPC_URL = config.get<string>('JUNO_RPC_URL')
+        if (!RPC_URL) {
+          throw new Error('Invalid RPC_URL variable.')
+        }
+
+        return {
+          RPC_URL,
         }
       },
     }),
@@ -119,17 +133,17 @@ import { WasmModule } from './terra/wasm/wasm.module'
     // StakingModule,
     // TendermintModule,
     // TreasuryModule,
-    WasmModule,
+    //WasmModule,
     // TxModule,
     // UtilsModule,
     // IbcModule,
     AddressListAdoModule,
     AdoOffersModule,
     AnchorAdoModule,
+    AppAdoModule,
     AuctionAdoModule,
     CrowdfundAdoModule,
     CW20TokenAdoModule,
-    MissionAdoModule,
     NftCollectibleAdoModule,
     PrimitiveAdoModule,
     RatesAdoModule,

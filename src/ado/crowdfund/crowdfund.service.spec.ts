@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { getTerraToken } from 'nestjs-terra'
+import { getCosmToken } from 'src/cosm'
 import { CrowdfundAdoService } from './crowdfund.service'
 
 describe('CrowdfundAdoService', () => {
@@ -18,6 +19,10 @@ describe('CrowdfundAdoService', () => {
         },
         {
           provide: getTerraToken(),
+          useValue: {},
+        },
+        {
+          provide: getCosmToken(),
           useValue: {},
         },
       ],

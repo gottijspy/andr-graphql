@@ -4,6 +4,8 @@ export class LCDClientError extends Error {
   constructor(err: any) {
     super()
 
+    console.log(err)
+    console.log(err?.response?.data)
     this.name = this.constructor.name
     this.message = err.message
 

@@ -1,23 +1,50 @@
-import { Query, Resolver } from '@nestjs/graphql'
-import { TimelockAdo } from './models'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { AndrSearchOptions } from '../common/models'
 import { TimelockAdoService } from './timelock.service'
+import { Escrow, TimelockQuery } from './types'
 
-@Resolver(TimelockAdo)
+@Resolver(TimelockQuery)
 export class TimelockAdoResolver {
   constructor(private readonly timelockAdoService: TimelockAdoService) {}
 
-  @Query(() => TimelockAdo)
-  public async timelock(): Promise<TimelockAdo> {
-    return this.timelockAdoService.instance()
+  @Query(() => TimelockQuery)
+  public async timelock(@Args('contractAddress') contractAddress: string): Promise<TimelockQuery> {
+    return { contractAddress: contractAddress } as TimelockQuery
   }
 
-  // @ResolveField(() => String)
-  // public async primitiveContract(@Args('address') address: string): Promise<string> {
-  //   return await this.tokenAdoService.primitiveContract(address);
-  // }
+  @ResolveField(() => String)
+  public async owner(@Parent() timelock: TimelockQuery): Promise<string> {
+    return this.timelockAdoService.owner(timelock.contractAddress)
+  }
 
-  // @ResolveField(() => AdoSearchResult)
-  // public async search(@Args('options') options: AdoSearchOptions): Promise<AdoSearchResult> {
-  //   return this.adoService.search(options)
-  // }
+  @ResolveField(() => [String])
+  public async operators(@Parent() timelock: TimelockQuery): Promise<string[]> {
+    return this.timelockAdoService.operators(timelock.contractAddress)
+  }
+
+  @ResolveField(() => Boolean)
+  public async isOperator(
+    @Parent() timelock: TimelockQuery,
+    @Args('operatorAddress') operatorAddress: string,
+  ): Promise<boolean> {
+    return this.timelockAdoService.isOperator(timelock.contractAddress, operatorAddress)
+  }
+
+  @ResolveField(() => Escrow)
+  public async getLockedFunds(
+    @Parent() timelock: TimelockQuery,
+    @Args('owner') owner: string,
+    @Args('recipient') recipient: string,
+  ): Promise<Escrow> {
+    return this.timelockAdoService.getLockedFunds(timelock.contractAddress, owner, recipient)
+  }
+
+  @ResolveField(() => [Escrow])
+  public async getLockedFundsForRecipient(
+    @Parent() timelock: TimelockQuery,
+    @Args('recipient') recipient: string,
+    @Args('options') options?: AndrSearchOptions,
+  ): Promise<Escrow[]> {
+    return [] as Escrow[]
+  }
 }

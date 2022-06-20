@@ -45,11 +45,6 @@ type AndrAddress {
   identifier: String!
 }
 
-type AndrCW20Coin {
-  address: String!
-  amount: Int!
-}
-
 type AndrCoin {
   amount: String!
   denom: String!
@@ -69,18 +64,6 @@ type AndrLogo {
   data: String!
   link: String!
   mimeType: String!
-}
-
-type AndrMarketingInfo {
-  description: String
-  logo: AndrLogo
-  marketing: String
-  project: String
-}
-
-type AndrMinterResponse {
-  cap: Int
-  minter: String!
 }
 
 type AndrModule {
@@ -113,6 +96,33 @@ input AndrSearchOptions {
 }
 
 scalar Anything
+
+type AppComponent {
+  ado_type: String!
+  instantiate_msg: String!
+  name: String!
+}
+
+type AppComponentAddress {
+  address: String!
+  name: String!
+}
+
+type AppConfig {
+  name: String!
+  owner: String!
+}
+
+type AppQuery {
+  config: AppConfig!
+  contractAddress: String!
+  getAddress(name: String!): String!
+  getAddresses: [AppComponentAddress!]!
+  getComponents: [AppComponent!]!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
+}
 
 type Auction {
   auctionIds(tokenAddress: String!, tokenId: String!): [Int!]!
@@ -166,48 +176,13 @@ type Bid {
   timestamp: String!
 }
 
-type CW20TokenAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  decimals: Int!
-  initial_balances: [AndrCW20Coin!]!
-  marketing: AndrMarketingInfo
-  mint: AndrMinterResponse
-  modules: [AndrModule!]
-  name: String!
-  operators: [String!]
-  primitiveContract: String
-  symbol: String!
-}
-
-type CodeInfo {
-  code_creator: String!
-  code_hash: String!
-}
-
-type Coin {
-  amount: String!
-  denom: String!
-}
-
-input CoinInput {
-  amount: String!
-  denom: String!
-}
-
-type CommissionRates {
-  max_change_rate: String!
-  max_rate: String!
-  rate: String!
-}
-
-type ContractInfo {
-  address: String!
-  admin: String
-  code_id: Int!
-  init_msg: JSON!
+type CW20TokenQuery {
+  contractAddress: String!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
   owner: String!
+  tokenInfo: TokenInfo!
+  tx(blockHeight: Float!): [TxInfo!]!
 }
 
 type CrowdfundConfig {
@@ -235,36 +210,15 @@ type CrowdfundState {
   recipient: AndrRecipient!
 }
 
-type DepositParams {
-  max_deposit_period: Int!
-  min_deposit: [Coin!]!
+type Escrow {
+  coins: [AndrCoin!]!
+  condition: EscrowCondition
+  recipient: AndrRecipient!
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-type MissionComponent {
-  ado_type: String!
-  instantiate_msg: String!
-  name: String!
-}
-
-type MissionConfig {
-  name: String!
-  owner: String!
-}
-
-type MissionQuery {
-  config: MissionConfig!
-  contractAddress: String!
-  getAddress(name: String!): String!
-  getAddresses: [String!]!
-  getComponents: [MissionComponent!]!
-  isOperator(operatorAddress: String!): Boolean!
-  operators: [String!]!
-  owner: String!
+type EscrowCondition {
+  expiration: AndrExpiration
+  miniumFunds: [AndrCoin!]
 }
 
 type NftApproval {
@@ -318,26 +272,8 @@ type OffersQuery {
   offer(tokenId: String!): OfferResponse!
 }
 
-type OracleWhitelist {
-  name: String!
-  tobin_tax: String!
-}
-
-type ParameterChanges {
-  key: String!
-  subspace: String!
-  value: String!
-}
-
 type PercentRate {
   decimal: Float!
-}
-
-type PolicyConstraints {
-  cap: Coin!
-  change_max: String!
-  rate_max: String!
-  rate_min: String!
 }
 
 type PrimitiveQuery {
@@ -350,10 +286,10 @@ type PrimitiveQuery {
 type Query {
   addresslist(contractAddress: String!): AddressListQuery!
   anchor(contractAddress: String!): AnchorQuery!
+  app(contractAddress: String!): AppQuery!
   auction: Auction!
   crowdfund(contractAddress: String!): CrowdfundQuery!
-  cw20token: CW20TokenAdo!
-  mission(contractAddress: String!): MissionQuery!
+  cw20token(contractAddress: String!): CW20TokenQuery!
   nft(contractAddress: String!): NftQuery!
   offers(contractAddress: String!): OffersQuery!
   ping: String!
@@ -361,9 +297,8 @@ type Query {
   rates(contractAddress: String!): RatesQuery!
   receipt: ReceiptAdo!
   splitter(contractAddress: String!): SplitterQuery!
-  timelock: TimelockAdo!
+  timelock(contractAddress: String!): TimelockQuery!
   vault(contractAddress: String!): VaultQuery!
-  wasm: Wasm!
 }
 
 type Rate {
@@ -397,10 +332,6 @@ type ReceiptAdo implements BaseAdo {
   primitiveContract: String
 }
 
-type SimplePublicKey {
-  key: String!
-}
-
 type Splitter {
   locked: Boolean!
   recipients: [AddressPercent!]!
@@ -414,40 +345,30 @@ type SplitterQuery {
   owner: String!
 }
 
-type StakeAuthorizationValidators {
-  addresses: [String!]!
+type TimelockQuery {
+  contractAddress: String!
+  getLockedFunds(owner: String!, recipient: String!): Escrow!
+  getLockedFundsForRecipient(options: AndrSearchOptions!, recipient: String!): [Escrow!]!
+  isOperator(operatorAddress: String!): Boolean!
+  operators: [String!]!
+  owner: String!
 }
 
-type TallyParams {
-  quorum: String!
-  threshold: String!
-  veto_threshold: String!
+type TokenInfo {
+  decimals: Int!
+  name: String!
+  symbol: String!
+  total_supply: Float!
 }
 
-type TimelockAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String
-}
-
-type ValConsPublicKey {
-  key: String!
-}
-
-type ValidatorCommission {
-  commission_rates: CommissionRates!
-  update_time: String!
-}
-
-type ValidatorDescription {
-  details: String!
-  identity: String!
-  moniker: String!
-  security_contact: String!
-  website: String!
+type TxInfo {
+  code: Int!
+  gasUsed: Int!
+  gasWanted: Int!
+  hash: String!
+  height: Int!
+  rawLog: String!
+  tx: [Int!]!
 }
 
 type VaultQuery {
@@ -455,34 +376,4 @@ type VaultQuery {
   isOperator(operatorAddress: String!): Boolean!
   operators: [String!]!
   owner: String!
-}
-
-enum VoteOption {
-  Abstain
-  Empty
-  No
-  NoWithVeto
-  Yes
-}
-
-type VotingParams {
-  voting_period: Int!
-}
-
-type Wasm {
-  codeInfo(codeID: Int!, height: Float): CodeInfo!
-  contractInfo(contractAddress: String!, height: Float!): ContractInfo!
-  contractQuery(contractAddress: String!, height: Float, query: JSON!): Anything!
-  parameters(height: Float): WasmParams!
-}
-
-type WasmParams {
-  max_contract_gas: Int
-  max_contract_msg_size: Int
-  max_contract_size: Int
-}
-
-type WeightedVoteOption {
-  option: VoteOption!
-  weight: String!
 }

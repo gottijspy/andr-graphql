@@ -2,17 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { getTerraToken } from 'nestjs-terra'
 import { getCosmToken } from 'src/cosm'
-import { SplitterAdoService } from './splitter.service'
+import { AdoAppService } from './app.service'
 
-describe('SplitterAdoService', () => {
-  let service: SplitterAdoService
+describe('AdoAppService', () => {
+  let service: AdoAppService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SplitterAdoService,
+        AdoAppService,
         {
-          provide: getLoggerToken(SplitterAdoService.name),
+          provide: getLoggerToken(AdoAppService.name),
           useValue: {
             error: jest.fn(),
           },
@@ -28,7 +28,7 @@ describe('SplitterAdoService', () => {
       ],
     }).compile()
 
-    service = module.get<SplitterAdoService>(SplitterAdoService)
+    service = module.get<AdoAppService>(AdoAppService)
   })
 
   it('should be defined', () => {

@@ -1,12 +1,17 @@
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Injectable } from '@nestjs/common'
 import { PinoLogger } from 'nestjs-pino'
 import { LCDClient } from 'nestjs-terra'
 import { LCDClientError } from 'src/ado/common/errors'
-import { AndrQuery } from '../interfaces'
+//import { AndrQuery } from '../interfaces'
 
 @Injectable()
 export abstract class AndrQueryService {
-  constructor(protected readonly logger: PinoLogger, protected readonly lcdService: LCDClient) {}
+  constructor(
+    protected readonly logger: PinoLogger,
+    protected readonly lcdService: LCDClient,
+    protected readonly cosmService: CosmWasmClient,
+  ) {}
 
   public async owner(contractAddress: string): Promise<string> {
     const query = {
@@ -16,7 +21,8 @@ export abstract class AndrQueryService {
     }
 
     try {
-      const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
+      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      //const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
       return queryResponse.owner
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -32,7 +38,8 @@ export abstract class AndrQueryService {
     }
 
     try {
-      const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
+      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      //const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
       return queryResponse.operators
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -50,7 +57,8 @@ export abstract class AndrQueryService {
     }
 
     try {
-      const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
+      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      //const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
       return queryResponse.isOperator ?? false
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
