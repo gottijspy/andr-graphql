@@ -2,7 +2,7 @@ import { plainToClass } from 'class-transformer'
 import { IsEnum, IsString, IsNumberString, validateSync } from 'class-validator'
 
 export enum Environment {
-  Development = 'development',
+  Development = 'dev',
   Production = 'production',
   Test = 'test',
 }
@@ -15,7 +15,10 @@ export class EnvironmentVariables {
   PORT = '8085'
 
   @IsString()
-  LOG_NAME = 'hive-graph'
+  HOST = '0.0.0.0'
+
+  @IsString()
+  LOG_NAME = 'andromeda-graph'
 
   @IsString()
   LOG_LEVEL = 'debug'
@@ -27,7 +30,7 @@ export class EnvironmentVariables {
   THROTTLE_LIMIT = 20 // The maximum number of requests within the TTL limit
 
   @IsString()
-  LCD_URL: string | undefined
+  RPC_URL: string | undefined
 
   @IsString()
   CHAIN_ID: string | undefined

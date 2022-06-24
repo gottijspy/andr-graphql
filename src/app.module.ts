@@ -94,7 +94,7 @@ import { validate } from './env.validation'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const RPC_URL = config.get<string>('JUNO_RPC_URL')
+        const RPC_URL = config.get<string>('RPC_URL')
         if (!RPC_URL) {
           throw new Error('Invalid RPC_URL variable.')
         }
@@ -108,11 +108,11 @@ import { validate } from './env.validation'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const URL = config.get<string>('LCD_URL')
+        const URL = config.get<string>('RPC_URL')
         const chainID = config.get<string>('CHAIN_ID')
 
         if (!URL || !chainID) {
-          throw new Error('Invalid LCD_URL or CHAIN_ID variables.')
+          throw new Error('Invalid RPC_URL or CHAIN_ID variables.')
         }
 
         return {

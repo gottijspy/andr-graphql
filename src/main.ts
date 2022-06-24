@@ -14,7 +14,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
   const configService = app.get(ConfigService)
   const port = parseInt(configService.get<string>('PORT', ''), 10)
-  const env = configService.get<string>('NODE_ENV', 'production')
+  const host = configService.get<string>('HOST', '0.0.0.0')
+  const env = configService.get<string>('NODE_ENV', 'dev')
   const playground = configService.get<string>('GRAPHQL_PLAYGROUND', 'false') === 'true'
   const helmetOptions = {
     frameguard: false,
@@ -37,9 +38,9 @@ async function bootstrap() {
   )
   app.use([compression(), helmet(helmetOptions), hpp()])
 
-  await app.listen(port)
+  await app.listen(port, host)
 
-  NestLogger.log(`App listening on port http://localhost:${port}/`)
+  NestLogger.log(`App listening on port http://${host}:${port}/`)
 }
 
 bootstrap()
