@@ -1,0 +1,22 @@
+version: 2.1
+workflows:
+  build:
+    jobs:
+      - test
+jobs:
+  test:
+    docker:
+      - image: node:14.17-alpine
+    environment:
+      NODE_ENV: test
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-deps-{{ checksum "package.json" }}
+      - run: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-deps-{{ checksum "package.json" }}
+      - run: yarn test
+      - run: yarn test:e2e
