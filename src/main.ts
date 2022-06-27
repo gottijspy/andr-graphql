@@ -38,7 +38,7 @@ async function bootstrap() {
   )
   app.use([compression(), helmet(helmetOptions), hpp()])
 
-  await app.listen(port, host)
+  await app.listen(process.env.PORT || port, host)
 
   NestLogger.log(`App listening on port http://${host}:${port}/`)
 }

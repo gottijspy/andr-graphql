@@ -103,5 +103,8 @@
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"
     }
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
