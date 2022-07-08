@@ -28,8 +28,8 @@ export class AddressListAdoService extends AndrQueryService {
     }
 
     try {
-      const response = await this.lcdService.wasm.contractQuery<AddressListResponse>(contractAddress, query)
-      return response
+      const response = await this.cosmService.queryContractSmart(contractAddress, query)
+      return response as AddressListResponse
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)

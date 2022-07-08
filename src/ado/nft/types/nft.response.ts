@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { AndrExpiration } from 'src/ado/common/types'
+import { AndrCoin, AndrExpiration } from 'src/ado/common/types'
 import { AnythingScalar } from 'src/anything.scalar'
 
 @ObjectType()
@@ -11,8 +11,6 @@ export class NftApproval {
   expires!: AndrExpiration
 }
 
-//ERR: Seems like a typo in ApprovedForAll responsed
-// actual: operators, expected: approvals
 @ObjectType()
 export class NftApprovedForAll {
   @Field(() => [NftApproval])
@@ -60,4 +58,28 @@ export class AllNftInfo {
 
   @Field(() => NftInfo)
   info!: Promise<NftInfo>
+}
+
+@ObjectType()
+export class AgreementAmount {
+  @Field(() => AndrCoin)
+  raw!: AndrCoin
+}
+
+@ObjectType()
+export class Agreement {
+  @Field(() => AgreementAmount)
+  amount!: AgreementAmount
+
+  @Field(() => String)
+  purchaser!: string
+}
+
+@ObjectType()
+export class TransferAgreement {
+  @Field(() => String)
+  tokenId!: string
+
+  @Field(() => Agreement)
+  agreement!: Agreement
 }

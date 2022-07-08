@@ -26,9 +26,9 @@ export class RatesAdoService extends AndrQueryService {
     }
 
     try {
-      const ratesInfo = await this.lcdService.wasm.contractQuery<RatesQuery>(contractAddress, query)
+      const ratesInfo = await this.cosmService.queryContractSmart(contractAddress, query)
       console.log(ratesInfo)
-      return ratesInfo.payments
+      return (ratesInfo as RatesQuery).payments
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)

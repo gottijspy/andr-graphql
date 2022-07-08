@@ -26,9 +26,9 @@ export class SplitterAdoService extends AndrQueryService {
     }
 
     try {
-      const splitter = await this.lcdService.wasm.contractQuery<SplitterQuery>(contractAddress, query)
+      const splitter = await this.cosmService.queryContractSmart(contractAddress, query)
       console.log(splitter.config)
-      return splitter.config
+      return (splitter as SplitterQuery).config
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)

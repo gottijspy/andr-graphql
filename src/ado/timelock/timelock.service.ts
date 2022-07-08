@@ -29,9 +29,9 @@ export class TimelockAdoService extends AndrQueryService {
     }
 
     try {
-      const lockedFunds = await this.lcdService.wasm.contractQuery<LockedFunds>(contractAddress, query)
+      const lockedFunds = await this.cosmService.queryContractSmart(contractAddress, query)
       console.log(lockedFunds)
-      return lockedFunds.funds ?? ({} as Escrow)
+      return (lockedFunds as LockedFunds).funds ?? ({} as Escrow)
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)

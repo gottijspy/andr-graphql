@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { AndrQuery, BaseQuery } from 'src/ado/common/interfaces'
+import { PrimitiveResponse } from './primitive.response'
 
 @ObjectType()
 export class PrimitiveQuery implements BaseQuery, AndrQuery {
@@ -14,4 +15,7 @@ export class PrimitiveQuery implements BaseQuery, AndrQuery {
 
   @Field(() => Boolean)
   isOperator!: Promise<boolean>
+
+  @Field(() => PrimitiveResponse)
+  getValue!: Promise<PrimitiveResponse>
 }

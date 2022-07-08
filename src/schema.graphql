@@ -24,6 +24,15 @@ type AddressPercent {
   recipient: AndrRecipient!
 }
 
+type Agreement {
+  amount: AgreementAmount!
+  purchaser: String!
+}
+
+type AgreementAmount {
+  raw: AndrCoin!
+}
+
 type AllNftInfo {
   access: NftOwnerInfo!
   info: NftInfo!
@@ -93,6 +102,15 @@ input AndrSearchOptions {
   limit: Int = 10
   orderBy: AndrOrderBy = Asc
   startAfter: Int = 0
+}
+
+type AndrStrategy {
+  address: String!
+  strategyType: AndrStrategyType!
+}
+
+enum AndrStrategyType {
+  Anchor
 }
 
 scalar Anything
@@ -191,9 +209,11 @@ type CrowdfundConfig {
 }
 
 type CrowdfundQuery {
+  availableTokens: [String!]!
   config: CrowdfundConfig!
   contractAddress: String!
   isOperator(operatorAddress: String!): Boolean!
+  isTokenAvailable(tokenId: String!): Boolean!
   operators: [String!]!
   owner: String!
   state: CrowdfundState!
@@ -243,10 +263,13 @@ type NftOwnerInfo {
 
 type NftQuery {
   allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo!
+  allOperators(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]!
   allTokens(options: AndrSearchOptions): [String!]!
-  approvedForAll(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]!
+  approval(includeExpired: Boolean!, spender: String!, tokenId: String!): NftApproval!
+  approvals(includeExpired: Boolean!, tokenId: String!): [NftApproval!]!
   contractAddress: String!
   contractInfo: NftContractInfo!
+  isArchived(tokenId: String!): Boolean!
   isOperator(operatorAddress: String!): Boolean!
   minter: String!
   nftInfo(tokenId: String!): NftInfo!
@@ -255,6 +278,7 @@ type NftQuery {
   owner: String!
   ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo!
   tokens(options: AndrSearchOptions, owner: String!): [String!]!
+  transferAgreement(tokenId: String!): TransferAgreement!
 }
 
 type OfferResponse {
@@ -276,11 +300,26 @@ type PercentRate {
   decimal: Float!
 }
 
+type Primitive {
+  bool: Boolean
+  coin: AndrCoin
+  decimal: Float
+  string: String
+  uint128: Int
+  vec: [Primitive!]
+}
+
 type PrimitiveQuery {
   contractAddress: String!
+  getValue(key: String!): PrimitiveResponse!
   isOperator(operatorAddress: String!): Boolean!
   operators: [String!]!
   owner: String!
+}
+
+type PrimitiveResponse {
+  key: String!
+  value: Primitive!
 }
 
 type Query {
@@ -361,6 +400,11 @@ type TokenInfo {
   total_supply: Float!
 }
 
+type TransferAgreement {
+  agreement: Agreement!
+  tokenId: String!
+}
+
 type TxInfo {
   code: Int!
   gasUsed: Int!
@@ -372,8 +416,10 @@ type TxInfo {
 }
 
 type VaultQuery {
+  balance(address: String!): [AndrCoin!]!
   contractAddress: String!
   isOperator(operatorAddress: String!): Boolean!
   operators: [String!]!
   owner: String!
+  strategyAddress(strategy: String!): AndrStrategy!
 }

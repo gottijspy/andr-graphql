@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { getTerraToken } from 'nestjs-terra'
+import { getCosmToken } from 'src/cosm'
 import { OffersAdoService } from './offers.service'
 
 describe('OffersAdoService', () => {
@@ -18,6 +19,10 @@ describe('OffersAdoService', () => {
         },
         {
           provide: getTerraToken(),
+          useValue: {},
+        },
+        {
+          provide: getCosmToken(),
           useValue: {},
         },
       ],

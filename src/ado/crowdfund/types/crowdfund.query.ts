@@ -21,4 +21,10 @@ export class CrowdfundQuery implements BaseQuery, AndrQuery {
 
   @Field(() => CrowdfundConfig)
   config!: Promise<CrowdfundConfig>
+
+  @Field(() => [String])
+  availableTokens!: Promise<string[]>
+
+  @Field(() => Boolean)
+  isTokenAvailable!: Promise<boolean>
 }

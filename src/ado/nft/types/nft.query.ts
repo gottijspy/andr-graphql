@@ -19,7 +19,7 @@ export class NftQuery implements BaseQuery, AndrQuery {
   @Field(() => Boolean)
   isOperator!: Promise<boolean>
 
-  //ERR: LCDClientError
+  //FIX: Unknown Variant minter
   @Field(() => String)
   minter!: Promise<string>
 
@@ -27,7 +27,13 @@ export class NftQuery implements BaseQuery, AndrQuery {
   ownerOf!: Promise<NftOwnerInfo>
 
   @Field(() => [NftApproval])
-  approvedForAll!: Promise<NftApproval[]>
+  allOperators!: Promise<NftApproval[]>
+
+  @Field(() => [NftApproval])
+  approvals!: Promise<NftApproval[]>
+
+  @Field(() => NftApproval)
+  approval!: Promise<NftApproval>
 
   @Field(() => Int)
   numTokens!: Promise<number>
@@ -37,6 +43,9 @@ export class NftQuery implements BaseQuery, AndrQuery {
 
   @Field(() => AllNftInfo)
   allNftInfo!: Promise<AllNftInfo>
+
+  @Field(() => Boolean)
+  isArchived!: Promise<boolean>
 
   @Field(() => [String])
   tokens!: Promise<string[]>

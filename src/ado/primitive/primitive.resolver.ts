@@ -1,5 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { PrimitiveAdoService } from './primitive.service'
+import { PrimitiveResponse } from './types'
 import { PrimitiveQuery } from './types/primitive.query'
 
 @Resolver(PrimitiveQuery)
@@ -27,5 +28,10 @@ export class PrimitiveAdoResolver {
     @Args('operatorAddress') operatorAddress: string,
   ): Promise<boolean> {
     return this.primitiveAdoService.isOperator(primitive.contractAddress, operatorAddress)
+  }
+
+  @ResolveField(() => PrimitiveResponse)
+  public async getValue(@Parent() primitive: PrimitiveQuery, @Args('key') key: string): Promise<PrimitiveResponse> {
+    return this.primitiveAdoService.getValue(primitive.contractAddress, key)
   }
 }

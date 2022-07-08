@@ -5,8 +5,8 @@ import { InjectLCDClient, LCDClient } from 'nestjs-terra'
 import { LCDClientError } from 'src/ado/common/errors'
 import { AndrQueryService, AndrSearchOptions } from 'src/ado/common/models'
 import { InjectCosmClient } from 'src/cosm'
-import { AllNftInfo, NftApproval, NftApprovedForAll, NftContractInfo } from './types'
-import { NftInfo, NftNumTokens, NftOwnerInfo, NftQuery } from './types'
+import { AllNftInfo, NftApproval, NftContractInfo, TransferAgreement } from './types'
+import { NftInfo, NftOwnerInfo, NftQuery } from './types'
 
 @Injectable()
 export class NftCollectibleAdoService extends AndrQueryService {
@@ -27,8 +27,8 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const minterInfo = await this.lcdService.wasm.contractQuery<NftQuery>(contractAddress, query)
-      return minterInfo.minter
+      const minterInfo = await this.cosmService.queryContractSmart(contractAddress, query)
+      return (minterInfo as NftQuery).minter
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)
@@ -44,30 +44,70 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const ownerInfo = await this.lcdService.wasm.contractQuery<NftOwnerInfo>(contractAddress, query)
-      return ownerInfo
+      const ownerInfo = await this.cosmService.queryContractSmart(contractAddress, query)
+      return ownerInfo as NftOwnerInfo
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)
     }
   }
 
-  public async approvedForAll(
+  public async allOperators(
     contractAddress: string,
     owner: string,
     includeExpired: boolean,
     options?: AndrSearchOptions,
   ): Promise<NftApproval[]> {
     const query = {
-      approved_for_all: {
+      all_operators: {
         owner: owner,
         include_expired: includeExpired,
       },
     }
 
     try {
-      const approvedForAll = await this.lcdService.wasm.contractQuery<NftApprovedForAll>(contractAddress, query)
-      return approvedForAll.operators ?? []
+      const allOperators = await this.cosmService.queryContractSmart(contractAddress, query)
+      return allOperators.operators ?? []
+    } catch (err) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      throw new LCDClientError(err)
+    }
+  }
+
+  public async approval(
+    contractAddress: string,
+    tokenId: string,
+    spender: string,
+    includeExpired: boolean,
+  ): Promise<NftApproval> {
+    const query = {
+      approval: {
+        token_id: tokenId,
+        spender: spender,
+        include_expired: includeExpired,
+      },
+    }
+
+    try {
+      const approvedForAll = await this.cosmService.queryContractSmart(contractAddress, query)
+      return approvedForAll as NftApproval
+    } catch (err) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      throw new LCDClientError(err)
+    }
+  }
+
+  public async approvals(contractAddress: string, tokenId: string, includeExpired: boolean): Promise<NftApproval[]> {
+    const query = {
+      approval: {
+        token_id: tokenId,
+        include_expired: includeExpired,
+      },
+    }
+
+    try {
+      const approvals = await this.cosmService.queryContractSmart(contractAddress, query)
+      return approvals as NftApproval[]
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)
@@ -80,7 +120,7 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const numTokens = await this.lcdService.wasm.contractQuery<NftNumTokens>(contractAddress, query)
+      const numTokens = await this.cosmService.queryContractSmart(contractAddress, query)
       return numTokens.count ?? 0
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -96,8 +136,8 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const nftInfo = await this.lcdService.wasm.contractQuery<NftInfo>(contractAddress, query)
-      return nftInfo
+      const nftInfo = await this.cosmService.queryContractSmart(contractAddress, query)
+      return nftInfo as NftInfo
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)
@@ -113,8 +153,40 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const allNftInfo = await this.lcdService.wasm.contractQuery<AllNftInfo>(contractAddress, query)
-      return allNftInfo
+      const allNftInfo = await this.cosmService.queryContractSmart(contractAddress, query)
+      return allNftInfo as AllNftInfo
+    } catch (err) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      throw new LCDClientError(err)
+    }
+  }
+
+  public async isArchived(contractAddress: string, tokenId: string): Promise<boolean> {
+    const query = {
+      is_archived: {
+        token_id: tokenId,
+      },
+    }
+
+    try {
+      const isArchived = await this.cosmService.queryContractSmart(contractAddress, query)
+      return isArchived as boolean
+    } catch (err) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      throw new LCDClientError(err)
+    }
+  }
+
+  public async transferAgreement(contractAddress: string, tokenId: string): Promise<TransferAgreement> {
+    const query = {
+      transfer_agreeement: {
+        token_id: tokenId,
+      },
+    }
+
+    try {
+      const transferAgreement = await this.cosmService.queryContractSmart(contractAddress, query)
+      return transferAgreement as TransferAgreement
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)
@@ -129,8 +201,7 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const tokenResponse = await this.lcdService.wasm.contractQuery<Partial<NftQuery>>(contractAddress, query)
-      console.log(tokenResponse)
+      const tokenResponse = await this.cosmService.queryContractSmart(contractAddress, query)
       return tokenResponse.tokens ?? []
     } catch (err) {
       console.log(err)
@@ -145,8 +216,7 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const tokenResponse = await this.lcdService.wasm.contractQuery<Partial<NftQuery>>(contractAddress, query)
-      console.log(tokenResponse)
+      const tokenResponse = await this.cosmService.queryContractSmart(contractAddress, query)
       return tokenResponse.tokens ?? []
     } catch (err) {
       console.log(err)
@@ -161,8 +231,8 @@ export class NftCollectibleAdoService extends AndrQueryService {
     }
 
     try {
-      const contractInfo = await this.lcdService.wasm.contractQuery<NftContractInfo>(contractAddress, query)
-      return contractInfo
+      const contractInfo = await this.cosmService.queryContractSmart(contractAddress, query)
+      return contractInfo as NftContractInfo
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)

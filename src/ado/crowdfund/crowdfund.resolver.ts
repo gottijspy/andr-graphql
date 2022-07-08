@@ -38,4 +38,17 @@ export class CrowdfundAdoResolver {
   public async config(@Parent() crowdfund: CrowdfundQuery): Promise<CrowdfundConfig> {
     return this.crowdfundAdoService.config(crowdfund.contractAddress)
   }
+
+  @ResolveField(() => [String])
+  public async availableTokens(@Parent() crowdfund: CrowdfundQuery): Promise<string[]> {
+    return this.crowdfundAdoService.availableTokens(crowdfund.contractAddress)
+  }
+
+  @ResolveField(() => Boolean)
+  public async isTokenAvailable(
+    @Parent() crowdfund: CrowdfundQuery,
+    @Args('tokenId') tokenId: string,
+  ): Promise<boolean> {
+    return this.crowdfundAdoService.isTokenAvailable(crowdfund.contractAddress, tokenId)
+  }
 }

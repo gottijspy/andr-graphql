@@ -1,5 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { VaultQuery } from './types'
+import { AndrCoin } from '../common/types'
+import { AndrStrategy, VaultQuery } from './types'
 import { VaultAdoService } from './vault.service'
 
 @Resolver(VaultQuery)
@@ -27,5 +28,16 @@ export class VaultAdoResolver {
     @Args('operatorAddress') operatorAddress: string,
   ): Promise<boolean> {
     return this.vaultAdoService.isOperator(vault.contractAddress, operatorAddress)
+  }
+
+  @ResolveField(() => [AndrCoin])
+  public async balance(@Parent() vault: VaultQuery, @Args('address') address: string): Promise<AndrCoin[]> {
+    return this.vaultAdoService.balance(vault.contractAddress, address)
+  }
+
+  //FIX Invalid Strategy (anchor)
+  @ResolveField(() => AndrStrategy)
+  public async strategyAddress(@Parent() vault: VaultQuery, @Args('strategy') strategy: string): Promise<AndrStrategy> {
+    return this.vaultAdoService.strategyAddress(vault.contractAddress, strategy)
   }
 }

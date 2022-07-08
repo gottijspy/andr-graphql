@@ -26,7 +26,7 @@ export class AdoAppService extends AndrQueryService {
     }
 
     try {
-      //const addresses = await this.lcdService.wasm.contractQuery<string[]>(contractAddress, query)
+      //const addresses = await this.cosmService.queryContractSmart<string[]>(contractAddress, query)
       const addresses = await this.cosmService.queryContractSmart(contractAddress, query)
       return addresses as AppComponentAddress[]
     } catch (err) {
@@ -44,7 +44,7 @@ export class AdoAppService extends AndrQueryService {
 
     try {
       const address = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const address = await this.lcdService.wasm.contractQuery<string>(contractAddress, query)
+      //const address = await this.cosmService.queryContractSmart<string>(contractAddress, query)
       return address
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -59,7 +59,7 @@ export class AdoAppService extends AndrQueryService {
 
     try {
       const components = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const components = await this.lcdService.wasm.contractQuery<AppComponent[]>(contractAddress, query)
+      //const components = await this.cosmService.queryContractSmart<AppComponent[]>(contractAddress, query)
       console.log(components)
       return components as AppComponent[]
     } catch (err) {
@@ -75,7 +75,7 @@ export class AdoAppService extends AndrQueryService {
 
     try {
       const config = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const config = await this.lcdService.wasm.contractQuery<AppConfig>(contractAddress, query)
+      //const config = await this.cosmService.queryContractSmart<AppConfig>(contractAddress, query)
       return config as AppConfig
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

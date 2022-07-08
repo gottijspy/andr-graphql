@@ -22,7 +22,7 @@ export abstract class AndrQueryService {
 
     try {
       const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
+      //const queryResponse = await this.cosmService.queryContractSmart<AndrQuery>(contractAddress, query)
       return queryResponse.owner
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -39,7 +39,7 @@ export abstract class AndrQueryService {
 
     try {
       const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
+      //const queryResponse = await this.cosmService.queryContractSmart<AndrQuery>(contractAddress, query)
       return queryResponse.operators
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -58,7 +58,7 @@ export abstract class AndrQueryService {
 
     try {
       const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const queryResponse = await this.lcdService.wasm.contractQuery<AndrQuery>(contractAddress, query)
+      //const queryResponse = await this.cosmService.queryContractSmart<AndrQuery>(contractAddress, query)
       return queryResponse.isOperator ?? false
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

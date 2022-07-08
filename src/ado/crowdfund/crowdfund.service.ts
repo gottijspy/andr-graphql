@@ -20,13 +20,14 @@ export class CrowdfundAdoService extends AndrQueryService {
     super(logger, lcdService, cosmService)
   }
 
+  //FIX: State not found
   public async state(contractAddress: string): Promise<CrowdfundState> {
     const query = {
       state: {},
     }
 
     try {
-      const crowdfundState = await this.lcdService.wasm.contractQuery<CrowdfundState>(contractAddress, query)
+      const crowdfundState = await this.cosmService.queryContractSmart(contractAddress, query)
       return crowdfundState
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -40,9 +41,39 @@ export class CrowdfundAdoService extends AndrQueryService {
     }
 
     try {
-      const crowdfundConfig = await this.lcdService.wasm.contractQuery<CrowdfundConfig>(contractAddress, query)
+      const crowdfundConfig = await this.cosmService.queryContractSmart(contractAddress, query)
       console.log(crowdfundConfig)
       return crowdfundConfig
+    } catch (err) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      throw new LCDClientError(err)
+    }
+  }
+
+  public async availableTokens(contractAddress: string): Promise<string[]> {
+    const query = {
+      available_tokens: {},
+    }
+
+    try {
+      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      return queryResponse
+    } catch (err) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      throw new LCDClientError(err)
+    }
+  }
+
+  public async isTokenAvailable(contractAddress: string, tokenId: string): Promise<boolean> {
+    const query = {
+      is_token_available: {
+        id: tokenId,
+      },
+    }
+
+    try {
+      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      return queryResponse ?? false
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)

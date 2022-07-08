@@ -1,17 +1,18 @@
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
 import { LCDClientError } from 'src/ado/common/errors'
 import { AndrSearchOptions } from 'src/ado/common/models'
-import { OfferResponse, OffersQuery } from './types'
+import { InjectCosmClient } from 'src/cosm'
+import { OfferResponse } from './types'
 
 @Injectable()
 export class OffersAdoService {
   constructor(
     @InjectPinoLogger(OffersAdoService.name)
     private readonly logger: PinoLogger,
-    @InjectLCDClient()
-    private readonly lcdService: LCDClient,
+    @InjectCosmClient()
+    protected readonly cosmService: CosmWasmClient,
   ) {}
 
   public async offer(contractAddress: string, tokenId: string): Promise<OfferResponse> {
@@ -22,8 +23,8 @@ export class OffersAdoService {
     }
 
     try {
-      const offerResponse = await this.lcdService.wasm.contractQuery<OfferResponse>(contractAddress, query)
-      return offerResponse
+      const offerResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      return offerResponse as OfferResponse
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
 
@@ -43,7 +44,7 @@ export class OffersAdoService {
     }
 
     try {
-      const offers = await this.lcdService.wasm.contractQuery<OffersQuery>(contractAddress, query)
+      const offers = await this.cosmService.queryContractSmart(contractAddress, query)
       return offers.allOffers ?? []
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
