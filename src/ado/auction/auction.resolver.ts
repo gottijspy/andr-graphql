@@ -1,5 +1,5 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AndrSearchOptions } from 'src/ado/common/models'
+import { AndrSearchOptions } from 'src/ado/common/interfaces'
 import { AuctionAdoService } from './auction.service'
 import { Auction, AuctionAdo } from './types'
 import { Bid } from './types/auction-bid.model'

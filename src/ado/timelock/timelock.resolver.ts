@@ -1,5 +1,5 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AndrSearchOptions } from '../common/models'
+import { AndrSearchOptions } from 'src/ado/common/interfaces'
 import { TimelockAdoService } from './timelock.service'
 import { Escrow, TimelockQuery } from './types'
 

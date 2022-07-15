@@ -1,70 +1,95 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
-import { LCDClientError } from 'src/ado/common/errors'
-import { AndrQueryService } from 'src/ado/common/models'
-import { InjectCosmClient } from 'src/cosm'
-import { CrowdfundConfig, CrowdfundState } from './types'
+import { CrowdfundConfig, CrowdfundState } from 'src/ado/types'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
+import { DEFAULT_CATCH_ERR } from '../types/ado.constants'
 
 @Injectable()
-export class CrowdfundAdoService extends AndrQueryService {
+export class CrowdfundAdoService extends AdoService {
   constructor(
     @InjectPinoLogger(CrowdfundAdoService.name)
     protected readonly logger: PinoLogger,
-    @InjectLCDClient()
-    protected readonly lcdService: LCDClient,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
+    @Inject(WasmService)
+    protected readonly wasmService: WasmService,
   ) {
-    super(logger, lcdService, cosmService)
+    super(logger, wasmService)
   }
 
+  // public async getCrowdfundContract(address: string): Promise<typeof CrowdfundContractResult>{
+  //   try {
+  //     const contractInfo = await this.getContract(address)
+  //     console.log(contractInfo)
+  //     if ('queries_expected' in contractInfo) {
+  //       if (contractInfo.queries_expected && contractInfo.queries_expected.includes(CROWDFUND_QUERY)) {
+  //         return contractInfo as CrowdfundContract
+  //       }
+  //     }
+
+  //     console.log('Message')
+  //     if ('message' in contractInfo) {
+  //       if (contractInfo.message){
+  //         return { code: contractInfo.code ?? -1, message: contractInfo.message }
+  //       }
+  //     }
+
+  //     return { code: 1, message: INVALID_ADO_CROWDFUND }
+  //   } catch(err: any) {
+  //     this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+  //     const errMsg = err.toString()
+  //     if (errMsg) {
+  //       return { code: -1, message: errMsg } as AdoContractError
+  //     }
+
+  //     throw new Error(err)
+  //   }
+  // }
+
   //FIX: State not found
-  public async state(contractAddress: string): Promise<CrowdfundState> {
+  public async state(address: string): Promise<CrowdfundState> {
     const query = {
       state: {},
     }
 
     try {
-      const crowdfundState = await this.cosmService.queryContractSmart(contractAddress, query)
+      const crowdfundState = await this.wasmService.queryContract(address, query)
       return crowdfundState
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
     }
   }
 
-  public async config(contractAddress: string): Promise<CrowdfundConfig> {
+  public async config(address: string): Promise<CrowdfundConfig> {
     const query = {
       config: {},
     }
 
     try {
-      const crowdfundConfig = await this.cosmService.queryContractSmart(contractAddress, query)
+      const crowdfundConfig = await this.wasmService.queryContract(address, query)
       console.log(crowdfundConfig)
       return crowdfundConfig
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
     }
   }
 
-  public async availableTokens(contractAddress: string): Promise<string[]> {
+  public async availableTokens(address: string): Promise<string[]> {
     const query = {
       available_tokens: {},
     }
 
     try {
-      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      const queryResponse = await this.wasmService.queryContract(address, query)
       return queryResponse
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
     }
   }
 
-  public async isTokenAvailable(contractAddress: string, tokenId: string): Promise<boolean> {
+  public async isTokenAvailable(address: string, tokenId: string): Promise<boolean> {
     const query = {
       is_token_available: {
         id: tokenId,
@@ -72,11 +97,11 @@ export class CrowdfundAdoService extends AndrQueryService {
     }
 
     try {
-      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      const queryResponse = await this.wasmService.queryContract(address, query)
       return queryResponse ?? false
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
     }
   }
 }

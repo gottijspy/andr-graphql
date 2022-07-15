@@ -24,18 +24,56 @@ type AddressPercent {
   recipient: AndrRecipient!
 }
 
+type AdoContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
+  operators: [String!]!
+  owner: String!
+  queries_expected: [String!]
+}
+
+type AdoContractError {
+  code: Int
+  error: String!
+}
+
+union AdoContractResult = AdoContract | AdoContractError
+
+enum AdoType {
+  AddressList
+  Ado
+  AdoOffers
+  App
+  Auction
+  CW20Token
+  Crowdfund
+  NFTCollectible
+  Primitive
+  Rates
+  Receipt
+  Splitter
+  Timelock
+  Vault
+}
+
 type Agreement {
-  amount: AgreementAmount!
-  purchaser: String!
+  amount: AgreementAmount
+  purchaser: String
 }
 
 type AgreementAmount {
-  raw: AndrCoin!
+  raw: AndrCoin
 }
 
 type AllNftInfo {
-  access: NftOwnerInfo!
-  info: NftInfo!
+  access: NftOwnerInfo
+  info: NftInfo
 }
 
 type AnchorQuery {
@@ -69,12 +107,6 @@ type AndrExpiration {
   at_time: String
 }
 
-type AndrLogo {
-  data: String!
-  link: String!
-  mimeType: String!
-}
-
 type AndrModule {
   address: AndrAddress!
   isMutable: Boolean!
@@ -105,8 +137,8 @@ input AndrSearchOptions {
 }
 
 type AndrStrategy {
-  address: String!
-  strategyType: AndrStrategyType!
+  address: String
+  strategyType: AndrStrategyType
 }
 
 enum AndrStrategyType {
@@ -131,16 +163,26 @@ type AppConfig {
   owner: String!
 }
 
-type AppQuery {
+type AppContract implements BaseAdoContract {
+  address: String!
+  addresses: [AppComponentAddress!]!
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
+  componentExists(name: String!): Boolean!
+  components: [AppComponent!]!
   config: AppConfig!
-  contractAddress: String!
+  creator: String!
   getAddress(name: String!): String!
-  getAddresses: [AppComponentAddress!]!
-  getComponents: [AppComponent!]!
-  isOperator(operatorAddress: String!): Boolean!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
   operators: [String!]!
   owner: String!
+  queries_expected: [String!]
 }
+
+union AppContractResult = AdoContractError | AppContract
 
 type Auction {
   auctionIds(tokenAddress: String!, tokenId: String!): [Int!]!
@@ -188,19 +230,48 @@ interface BaseAdo {
   primitiveContract: String
 }
 
+interface BaseAdoContract {
+  address: String!
+  admin: String
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  label: String!
+  operators: [String!]!
+  owner: String!
+  queries_expected: [String!]
+}
+
+interface BaseContract {
+  address: String!
+  admin: String
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  label: String!
+  queries_expected: [String!]
+}
+
 type Bid {
   amount: Int!
   bidder: String!
   timestamp: String!
 }
 
-type CW20TokenQuery {
-  contractAddress: String!
-  isOperator(operatorAddress: String!): Boolean!
+type CW20TokenContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
   operators: [String!]!
   owner: String!
+  queries_expected: [String!]
   tokenInfo: TokenInfo!
-  tx(blockHeight: Float!): [TxInfo!]!
+  tx: [TxInfo!]!
 }
 
 type CrowdfundConfig {
@@ -208,27 +279,38 @@ type CrowdfundConfig {
   token_address: AndrAddress!
 }
 
-type CrowdfundQuery {
+type CrowdfundContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
   availableTokens: [String!]!
+  codeId: Int!
   config: CrowdfundConfig!
-  contractAddress: String!
-  isOperator(operatorAddress: String!): Boolean!
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
   isTokenAvailable(tokenId: String!): Boolean!
+  label: String!
   operators: [String!]!
   owner: String!
+  queries_expected: [String!]
   state: CrowdfundState!
 }
 
+union CrowdfundContractResult = AdoContractError | CrowdfundContract
+
 type CrowdfundState {
-  amount_sold: Int!
-  amount_to_send: Int!
-  amount_transferred: Int!
-  expiration: AndrExpiration!
-  max_amount_per_wallet: Int!
-  min_tokens_sold: Int!
-  price: AndrCoin!
-  recipient: AndrRecipient!
+  amount_sold: Int
+  amount_to_send: Int
+  amount_transferred: Int
+  expiration: AndrExpiration
+  max_amount_per_wallet: Int
+  min_tokens_sold: Int
+  price: AndrCoin
+  recipient: AndrRecipient
 }
+
+union Cw20TokenContractResult = AdoContractError | CW20TokenContract
 
 type Escrow {
   coins: [AndrCoin!]!
@@ -242,43 +324,52 @@ type EscrowCondition {
 }
 
 type NftApproval {
-  expires: AndrExpiration!
-  spender: String!
+  expires: AndrExpiration
+  spender: String
 }
 
-type NftContractInfo {
-  name: String!
-  symbol: String!
-}
-
-type NftInfo {
-  extension: Anything!
-  tokenUri: String
-}
-
-type NftOwnerInfo {
-  approvals: [NftApproval!]!
-  owner: String!
-}
-
-type NftQuery {
+type NftContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
   allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo!
   allOperators(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]!
   allTokens(options: AndrSearchOptions): [String!]!
   approval(includeExpired: Boolean!, spender: String!, tokenId: String!): NftApproval!
   approvals(includeExpired: Boolean!, tokenId: String!): [NftApproval!]!
-  contractAddress: String!
+  codeId: Int!
   contractInfo: NftContractInfo!
+  creator: String!
+  ibcPortId: String
   isArchived(tokenId: String!): Boolean!
-  isOperator(operatorAddress: String!): Boolean!
+  isOperator(operator: String!): Boolean!
+  label: String!
   minter: String!
   nftInfo(tokenId: String!): NftInfo!
   numTokens: Int!
   operators: [String!]!
   owner: String!
   ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo!
+  queries_expected: [String!]
   tokens(options: AndrSearchOptions, owner: String!): [String!]!
   transferAgreement(tokenId: String!): TransferAgreement!
+}
+
+type NftContractInfo {
+  name: String
+  symbol: String
+}
+
+union NftContractResult = AdoContractError | NftContract
+
+type NftInfo {
+  extension: Anything
+  tokenUri: String
+}
+
+type NftOwnerInfo {
+  approvals: [NftApproval!]
+  owner: String
 }
 
 type OfferResponse {
@@ -309,13 +400,22 @@ type Primitive {
   vec: [Primitive!]
 }
 
-type PrimitiveQuery {
-  contractAddress: String!
+type PrimitiveContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
+  creator: String!
   getValue(key: String!): PrimitiveResponse!
-  isOperator(operatorAddress: String!): Boolean!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
   operators: [String!]!
   owner: String!
+  queries_expected: [String!]
 }
+
+union PrimitiveContractResult = AdoContractError | PrimitiveContract
 
 type PrimitiveResponse {
   key: String!
@@ -324,20 +424,21 @@ type PrimitiveResponse {
 
 type Query {
   addresslist(contractAddress: String!): AddressListQuery!
+  ado(address: String!): AdoContractResult!
   anchor(contractAddress: String!): AnchorQuery!
-  app(contractAddress: String!): AppQuery!
+  app(address: String!): AppContractResult!
   auction: Auction!
-  crowdfund(contractAddress: String!): CrowdfundQuery!
-  cw20token(contractAddress: String!): CW20TokenQuery!
-  nft(contractAddress: String!): NftQuery!
+  crowdfund(address: String!): CrowdfundContractResult!
+  cw20token(address: String!): Cw20TokenContractResult!
+  nft(address: String!): NftContractResult!
   offers(contractAddress: String!): OffersQuery!
   ping: String!
-  primitive(contractAddress: String!): PrimitiveQuery!
+  primitive(address: String!): PrimitiveContractResult!
   rates(contractAddress: String!): RatesQuery!
-  receipt: ReceiptAdo!
-  splitter(contractAddress: String!): SplitterQuery!
+  splitter(address: String!): SplitterContractResult!
   timelock(contractAddress: String!): TimelockQuery!
-  vault(contractAddress: String!): VaultQuery!
+  vault(address: String!): VaultContractResult!
+  wasm(address: String!): WasmContractResult!
 }
 
 type Rate {
@@ -361,28 +462,27 @@ type RatesQuery {
   payments: [RateInfo!]!
 }
 
-type ReceiptAdo implements BaseAdo {
-  adoId: String!
-  adoType: String!
-  contractQuery: Anything!
-  minter: String!
-  modules: [AndrModule!]
-  operators: [String!]
-  primitiveContract: String
-}
-
 type Splitter {
   locked: Boolean!
   recipients: [AddressPercent!]!
 }
 
-type SplitterQuery {
+type SplitterContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
   config: Splitter!
-  contractAddress: String!
-  isOperator(operatorAddress: String!): Boolean!
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
   operators: [String!]!
   owner: String!
+  queries_expected: [String!]
 }
+
+union SplitterContractResult = AdoContractError | SplitterContract
 
 type TimelockQuery {
   contractAddress: String!
@@ -401,8 +501,8 @@ type TokenInfo {
 }
 
 type TransferAgreement {
-  agreement: Agreement!
-  tokenId: String!
+  agreement: Agreement
+  tokenId: String
 }
 
 type TxInfo {
@@ -415,11 +515,37 @@ type TxInfo {
   tx: [Int!]!
 }
 
-type VaultQuery {
+type VaultContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
   balance(address: String!): [AndrCoin!]!
-  contractAddress: String!
-  isOperator(operatorAddress: String!): Boolean!
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
   operators: [String!]!
   owner: String!
+  queries_expected: [String!]
   strategyAddress(strategy: String!): AndrStrategy!
 }
+
+union VaultContractResult = AdoContractError | VaultContract
+
+type WasmContract implements BaseContract {
+  address: String!
+  admin: String
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  label: String!
+  queries_expected: [String!]
+}
+
+type WasmContractError {
+  code: Int
+  error: String!
+}
+
+union WasmContractResult = WasmContract | WasmContractError

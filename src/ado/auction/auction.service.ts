@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { AndrSearchOptions } from 'src/ado/common/models'
+import { AndrSearchOptions } from 'src/ado/common/interfaces'
 import { AuctionAdo, AuctionInfo, Bid } from './types'
 //import { AdoSearchOptions, AdoSearchResult } from './models'
 

@@ -1,60 +1,72 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AndrSearchOptions } from 'src/ado/common/models'
+import { AndrSearchOptions } from 'src/ado/common/interfaces'
+import { AllNftInfo, NftApproval, NftContractInfo, NftInfo, NftOwnerInfo, TransferAgreement } from 'src/ado/types'
+import { NftContract, NftContractResult, AdoContractError, TypeMismatchError } from 'src/ado/types'
+import { AdoType } from 'src/ado/types/ado.enums'
 import { NftCollectibleAdoService } from './nft.service'
-import { AllNftInfo, NftQuery, NftApproval, NftContractInfo, NftInfo, NftOwnerInfo, TransferAgreement } from './types'
 
 //  expected one of
 // `andr_query`, `andr_hook`, `owner_of`, `all_operators`, `num_tokens`,
 // `nft_info`, `all_nft_info`, `tokens`, `all_tokens`, `module_info`, `contract_info`
-@Resolver(NftQuery)
+@Resolver(NftContract)
 export class NftCollectibleAdoResolver {
   constructor(private readonly nftCollectibleAdoService: NftCollectibleAdoService) {}
 
-  @Query(() => NftQuery)
-  public async nft(@Args('contractAddress') contractAddress: string): Promise<NftQuery> {
-    return { contractAddress: contractAddress } as NftQuery
+  @Query(() => NftContractResult)
+  public async nft(@Args('address') address: string): Promise<typeof NftContractResult> {
+    const contractInfo = await this.nftCollectibleAdoService.getContract(address)
+    if ('error' in contractInfo) {
+      return contractInfo
+    }
+
+    if (contractInfo.adoType && contractInfo.adoType == AdoType.NFTCollectible) {
+      return contractInfo as NftContract
+    }
+
+    const typeError = new TypeMismatchError(AdoType.NFTCollectible, contractInfo.adoType)
+    return { ...typeError } as AdoContractError
   }
 
   @ResolveField(() => String)
-  public async owner(@Parent() nft: NftQuery): Promise<string> {
-    return this.nftCollectibleAdoService.owner(nft.contractAddress)
+  public async owner(@Parent() nft: NftContract): Promise<string> {
+    return this.nftCollectibleAdoService.owner(nft.address)
   }
 
   @ResolveField(() => [String])
-  public async operators(@Parent() nft: NftQuery): Promise<string[]> {
-    return this.nftCollectibleAdoService.operators(nft.contractAddress)
+  public async operators(@Parent() nft: NftContract): Promise<string[]> {
+    return this.nftCollectibleAdoService.operators(nft.address)
   }
 
   @ResolveField(() => Boolean)
-  public async isOperator(@Parent() nft: NftQuery, @Args('operatorAddress') operatorAddress: string): Promise<boolean> {
-    return this.nftCollectibleAdoService.isOperator(nft.contractAddress, operatorAddress)
+  public async isOperator(@Parent() nft: NftContract, @Args('operator') operator: string): Promise<boolean> {
+    return this.nftCollectibleAdoService.isOperator(nft.address, operator)
   }
 
   //FIX: unknown variant minter
   //Query failed with (18): Error parsing into type
   //  andromeda_non_fungible_tokens::cw721::QueryMsg: unknown variant `minter`
   @ResolveField(() => String)
-  public async minter(@Parent() nft: NftQuery): Promise<string> {
-    return this.nftCollectibleAdoService.minter(nft.contractAddress)
+  public async minter(@Parent() nft: NftContract): Promise<string> {
+    return this.nftCollectibleAdoService.minter(nft.address)
   }
 
   @ResolveField(() => NftOwnerInfo)
   public async ownerOf(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('tokenId') tokenId: string,
     @Args('includeExpired') includeExpired: boolean,
   ): Promise<NftOwnerInfo> {
-    return this.nftCollectibleAdoService.ownerOf(nft.contractAddress, tokenId, includeExpired)
+    return this.nftCollectibleAdoService.ownerOf(nft.address, tokenId, includeExpired)
   }
 
   @ResolveField(() => [NftApproval])
   public async allOperators(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('owner') owner: string,
     @Args('includeExpired') includeExpired: boolean,
     @Args('options', { nullable: true }) options: AndrSearchOptions,
   ): Promise<NftApproval[]> {
-    return this.nftCollectibleAdoService.allOperators(nft.contractAddress, owner, includeExpired, options)
+    return this.nftCollectibleAdoService.allOperators(nft.address, owner, includeExpired, options)
   }
 
   //FIX: unknown variant approval
@@ -62,12 +74,12 @@ export class NftCollectibleAdoResolver {
   //  andromeda_non_fungible_tokens::cw721::QueryMsg: unknown variant `approval`
   @ResolveField(() => NftApproval)
   public async approval(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('tokenId') tokenId: string,
     @Args('spender') spender: string,
     @Args('includeExpired') includeExpired: boolean,
   ): Promise<NftApproval> {
-    return this.nftCollectibleAdoService.approval(nft.contractAddress, tokenId, spender, includeExpired)
+    return this.nftCollectibleAdoService.approval(nft.address, tokenId, spender, includeExpired)
   }
 
   //FIX: unknown variant approvals
@@ -75,38 +87,38 @@ export class NftCollectibleAdoResolver {
   //  andromeda_non_fungible_tokens::cw721::QueryMsg: unknown variant `approvals`
   @ResolveField(() => [NftApproval])
   public async approvals(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('tokenId') tokenId: string,
     @Args('includeExpired') includeExpired: boolean,
   ): Promise<NftApproval[]> {
-    return this.nftCollectibleAdoService.approvals(nft.contractAddress, tokenId, includeExpired)
+    return this.nftCollectibleAdoService.approvals(nft.address, tokenId, includeExpired)
   }
 
   @ResolveField(() => Int)
-  public async numTokens(@Parent() nft: NftQuery): Promise<number> {
-    return this.nftCollectibleAdoService.numTokens(nft.contractAddress)
+  public async numTokens(@Parent() nft: NftContract): Promise<number> {
+    return this.nftCollectibleAdoService.numTokens(nft.address)
   }
 
   @ResolveField(() => NftInfo)
-  public async nftInfo(@Parent() nft: NftQuery, @Args('tokenId') tokenId: string): Promise<NftInfo> {
-    return this.nftCollectibleAdoService.nftInfo(nft.contractAddress, tokenId)
+  public async nftInfo(@Parent() nft: NftContract, @Args('tokenId') tokenId: string): Promise<NftInfo> {
+    return this.nftCollectibleAdoService.nftInfo(nft.address, tokenId)
   }
 
   @ResolveField(() => AllNftInfo)
   public async allNftInfo(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('tokenId') tokenId: string,
     @Args('includeExpired') includeExpired: boolean,
   ): Promise<AllNftInfo> {
-    return this.nftCollectibleAdoService.allNftInfo(nft.contractAddress, tokenId, includeExpired)
+    return this.nftCollectibleAdoService.allNftInfo(nft.address, tokenId, includeExpired)
   }
 
   //FIX: unknown variant
   //Query failed with (18): Error parsing into type
   // andromeda_non_fungible_tokens::cw721::QueryMsg: unknown variant `is_archived`
   @ResolveField(() => Boolean)
-  public async isArchived(@Parent() nft: NftQuery, @Args('tokenId') tokenId: string): Promise<boolean> {
-    return this.nftCollectibleAdoService.isArchived(nft.contractAddress, tokenId)
+  public async isArchived(@Parent() nft: NftContract, @Args('tokenId') tokenId: string): Promise<boolean> {
+    return this.nftCollectibleAdoService.isArchived(nft.address, tokenId)
   }
 
   //FIX: unknown variant
@@ -114,32 +126,32 @@ export class NftCollectibleAdoResolver {
   // andromeda_non_fungible_tokens::cw721::QueryMsg: unknown variant `transfer_agreeement`
   @ResolveField(() => TransferAgreement)
   public async transferAgreement(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('tokenId') tokenId: string,
   ): Promise<TransferAgreement> {
-    return this.nftCollectibleAdoService.transferAgreement(nft.contractAddress, tokenId)
+    return this.nftCollectibleAdoService.transferAgreement(nft.address, tokenId)
   }
 
   @ResolveField(() => [String])
   public async tokens(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('owner') owner: string,
     @Args('options', { nullable: true }) options: AndrSearchOptions,
   ): Promise<string[]> {
-    return this.nftCollectibleAdoService.tokens(nft.contractAddress, owner, options)
+    return this.nftCollectibleAdoService.tokens(nft.address, owner, options)
   }
 
   @ResolveField(() => [String])
   public async allTokens(
-    @Parent() nft: NftQuery,
+    @Parent() nft: NftContract,
     @Args('options', { nullable: true }) options: AndrSearchOptions,
   ): Promise<string[]> {
-    return this.nftCollectibleAdoService.allTokens(nft.contractAddress, options)
+    return this.nftCollectibleAdoService.allTokens(nft.address, options)
   }
 
   //Missing @Args: Open-endded query?
   @ResolveField(() => NftContractInfo)
-  public async contractInfo(@Parent() nft: NftQuery): Promise<NftContractInfo> {
-    return this.nftCollectibleAdoService.contractInfo(nft.contractAddress)
+  public async contractInfo(@Parent() nft: NftContract): Promise<NftContractInfo> {
+    return this.nftCollectibleAdoService.contractInfo(nft.address)
   }
 }

@@ -1,3 +1,4 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
@@ -7,41 +8,26 @@ import { TerraModule } from 'nestjs-terra'
 import { join } from 'path'
 import pino from 'pino'
 import { AddressListAdoModule } from './ado/address-list/address-list.module'
+import { AdoModule } from './ado/ado.module'
 import { AnchorAdoModule } from './ado/anchor/anchor.module'
 import { AppAdoModule } from './ado/app/app.module'
 import { AuctionAdoModule } from './ado/auction/auction.module'
-import { registerEnums } from './ado/common/enums'
 import { CrowdfundAdoModule } from './ado/crowdfund/crowdfund.module'
 import { CW20TokenAdoModule } from './ado/cw20-token/cw20-token.module'
 import { NftCollectibleAdoModule } from './ado/nft/nft.module'
 import { AdoOffersModule } from './ado/offers/offers.module'
 import { PrimitiveAdoModule } from './ado/primitive/primitive.module'
 import { RatesAdoModule } from './ado/rates/rates.module'
-import { ReceiptAdoModule } from './ado/receipt/receipt.module'
 import { SplitterAdoModule } from './ado/splitter/splitter.module'
 import { TimelockAdoModule } from './ado/timelock/timelock.module'
+import { registerEnums } from './ado/types/ado.enums'
 import { VaultAdoModule } from './ado/vault/vault.module'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
 import { CosmModule } from './cosm'
-//import { AuthModule } from './auth/auth.module'
-//import { BankModule } from './bank/bank.module'
-//import { DistributionModule } from './distribution/distribution.module'
 import { validate } from './env.validation'
-//import { registerEnums } from './terra/common/enums'
-// import { GovModule } from './gov/gov.module'
-// import { IbcModule } from './ibc/ibc.module'
-// import { MarketModule } from './market/market.module'
-// import { MintModule } from './mint/mint.module'
-// import { MsgauthModule } from './msgauth/msgauth.module'
-// import { OracleModule } from './oracle/oracle.module'
-// import { SlashingModule } from './slashing/slashing.module'
-// import { StakingModule } from './staking/staking.module'
-// import { TendermintModule } from './tendermint/tendermint.module'
-// import { TreasuryModule } from './treasury/treasury.module'
-// import { TxModule } from './tx/tx.module'
-// import { UtilsModule } from './utils/utils.module'
-//import { WasmModule } from './terra/wasm/wasm.module'
+import { TxModule } from './tx/tx.module'
+import { WasmModule } from './wasm/wasm.module'
 
 @Module({
   imports: [
@@ -75,9 +61,10 @@ import { validate } from './env.validation'
     //         limit: parseInt(config.get<string>('THROTTLE_LIMIT', '20'), 10),
     //       }),
     //     }),
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       imports: [ConfigModule],
       inject: [ConfigService],
+      driver: ApolloDriver,
       useFactory: (config: ConfigService) => {
         registerEnums() // register enums graphql
 
@@ -121,23 +108,8 @@ import { validate } from './env.validation'
         }
       },
     }),
-    //AuthModule,
-    // BankModule,
-    // DistributionModule,
-    // GovModule,
-    // MarketModule,
-    // MintModule,
-    // MsgauthModule,
-    // OracleModule,
-    // SlashingModule,
-    // StakingModule,
-    // TendermintModule,
-    // TreasuryModule,
-    //WasmModule,
-    // TxModule,
-    // UtilsModule,
-    // IbcModule,
     AddressListAdoModule,
+    AdoModule,
     AdoOffersModule,
     AnchorAdoModule,
     AppAdoModule,
@@ -147,10 +119,11 @@ import { validate } from './env.validation'
     NftCollectibleAdoModule,
     PrimitiveAdoModule,
     RatesAdoModule,
-    ReceiptAdoModule,
     SplitterAdoModule,
     TimelockAdoModule,
     VaultAdoModule,
+    TxModule,
+    WasmModule,
   ],
   providers: [AppResolver, AnythingScalar],
 })

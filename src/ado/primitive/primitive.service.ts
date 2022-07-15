@@ -1,23 +1,19 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
-import { AndrQueryService } from 'src/ado/common/models'
-import { InjectCosmClient } from 'src/cosm'
+import { PrimitiveResponse } from 'src/ado/types'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
 import { LCDClientError } from '../common/errors'
-import { PrimitiveResponse } from './types'
 
 @Injectable()
-export class PrimitiveAdoService extends AndrQueryService {
+export class PrimitiveAdoService extends AdoService {
   constructor(
     @InjectPinoLogger(PrimitiveAdoService.name)
     protected readonly logger: PinoLogger,
-    @InjectLCDClient()
-    protected readonly lcdService: LCDClient,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
+    @Inject(WasmService)
+    protected readonly wasmService: WasmService,
   ) {
-    super(logger, lcdService, cosmService)
+    super(logger, wasmService)
   }
 
   public async getValue(contractAddress: string, key: string): Promise<PrimitiveResponse> {
@@ -30,7 +26,7 @@ export class PrimitiveAdoService extends AndrQueryService {
     }
 
     try {
-      const queryResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      const queryResponse = await this.wasmService.queryContract(contractAddress, query)
       console.log(queryResponse)
       return queryResponse
     } catch (err) {

@@ -1,5 +1,5 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AndrSearchOptions } from 'src/ado/common/models'
+import { AndrSearchOptions } from 'src/ado/common/interfaces'
 import { OffersAdoService } from './offers.service'
 import { OfferResponse, OffersQuery } from './types'
 

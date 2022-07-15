@@ -1,85 +1,94 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
-import { LCDClientError } from 'src/ado/common/errors'
-import { AndrQueryService } from 'src/ado/common/models'
-import { InjectCosmClient } from 'src/cosm'
-import { AppComponent, AppComponentAddress, AppConfig } from './types'
+import { AppComponent, AppComponentAddress, AppConfig } from 'src/ado/types'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
+import { DEFAULT_CATCH_ERR } from '../types/ado.constants'
 
 @Injectable()
-export class AdoAppService extends AndrQueryService {
+export class AdoAppService extends AdoService {
   constructor(
     @InjectPinoLogger(AdoAppService.name)
     protected readonly logger: PinoLogger,
-    @InjectLCDClient()
-    protected readonly lcdService: LCDClient,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
+    @Inject(WasmService)
+    protected readonly wasmService: WasmService,
   ) {
-    super(logger, lcdService, cosmService)
+    super(logger, wasmService)
   }
 
-  public async getAddresses(contractAddress: string): Promise<AppComponentAddress[]> {
-    const query = {
+  public async config(address: string): Promise<AppConfig> {
+    const queryMsg = {
+      config: {},
+    }
+
+    try {
+      const config = await this.wasmService.queryContract(address, queryMsg)
+      return config as AppConfig
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
+    }
+  }
+
+  public async getAddresses(address: string): Promise<AppComponentAddress[]> {
+    const queryMsg = {
       get_addresses: {},
     }
 
     try {
-      //const addresses = await this.cosmService.queryContractSmart<string[]>(contractAddress, query)
-      const addresses = await this.cosmService.queryContractSmart(contractAddress, query)
+      const addresses = await this.wasmService.queryContract(address, queryMsg)
       return addresses as AppComponentAddress[]
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
     }
   }
 
-  public async getAddress(contractAddress: string, name: string): Promise<string> {
-    const query = {
+  public async getAddress(address: string, name: string): Promise<string> {
+    const queryMsg = {
       get_address: {
         name: name,
       },
     }
 
     try {
-      const address = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const address = await this.cosmService.queryContractSmart<string>(contractAddress, query)
-      return address
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      const addressResult = await this.wasmService.queryContract(address, queryMsg)
+      return addressResult
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
+    }
+  }
+
+  public async componentExists(address: string, name: string): Promise<boolean> {
+    const queryMsg = {
+      component_exists: {
+        name: name,
+      },
+    }
+
+    try {
+      const componentResult = await this.wasmService.queryContract(address, queryMsg)
+      console.log(componentResult)
+      return componentResult
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      throw new Error(err)
     }
   }
 
   public async getComponents(contractAddress: string): Promise<AppComponent[]> {
-    const query = {
+    const queryMsg = {
       get_components: {},
     }
 
     try {
-      const components = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const components = await this.cosmService.queryContractSmart<AppComponent[]>(contractAddress, query)
+      const components = await this.wasmService.queryContract(contractAddress, queryMsg)
       console.log(components)
       return components as AppComponent[]
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
-    }
-  }
-
-  public async config(contractAddress: string): Promise<AppConfig> {
-    const query = {
-      config: {},
-    }
-
-    try {
-      const config = await this.cosmService.queryContractSmart(contractAddress, query)
-      //const config = await this.cosmService.queryContractSmart<AppConfig>(contractAddress, query)
-      return config as AppConfig
-    } catch (err) {
-      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, contractAddress)
+      throw new Error(err)
     }
   }
 }

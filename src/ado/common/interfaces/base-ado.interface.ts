@@ -1,6 +1,6 @@
 import { Field, InterfaceType } from '@nestjs/graphql'
 import { AnythingScalar } from 'src/anything.scalar'
-import { AndrModule } from '../models'
+import { AndrModule } from '../types'
 
 @InterfaceType()
 export abstract class BaseAdo {

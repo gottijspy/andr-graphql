@@ -2,7 +2,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { LCDClientError } from 'src/ado/common/errors'
-import { AndrSearchOptions } from 'src/ado/common/models'
+import { AndrSearchOptions } from 'src/ado/common/interfaces'
 import { InjectCosmClient } from 'src/cosm'
 import { OfferResponse } from './types'
 

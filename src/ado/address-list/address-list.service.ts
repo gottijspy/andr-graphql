@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { InjectLCDClient, LCDClient } from 'nestjs-terra'
 import { LCDClientError } from 'src/ado/common/errors'
-import { AndrQueryService } from 'src/ado/common/models'
+import { AndrQueryService } from 'src/ado/common/interfaces'
 import { InjectCosmClient } from 'src/cosm'
 import { AddressListResponse } from './types'
 

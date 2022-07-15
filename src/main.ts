@@ -1,8 +1,8 @@
 import { Logger as NestLogger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-//import { NestExpressApplication } from '@nestjs/platform-express'
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
+import { NestExpressApplication } from '@nestjs/platform-express'
+//import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
 import * as compression from 'compression'
 import * as helmet from 'helmet'
 import * as hpp from 'hpp'
@@ -10,8 +10,8 @@ import { Logger } from 'nestjs-pino'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
-  //const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true })
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true })
+  //const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
   const configService = app.get(ConfigService)
   const port = parseInt(configService.get<string>('PORT', ''), 10)
   const host = configService.get<string>('HOST', '0.0.0.0')

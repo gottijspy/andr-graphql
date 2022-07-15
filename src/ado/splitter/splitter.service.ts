@@ -1,24 +1,49 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
 import { LCDClientError } from 'src/ado/common/errors'
-import { AndrQueryService } from 'src/ado/common/models'
-import { InjectCosmClient } from 'src/cosm'
-import { Splitter, SplitterQuery } from './types'
+import { Splitter, SplitterContract } from 'src/ado/types'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
 
 @Injectable()
-export class SplitterAdoService extends AndrQueryService {
+export class SplitterAdoService extends AdoService {
   constructor(
     @InjectPinoLogger(SplitterAdoService.name)
     protected readonly logger: PinoLogger,
-    @InjectLCDClient()
-    protected readonly lcdService: LCDClient,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
+    @Inject(WasmService)
+    protected readonly wasmService: WasmService,
   ) {
-    super(logger, lcdService, cosmService)
+    super(logger, wasmService)
   }
+
+  // public async getSplitterContract(address: string): Promise<typeof SplitterContractResult>{
+  //   try {
+  //     const contractInfo = await this.getContract(address)
+  //     console.log(contractInfo)
+  //     if ('queries_expected' in contractInfo) {
+  //       if (contractInfo.queries_expected && contractInfo.queries_expected.includes(SPLITTER_QUERY)) {
+  //         return contractInfo as SplitterContract
+  //       }
+  //     }
+
+  //     console.log('Message')
+  //     if ('message' in contractInfo) {
+  //       if (contractInfo.message){
+  //         return { code: contractInfo.code ?? -1, message: contractInfo.message }
+  //       }
+  //     }
+
+  //     return { code: 1, message: INVALID_ADO_SPLITTER }
+  //   } catch(err: any) {
+  //     this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+  //     const errMsg = err.toString()
+  //     if (errMsg) {
+  //       return { code: -1, message: errMsg } as AdoContractError
+  //     }
+
+  //     throw new Error(err)
+  //   }
+  // }
 
   public async config(contractAddress: string): Promise<Splitter> {
     const query = {
@@ -26,9 +51,9 @@ export class SplitterAdoService extends AndrQueryService {
     }
 
     try {
-      const splitter = await this.cosmService.queryContractSmart(contractAddress, query)
+      const splitter = await this.wasmService.queryContract(contractAddress, query)
       console.log(splitter.config)
-      return (splitter as SplitterQuery).config
+      return (splitter as SplitterContract).config
     } catch (err) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new LCDClientError(err)
