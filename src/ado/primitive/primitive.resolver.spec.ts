@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { PrimitiveAdoResolver } from './primitive.resolver'
-import { PrimitiveAdoService } from './primitive.service'
+import { PrimitiveResolver } from './primitive.resolver'
+import { PrimitiveService } from './primitive.service'
 
-describe('PrimitiveAdoResolver', () => {
-  let resolver: PrimitiveAdoResolver
+describe('PrimitiveResolver', () => {
+  let resolver: PrimitiveResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PrimitiveAdoResolver, { provide: PrimitiveAdoService, useValue: {} }],
+      providers: [PrimitiveResolver, { provide: PrimitiveService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<PrimitiveAdoResolver>(PrimitiveAdoResolver)
+    resolver = module.get<PrimitiveResolver>(PrimitiveResolver)
   })
 
   it('should be defined', () => {

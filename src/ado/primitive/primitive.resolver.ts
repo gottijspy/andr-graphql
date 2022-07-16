@@ -7,15 +7,15 @@ import {
   TypeMismatchError,
 } from 'src/ado/types'
 import { AdoType } from '../types/ado.enums'
-import { PrimitiveAdoService } from './primitive.service'
+import { PrimitiveService } from './primitive.service'
 
 @Resolver(PrimitiveContract)
-export class PrimitiveAdoResolver {
-  constructor(private readonly primitiveAdoService: PrimitiveAdoService) {}
+export class PrimitiveResolver {
+  constructor(private readonly primitiveService: PrimitiveService) {}
 
   @Query(() => PrimitiveContractResult)
   public async primitive(@Args('address') address: string): Promise<typeof PrimitiveContractResult> {
-    const contractInfo = await this.primitiveAdoService.getContract(address)
+    const contractInfo = await this.primitiveService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
     }
@@ -30,12 +30,12 @@ export class PrimitiveAdoResolver {
 
   @ResolveField(() => String)
   public async owner(@Parent() primitive: PrimitiveContract): Promise<string> {
-    return this.primitiveAdoService.owner(primitive.address)
+    return this.primitiveService.owner(primitive.address)
   }
 
   @ResolveField(() => [String])
   public async operators(@Parent() primitive: PrimitiveContract): Promise<string[]> {
-    return this.primitiveAdoService.operators(primitive.address)
+    return this.primitiveService.operators(primitive.address)
   }
 
   @ResolveField(() => Boolean)
@@ -43,11 +43,11 @@ export class PrimitiveAdoResolver {
     @Parent() primitive: PrimitiveContract,
     @Args('operator') operator: string,
   ): Promise<boolean> {
-    return this.primitiveAdoService.isOperator(primitive.address, operator)
+    return this.primitiveService.isOperator(primitive.address, operator)
   }
 
   @ResolveField(() => PrimitiveResponse)
   public async getValue(@Parent() primitive: PrimitiveContract, @Args('key') key: string): Promise<PrimitiveResponse> {
-    return this.primitiveAdoService.getValue(primitive.address, key)
+    return this.primitiveService.getValue(primitive.address, key)
   }
 }

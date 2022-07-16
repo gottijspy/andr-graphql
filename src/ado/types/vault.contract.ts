@@ -1,12 +1,11 @@
 import { createUnionType, Field, ObjectType } from '@nestjs/graphql'
-import { AndrCoin } from 'src/ado/common/types'
 import { AdoType, AndrStrategyType } from 'src/ado/types/ado.enums'
-import { AdoContract, AdoContractError } from './ado.contract'
+import { AdoContract, AdoContractError, Coin } from './ado.contract'
 
 @ObjectType()
 export class VaultContract extends AdoContract {
-  @Field(() => [AndrCoin])
-  balance!: Promise<AndrCoin[]>
+  @Field(() => [Coin])
+  balance!: Promise<Coin[]>
 
   @Field(() => AndrStrategy)
   strategyAddress!: Promise<AndrStrategy>

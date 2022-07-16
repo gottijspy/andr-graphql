@@ -1,29 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { getLoggerToken } from 'nestjs-pino'
-import { getTerraToken } from 'nestjs-terra'
-import { AuctionAdoService } from './auction.service'
+import { AuctionService } from './auction.service'
 
-describe('AuctionAdoService', () => {
-  let service: AuctionAdoService
+describe('AuctionService', () => {
+  let service: AuctionService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuctionAdoService,
-        {
-          provide: getLoggerToken(AuctionAdoService.name),
-          useValue: {
-            error: jest.fn(),
-          },
-        },
-        {
-          provide: getTerraToken(),
-          useValue: {},
-        },
-      ],
+      providers: [AuctionService],
     }).compile()
 
-    service = module.get<AuctionAdoService>(AuctionAdoService)
+    service = module.get<AuctionService>(AuctionService)
   })
 
   it('should be defined', () => {

@@ -1,20 +1,16 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
-import { AndrQueryService } from 'src/ado/common/interfaces'
-import { InjectCosmClient } from 'src/cosm'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
 
 @Injectable()
-export class AnchorAdoService extends AndrQueryService {
+export class AnchorService extends AdoService {
   constructor(
-    @InjectPinoLogger(AnchorAdoService.name)
+    @InjectPinoLogger(AnchorService.name)
     protected readonly logger: PinoLogger,
-    @InjectLCDClient()
-    protected readonly lcdService: LCDClient,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
+    @Inject(WasmService)
+    protected readonly wasmService: WasmService,
   ) {
-    super(logger, lcdService, cosmService)
+    super(logger, wasmService)
   }
 }

@@ -1,15 +1,15 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AdoContractError, Splitter, SplitterContract, SplitterContractResult, TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
-import { SplitterAdoService } from './splitter.service'
+import { SplitterService } from './splitter.service'
 
 @Resolver(SplitterContract)
-export class SplitterAdoResolver {
-  constructor(private readonly splitterAdoService: SplitterAdoService) {}
+export class SplitterResolver {
+  constructor(private readonly splitterService: SplitterService) {}
 
   @Query(() => SplitterContractResult)
   public async splitter(@Args('address') address: string): Promise<typeof SplitterContractResult> {
-    const contractInfo = await this.splitterAdoService.getContract(address)
+    const contractInfo = await this.splitterService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
     }
@@ -24,21 +24,21 @@ export class SplitterAdoResolver {
 
   @ResolveField(() => String)
   public async owner(@Parent() splitter: SplitterContract): Promise<string> {
-    return this.splitterAdoService.owner(splitter.address)
+    return this.splitterService.owner(splitter.address)
   }
 
   @ResolveField(() => [String])
   public async operators(@Parent() splitter: SplitterContract): Promise<string[]> {
-    return this.splitterAdoService.operators(splitter.address)
+    return this.splitterService.operators(splitter.address)
   }
 
   @ResolveField(() => Boolean)
   public async isOperator(@Parent() splitter: SplitterContract, @Args('operator') operator: string): Promise<boolean> {
-    return this.splitterAdoService.isOperator(splitter.address, operator)
+    return this.splitterService.isOperator(splitter.address, operator)
   }
 
   @ResolveField(() => Splitter)
   public async config(@Parent() splitter: SplitterContract): Promise<Splitter> {
-    return this.splitterAdoService.config(splitter.address)
+    return this.splitterService.config(splitter.address)
   }
 }

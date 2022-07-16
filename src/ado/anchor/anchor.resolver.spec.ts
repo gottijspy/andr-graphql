@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { AnchorAdoResolver } from './anchor.resolver'
-import { AnchorAdoService } from './anchor.service'
+import { AnchorResolver } from './anchor.resolver'
+import { AnchorService } from './anchor.service'
 
-describe('AnchorAdoResolver', () => {
-  let resolver: AnchorAdoResolver
+describe('AnchorResolver', () => {
+  let resolver: AnchorResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AnchorAdoResolver, { provide: AnchorAdoService, useValue: {} }],
+      providers: [AnchorResolver, { provide: AnchorService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<AnchorAdoResolver>(AnchorAdoResolver)
+    resolver = module.get<AnchorResolver>(AnchorResolver)
   })
 
   it('should be defined', () => {

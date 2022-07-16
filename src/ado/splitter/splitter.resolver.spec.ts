@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { SplitterAdoResolver } from './splitter.resolver'
-import { SplitterAdoService } from './splitter.service'
+import { SplitterResolver } from './splitter.resolver'
+import { SplitterService } from './splitter.service'
 
-describe('SplitterAdoResolver', () => {
-  let resolver: SplitterAdoResolver
+describe('SplitterResolver', () => {
+  let resolver: SplitterResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SplitterAdoResolver, { provide: SplitterAdoService, useValue: {} }],
+      providers: [SplitterResolver, { provide: SplitterService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<SplitterAdoResolver>(SplitterAdoResolver)
+    resolver = module.get<SplitterResolver>(SplitterResolver)
   })
 
   it('should be defined', () => {

@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { PrimitiveResponse } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
+import { AddresslistResponse } from '../types'
 
 @Injectable()
-export class PrimitiveService extends AdoService {
+export class AddresslistService extends AdoService {
   constructor(
-    @InjectPinoLogger(PrimitiveService.name)
+    @InjectPinoLogger(AddresslistService.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -15,21 +15,17 @@ export class PrimitiveService extends AdoService {
     super(logger, wasmService)
   }
 
-  public async getValue(contractAddress: string, key: string): Promise<PrimitiveResponse> {
-    const encodedKey = Buffer.from(JSON.stringify(key)).toString('base64')
-    console.log(encodedKey)
+  public async includesAddress(contractAddress: string, address: string): Promise<AddresslistResponse> {
     const query = {
-      andr_query: {
-        get: encodedKey,
+      includes_address: {
+        address: address,
       },
     }
 
     try {
-      const queryResponse = await this.wasmService.queryContract(contractAddress, query)
-      console.log(queryResponse)
-      return queryResponse
+      const response = await this.wasmService.queryContract(contractAddress, query)
+      return response as AddresslistResponse
     } catch (err: any) {
-      console.log('error: ' + err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new Error(err)
     }

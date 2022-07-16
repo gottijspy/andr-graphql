@@ -4,24 +4,23 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 // import { ThrottlerModule } from '@nestjs/throttler'
 import { LoggerModule } from 'nestjs-pino'
-import { TerraModule } from 'nestjs-terra'
 import { join } from 'path'
 import pino from 'pino'
-import { AddressListAdoModule } from './ado/address-list/address-list.module'
+import { AddresslistModule } from './ado/addresslist/addresslist.module'
 import { AdoModule } from './ado/ado.module'
-import { AnchorAdoModule } from './ado/anchor/anchor.module'
-import { AppAdoModule } from './ado/app/app.module'
-import { AuctionAdoModule } from './ado/auction/auction.module'
-import { CrowdfundAdoModule } from './ado/crowdfund/crowdfund.module'
-import { CW20TokenAdoModule } from './ado/cw20-token/cw20-token.module'
-import { NftCollectibleAdoModule } from './ado/nft/nft.module'
+import { AdoAppModule } from './ado/adoapp/app.module'
+import { AnchorModule } from './ado/anchor/anchor.module'
+import { AuctionModule } from './ado/auction/auction.module'
+import { CrowdfundModule } from './ado/crowdfund/crowdfund.module'
+import { CW20TokenModule } from './ado/cw20-token/cw20-token.module'
+import { NftModule } from './ado/nft/nft.module'
 import { AdoOffersModule } from './ado/offers/offers.module'
-import { PrimitiveAdoModule } from './ado/primitive/primitive.module'
-import { RatesAdoModule } from './ado/rates/rates.module'
-import { SplitterAdoModule } from './ado/splitter/splitter.module'
-import { TimelockAdoModule } from './ado/timelock/timelock.module'
+import { PrimitiveModule } from './ado/primitive/primitive.module'
+import { RatesModule } from './ado/rates/rates.module'
+import { SplitterModule } from './ado/splitter/splitter.module'
+import { TimelockModule } from './ado/timelock/timelock.module'
 import { registerEnums } from './ado/types/ado.enums'
-import { VaultAdoModule } from './ado/vault/vault.module'
+import { VaultModule } from './ado/vault/vault.module'
 import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
 import { CosmModule } from './cosm'
@@ -91,37 +90,37 @@ import { WasmModule } from './wasm/wasm.module'
         }
       },
     }),
-    TerraModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const URL = config.get<string>('RPC_URL')
-        const chainID = config.get<string>('CHAIN_ID')
+    // TerraModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => {
+    //     const URL = config.get<string>('RPC_URL')
+    //     const chainID = config.get<string>('CHAIN_ID')
 
-        if (!URL || !chainID) {
-          throw new Error('Invalid RPC_URL or CHAIN_ID variables.')
-        }
+    //     if (!URL || !chainID) {
+    //       throw new Error('Invalid RPC_URL or CHAIN_ID variables.')
+    //     }
 
-        return {
-          URL,
-          chainID,
-        }
-      },
-    }),
-    AddressListAdoModule,
+    //     return {
+    //       URL,
+    //       chainID,
+    //     }
+    //   },
+    // }),
+    AddresslistModule,
     AdoModule,
     AdoOffersModule,
-    AnchorAdoModule,
-    AppAdoModule,
-    AuctionAdoModule,
-    CrowdfundAdoModule,
-    CW20TokenAdoModule,
-    NftCollectibleAdoModule,
-    PrimitiveAdoModule,
-    RatesAdoModule,
-    SplitterAdoModule,
-    TimelockAdoModule,
-    VaultAdoModule,
+    AnchorModule,
+    AdoAppModule,
+    AuctionModule,
+    CrowdfundModule,
+    CW20TokenModule,
+    NftModule,
+    PrimitiveModule,
+    RatesModule,
+    SplitterModule,
+    TimelockModule,
+    VaultModule,
     TxModule,
     WasmModule,
   ],

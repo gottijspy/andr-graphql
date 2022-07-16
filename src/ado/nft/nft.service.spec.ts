@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
-import { NftCollectibleAdoService } from './nft.service'
+import { NftService } from './nft.service'
 
-describe('NftCollectibleAdoService', () => {
-  let service: NftCollectibleAdoService
+describe('NftService', () => {
+  let service: NftService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        NftCollectibleAdoService,
+        NftService,
         {
-          provide: getLoggerToken(NftCollectibleAdoService.name),
+          provide: getLoggerToken(NftService.name),
           useValue: {
             error: jest.fn(),
           },
@@ -23,7 +23,7 @@ describe('NftCollectibleAdoService', () => {
       ],
     }).compile()
 
-    service = module.get<NftCollectibleAdoService>(NftCollectibleAdoService)
+    service = module.get<NftService>(NftService)
   })
 
   it('should be defined', () => {

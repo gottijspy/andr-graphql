@@ -1,15 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { AndrStrategy } from 'src/ado/types'
+import { AndrStrategy, Coin } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
-import { LCDClientError } from '../common/errors'
-import { AndrCoin } from '../common/types'
 
 @Injectable()
-export class VaultAdoService extends AdoService {
+export class VaultService extends AdoService {
   constructor(
-    @InjectPinoLogger(VaultAdoService.name)
+    @InjectPinoLogger(VaultService.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -46,7 +44,7 @@ export class VaultAdoService extends AdoService {
   //   }
   // }
 
-  public async balance(contractAddress: string, address: string): Promise<AndrCoin[]> {
+  public async balance(contractAddress: string, address: string): Promise<Coin[]> {
     const query = {
       balance: {
         address: address,
@@ -55,10 +53,10 @@ export class VaultAdoService extends AdoService {
 
     try {
       const queryResponse = await this.wasmService.queryContract(contractAddress, query)
-      return queryResponse as AndrCoin[]
-    } catch (err) {
+      return queryResponse as Coin[]
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -72,9 +70,9 @@ export class VaultAdoService extends AdoService {
     try {
       const queryResponse = await this.wasmService.queryContract(contractAddress, query)
       return queryResponse as AndrStrategy
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 }

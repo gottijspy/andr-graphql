@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { WasmModule } from 'src/wasm/wasm.module'
-import { CW20TokenAdoResolver } from './cw20-token.resolver'
-import { CW20TokenAdoService } from './cw20-token.service'
+import { CW20TokenResolver } from './cw20-token.resolver'
+import { CW20TokenService } from './cw20-token.service'
 
 @Module({
   imports: [WasmModule],
-  providers: [CW20TokenAdoResolver, CW20TokenAdoService],
+  providers: [CW20TokenResolver, CW20TokenService],
 })
-export class CW20TokenAdoModule {}
+export class CW20TokenModule {}

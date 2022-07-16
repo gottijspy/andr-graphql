@@ -3,12 +3,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { TokenInfo } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
-import { LCDClientError } from '../common/errors'
 
 @Injectable()
-export class CW20TokenAdoService extends AdoService {
+export class CW20TokenService extends AdoService {
   constructor(
-    @InjectPinoLogger(CW20TokenAdoService.name)
+    @InjectPinoLogger(CW20TokenService.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -25,9 +24,9 @@ export class CW20TokenAdoService extends AdoService {
       const tokenInfo = await this.wasmService.queryContract(contractAddress, query)
       console.log(tokenInfo)
       return tokenInfo as TokenInfo
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 

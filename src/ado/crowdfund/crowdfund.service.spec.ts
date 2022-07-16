@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
-import { CrowdfundAdoService } from './crowdfund.service'
+import { CrowdfundService } from './crowdfund.service'
 
-describe('CrowdfundAdoService', () => {
-  let service: CrowdfundAdoService
+describe('CrowdfundService', () => {
+  let service: CrowdfundService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CrowdfundAdoService,
+        CrowdfundService,
         {
-          provide: getLoggerToken(CrowdfundAdoService.name),
+          provide: getLoggerToken(CrowdfundService.name),
           useValue: {
             error: jest.fn(),
           },
@@ -23,7 +23,7 @@ describe('CrowdfundAdoService', () => {
       ],
     }).compile()
 
-    service = module.get<CrowdfundAdoService>(CrowdfundAdoService)
+    service = module.get<CrowdfundService>(CrowdfundService)
   })
 
   it('should be defined', () => {

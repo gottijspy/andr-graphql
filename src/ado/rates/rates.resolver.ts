@@ -1,36 +1,44 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { RatesAdoService } from './rates.service'
-import { RateInfo, RatesQuery } from './types'
+import { AdoContractError, RateInfo, RatesContract, RatesContractResult, TypeMismatchError } from '../types'
+import { AdoType } from '../types/ado.enums'
+import { RatesService } from './rates.service'
 
-@Resolver(RatesQuery)
-export class RatesAdoResolver {
-  constructor(private readonly ratesAdoService: RatesAdoService) {}
+@Resolver(RatesContract)
+export class RatesResolver {
+  constructor(private readonly ratesService: RatesService) {}
 
-  @Query(() => RatesQuery)
-  public async rates(@Args('contractAddress') contractAddress: string): Promise<RatesQuery> {
-    return { contractAddress: contractAddress } as RatesQuery
+  @Query(() => RatesContractResult)
+  public async rates(@Args('address') address: string): Promise<typeof RatesContractResult> {
+    const contractInfo = await this.ratesService.getContract(address)
+    if ('error' in contractInfo) {
+      return contractInfo
+    }
+
+    if (contractInfo.adoType && contractInfo.adoType == AdoType.Rates) {
+      return contractInfo as RatesContract
+    }
+
+    const typeError = new TypeMismatchError(AdoType.Rates, contractInfo.adoType)
+    return { ...typeError } as AdoContractError
   }
 
   @ResolveField(() => String)
-  public async owner(@Parent() rates: RatesQuery): Promise<string> {
-    return this.ratesAdoService.owner(rates.contractAddress)
+  public async owner(@Parent() rates: RatesContract): Promise<string> {
+    return this.ratesService.owner(rates.address)
   }
 
   @ResolveField(() => [String])
-  public async operators(@Parent() rates: RatesQuery): Promise<string[]> {
-    return this.ratesAdoService.operators(rates.contractAddress)
+  public async operators(@Parent() rates: RatesContract): Promise<string[]> {
+    return this.ratesService.operators(rates.address)
   }
 
   @ResolveField(() => Boolean)
-  public async isOperator(
-    @Parent() rates: RatesQuery,
-    @Args('operatorAddress') operatorAddress: string,
-  ): Promise<boolean> {
-    return this.ratesAdoService.isOperator(rates.contractAddress, operatorAddress)
+  public async isOperator(@Parent() rates: RatesContract, @Args('operator') operator: string): Promise<boolean> {
+    return this.ratesService.isOperator(rates.address, operator)
   }
 
   @ResolveField(() => [RateInfo])
-  public async payments(@Parent() rates: RatesQuery): Promise<RateInfo[]> {
-    return this.ratesAdoService.payments(rates.contractAddress)
+  public async payments(@Parent() rates: RatesContract): Promise<RateInfo[]> {
+    return this.ratesService.payments(rates.address)
   }
 }

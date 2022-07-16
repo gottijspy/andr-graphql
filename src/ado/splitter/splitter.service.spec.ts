@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
-import { SplitterAdoService } from './splitter.service'
+import { SplitterService } from './splitter.service'
 
-describe('SplitterAdoService', () => {
-  let service: SplitterAdoService
+describe('SplitterService', () => {
+  let service: SplitterService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SplitterAdoService,
+        SplitterService,
         {
-          provide: getLoggerToken(SplitterAdoService.name),
+          provide: getLoggerToken(SplitterService.name),
           useValue: {
             error: jest.fn(),
           },
@@ -23,7 +23,7 @@ describe('SplitterAdoService', () => {
       ],
     }).compile()
 
-    service = module.get<SplitterAdoService>(SplitterAdoService)
+    service = module.get<SplitterService>(SplitterService)
   })
 
   it('should be defined', () => {

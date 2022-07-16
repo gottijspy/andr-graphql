@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { WasmModule } from 'src/wasm/wasm.module'
-import { NftCollectibleAdoResolver } from './nft.resolver'
-import { NftCollectibleAdoService } from './nft.service'
+import { NftResolver } from './nft.resolver'
+import { NftService } from './nft.service'
 
 @Module({
   imports: [WasmModule],
-  providers: [NftCollectibleAdoResolver, NftCollectibleAdoService],
+  providers: [NftResolver, NftService],
 })
-export class NftCollectibleAdoModule {}
+export class NftModule {}

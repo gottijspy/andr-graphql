@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { VaultAdoResolver } from './vault.resolver'
-import { VaultAdoService } from './vault.service'
+import { VaultResolver } from './vault.resolver'
+import { VaultService } from './vault.service'
 
-describe('VaultAdoResolver', () => {
-  let resolver: VaultAdoResolver
+describe('VaultResolver', () => {
+  let resolver: VaultResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [VaultAdoResolver, { provide: VaultAdoService, useValue: {} }],
+      providers: [VaultResolver, { provide: VaultService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<VaultAdoResolver>(VaultAdoResolver)
+    resolver = module.get<VaultResolver>(VaultResolver)
   })
 
   it('should be defined', () => {

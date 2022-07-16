@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
-import { RatesAdoResolver } from './rates.resolver'
-import { RatesAdoService } from './rates.service'
+import { WasmModule } from 'src/wasm/wasm.module'
+import { RatesResolver } from './rates.resolver'
+import { RatesService } from './rates.service'
 
 @Module({
-  providers: [RatesAdoResolver, RatesAdoService],
+  imports: [WasmModule],
+  providers: [RatesResolver, RatesService],
 })
-export class RatesAdoModule {}
+export class RatesModule {}

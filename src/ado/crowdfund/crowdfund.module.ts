@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { WasmModule } from 'src/wasm/wasm.module'
-import { CrowdfundAdoResolver } from './crowdfund.resolver'
-import { CrowdfundAdoService } from './crowdfund.service'
+import { CrowdfundResolver } from './crowdfund.resolver'
+import { CrowdfundService } from './crowdfund.service'
 
 @Module({
   imports: [WasmModule],
-  providers: [CrowdfundAdoResolver, CrowdfundAdoService],
+  providers: [CrowdfundResolver, CrowdfundService],
 })
-export class CrowdfundAdoModule {}
+export class CrowdfundModule {}

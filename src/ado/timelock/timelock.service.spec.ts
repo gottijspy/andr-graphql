@@ -1,34 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
-import { getTerraToken } from 'nestjs-terra'
-import { getCosmToken } from 'src/cosm'
-import { TimelockAdoService } from './timelock.service'
+import { WasmService } from 'src/wasm/wasm.service'
+import { TimelockService } from './timelock.service'
 
-describe('TimelockAdoService', () => {
-  let service: TimelockAdoService
+describe('TimelockService', () => {
+  let service: TimelockService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TimelockAdoService,
+        TimelockService,
         {
-          provide: getLoggerToken(TimelockAdoService.name),
+          provide: getLoggerToken(TimelockService.name),
           useValue: {
             error: jest.fn(),
           },
         },
         {
-          provide: getTerraToken(),
-          useValue: {},
-        },
-        {
-          provide: getCosmToken(),
+          provide: WasmService,
           useValue: {},
         },
       ],
     }).compile()
 
-    service = module.get<TimelockAdoService>(TimelockAdoService)
+    service = module.get<TimelockService>(TimelockService)
   })
 
   it('should be defined', () => {

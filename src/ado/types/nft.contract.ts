@@ -1,6 +1,6 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
-import { AndrCoin, AndrExpiration } from 'src/ado/common/types'
-import { AdoContract, AdoContractError } from 'src/ado/types/ado.contract'
+import GraphQLJSON from 'graphql-type-json'
+import { AdoContract, AdoContractError, Coin } from 'src/ado/types'
 import { AnythingScalar } from 'src/anything.scalar'
 import { AdoType } from './ado.enums'
 
@@ -49,8 +49,8 @@ export class NftApproval {
   @Field({ nullable: true })
   spender?: string
 
-  @Field(() => AndrExpiration, { nullable: true })
-  expires?: AndrExpiration
+  @Field(() => GraphQLJSON, { nullable: true })
+  expires?: JSON
 }
 
 @ObjectType()
@@ -104,8 +104,8 @@ export class AllNftInfo {
 
 @ObjectType()
 export class AgreementAmount {
-  @Field(() => AndrCoin, { nullable: true })
-  raw?: AndrCoin
+  @Field(() => Coin, { nullable: true })
+  raw?: Coin
 }
 
 @ObjectType()
@@ -130,7 +130,7 @@ export const NftContractResult = createUnionType({
   name: 'NftContractResult',
   types: () => [NftContract, AdoContractError] as const,
   resolveType: (contract) => {
-    if (contract.adoType == AdoType.NFTCollectible) {
+    if (contract.adoType == AdoType.NFT) {
       return NftContract
     }
 

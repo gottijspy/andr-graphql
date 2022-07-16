@@ -1,5 +1,5 @@
 import { createUnionType, Field, ObjectType } from '@nestjs/graphql'
-import { AndrRecipient } from 'src/ado/common/types'
+import GraphQLJSON from 'graphql-type-json'
 import { AdoContract, AdoContractError } from 'src/ado/types/ado.contract'
 import { AdoType } from './ado.enums'
 
@@ -11,8 +11,8 @@ export class SplitterContract extends AdoContract {
 
 @ObjectType()
 export class AddressPercent {
-  @Field(() => AndrRecipient)
-  recipient!: AndrRecipient
+  @Field(() => GraphQLJSON)
+  recipient?: JSON
 
   @Field(() => String)
   percent!: string

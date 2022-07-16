@@ -1,5 +1,0 @@
-export { BaseAdo } from './base-ado.interface'
-export { AndrQuery } from './andr-query.interface'
-export { BaseQuery } from './base-contract.interface'
-export { AndrQueryService } from './andr-query.service'
-export { AndrSearchOptions } from './andr-search-options.input'

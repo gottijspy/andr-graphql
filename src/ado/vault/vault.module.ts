@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { WasmModule } from 'src/wasm/wasm.module'
-import { VaultAdoResolver } from './vault.resolver'
-import { VaultAdoService } from './vault.service'
+import { VaultResolver } from './vault.resolver'
+import { VaultService } from './vault.service'
 
 @Module({
   imports: [WasmModule],
-  providers: [VaultAdoResolver, VaultAdoService],
+  providers: [VaultResolver, VaultService],
 })
-export class VaultAdoModule {}
+export class VaultModule {}

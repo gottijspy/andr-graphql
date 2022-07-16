@@ -1,34 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
-import { getTerraToken } from 'nestjs-terra'
-import { getCosmToken } from 'src/cosm'
-import { AnchorAdoService } from './anchor.service'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AnchorService } from './anchor.service'
 
-describe('AnchorAdoService', () => {
-  let service: AnchorAdoService
+describe('AnchorService', () => {
+  let service: AnchorService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AnchorAdoService,
+        AnchorService,
         {
-          provide: getLoggerToken(AnchorAdoService.name),
+          provide: getLoggerToken(AnchorService.name),
           useValue: {
             error: jest.fn(),
           },
         },
         {
-          provide: getTerraToken(),
-          useValue: {},
-        },
-        {
-          provide: getCosmToken(),
+          provide: WasmService,
           useValue: {},
         },
       ],
     }).compile()
 
-    service = module.get<AnchorAdoService>(AnchorAdoService)
+    service = module.get<AnchorService>(AnchorService)
   })
 
   it('should be defined', () => {

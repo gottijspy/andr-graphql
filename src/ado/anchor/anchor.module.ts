@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
-import { AnchorAdoResolver } from './anchor.resolver'
-import { AnchorAdoService } from './anchor.service'
+import { WasmModule } from 'src/wasm/wasm.module'
+import { AnchorResolver } from './anchor.resolver'
+import { AnchorService } from './anchor.service'
 
 @Module({
-  providers: [AnchorAdoResolver, AnchorAdoService],
+  imports: [WasmModule],
+  providers: [AnchorResolver, AnchorService],
 })
-export class AnchorAdoModule {}
+export class AnchorModule {}

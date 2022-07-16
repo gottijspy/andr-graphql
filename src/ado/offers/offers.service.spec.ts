@@ -1,34 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
-import { getTerraToken } from 'nestjs-terra'
-import { getCosmToken } from 'src/cosm'
-import { OffersAdoService } from './offers.service'
+import { WasmService } from 'src/wasm/wasm.service'
+import { OffersService } from './offers.service'
 
-describe('OffersAdoService', () => {
-  let service: OffersAdoService
+describe('OffersService', () => {
+  let service: OffersService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        OffersAdoService,
+        OffersService,
         {
-          provide: getLoggerToken(OffersAdoService.name),
+          provide: getLoggerToken(OffersService.name),
           useValue: {
             error: jest.fn(),
           },
         },
         {
-          provide: getTerraToken(),
-          useValue: {},
-        },
-        {
-          provide: getCosmToken(),
+          provide: WasmService,
           useValue: {},
         },
       ],
     }).compile()
 
-    service = module.get<OffersAdoService>(OffersAdoService)
+    service = module.get<OffersService>(OffersService)
   })
 
   it('should be defined', () => {

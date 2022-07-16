@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { OffersAdoResolver } from './offers.resolver'
-import { OffersAdoService } from './offers.service'
+import { OffersResolver } from './offers.resolver'
+import { OffersService } from './offers.service'
 
-describe('OffersAdoResolver', () => {
-  let resolver: OffersAdoResolver
+describe('OffersResolver', () => {
+  let resolver: OffersResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OffersAdoResolver, { provide: OffersAdoService, useValue: {} }],
+      providers: [OffersResolver, { provide: OffersService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<OffersAdoResolver>(OffersAdoResolver)
+    resolver = module.get<OffersResolver>(OffersResolver)
   })
 
   it('should be defined', () => {

@@ -54,6 +54,15 @@ export class AdoContract implements BaseAdoContract {
   isOperator!: Promise<boolean>
 }
 
+@ObjectType()
+export class Coin {
+  @Field()
+  denom!: string
+
+  @Field()
+  amount!: string
+}
+
 export class TypeMismatchError {
   constructor(expectedType: AdoType, observedType: AdoType) {
     this.code = 1

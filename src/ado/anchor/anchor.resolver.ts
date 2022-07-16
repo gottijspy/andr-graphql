@@ -1,31 +1,39 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AnchorAdoService } from './anchor.service'
-import { AnchorQuery } from './types'
+import { AdoContractError, AnchorContract, AnchorContractResult, TypeMismatchError } from '../types'
+import { AdoType } from '../types/ado.enums'
+import { AnchorService } from './anchor.service'
 
-@Resolver(AnchorQuery)
-export class AnchorAdoResolver {
-  constructor(private readonly anchorAdoService: AnchorAdoService) {}
+@Resolver(AnchorContract)
+export class AnchorResolver {
+  constructor(private readonly anchorService: AnchorService) {}
 
-  @Query(() => AnchorQuery)
-  public async anchor(@Args('contractAddress') contractAddress: string): Promise<AnchorQuery> {
-    return { contractAddress: contractAddress } as AnchorQuery
+  @Query(() => AnchorContractResult)
+  public async anchor(@Args('address') address: string): Promise<typeof AnchorContractResult> {
+    const contractInfo = await this.anchorService.getContract(address)
+    if ('error' in contractInfo) {
+      return contractInfo
+    }
+
+    if (contractInfo.adoType && contractInfo.adoType == AdoType.Anchor) {
+      return contractInfo as AnchorContract
+    }
+
+    const typeError = new TypeMismatchError(AdoType.Anchor, contractInfo.adoType)
+    return { ...typeError } as AdoContractError
   }
 
   @ResolveField(() => String)
-  public async owner(@Parent() anchor: AnchorQuery): Promise<string> {
-    return this.anchorAdoService.owner(anchor.contractAddress)
+  public async owner(@Parent() anchor: AnchorContract): Promise<string> {
+    return this.anchorService.owner(anchor.address)
   }
 
   @ResolveField(() => [String])
-  public async operators(@Parent() anchor: AnchorQuery): Promise<string[]> {
-    return this.anchorAdoService.operators(anchor.contractAddress)
+  public async operators(@Parent() anchor: AnchorContract): Promise<string[]> {
+    return this.anchorService.operators(anchor.address)
   }
 
   @ResolveField(() => Boolean)
-  public async isOperator(
-    @Parent() anchor: AnchorQuery,
-    @Args('operatorAddress') operatorAddress: string,
-  ): Promise<boolean> {
-    return this.anchorAdoService.isOperator(anchor.contractAddress, operatorAddress)
+  public async isOperator(@Parent() anchor: AnchorContract, @Args('operator') operator: string): Promise<boolean> {
+    return this.anchorService.isOperator(anchor.address, operator)
   }
 }

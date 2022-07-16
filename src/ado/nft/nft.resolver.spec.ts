@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { NftCollectibleAdoResolver } from './nft.resolver'
-import { NftCollectibleAdoService } from './nft.service'
+import { NftResolver } from './nft.resolver'
+import { NftService } from './nft.service'
 
-describe('NftCollectibleAdoResolver', () => {
-  let resolver: NftCollectibleAdoResolver
+describe('NftResolver', () => {
+  let resolver: NftResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [NftCollectibleAdoResolver, { provide: NftCollectibleAdoService, useValue: {} }],
+      providers: [NftResolver, { provide: NftService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<NftCollectibleAdoResolver>(NftCollectibleAdoResolver)
+    resolver = module.get<NftResolver>(NftResolver)
   })
 
   it('should be defined', () => {

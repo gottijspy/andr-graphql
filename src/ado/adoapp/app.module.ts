@@ -7,4 +7,4 @@ import { AdoAppService } from './app.service'
   imports: [WasmModule],
   providers: [AdoAppResolver, AdoAppService],
 })
-export class AppAdoModule {}
+export class AdoAppModule {}

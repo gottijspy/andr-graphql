@@ -12,4 +12,3 @@ export {
   MAINNET_CHAIN_ID,
 } from './cosm.constants'
 export { getCosmToken } from './cosm.utils'
-export * from '@terra-money/terra.js'

@@ -1,6 +1,6 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
-import { AndrAddress, AndrCoin, AndrExpiration, AndrRecipient } from 'src/ado/common/types'
-import { AdoContract, AdoContractError } from 'src/ado/types/ado.contract'
+import GraphQLJSON from 'graphql-type-json'
+import { AdoContract, AdoContractError, Coin } from 'src/ado/types/ado.contract'
 import { AdoType } from 'src/ado/types/ado.enums'
 
 @ObjectType()
@@ -20,11 +20,11 @@ export class CrowdfundContract extends AdoContract {
 
 @ObjectType()
 export class CrowdfundState {
-  @Field(() => AndrExpiration, { nullable: true })
-  expiration?: Promise<AndrExpiration>
+  @Field(() => GraphQLJSON, { nullable: true })
+  expiration?: Promise<JSON>
 
-  @Field(() => AndrCoin, { nullable: true })
-  price?: Promise<AndrCoin>
+  @Field(() => Coin, { nullable: true })
+  price?: Promise<Coin>
 
   @Field(() => Int, { nullable: true })
   min_tokens_sold?: Promise<number>
@@ -41,14 +41,14 @@ export class CrowdfundState {
   @Field(() => Int, { nullable: true })
   amount_transferred?: Promise<number>
 
-  @Field(() => AndrRecipient, { nullable: true })
-  recipient?: Promise<AndrRecipient>
+  @Field(() => GraphQLJSON, { nullable: true })
+  recipient?: Promise<JSON>
 }
 
 @ObjectType()
 export class CrowdfundConfig {
-  @Field(() => AndrAddress)
-  token_address!: Promise<AndrAddress>
+  @Field(() => GraphQLJSON)
+  token_address!: Promise<JSON>
 
   @Field(() => Boolean)
   can_mint_after_sale!: Promise<boolean>

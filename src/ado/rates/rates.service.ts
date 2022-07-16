@@ -1,23 +1,18 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { InjectLCDClient, LCDClient } from 'nestjs-terra'
-import { LCDClientError } from 'src/ado/common/errors'
-import { AndrQueryService } from 'src/ado/common/interfaces'
-import { InjectCosmClient } from 'src/cosm'
-import { RateInfo, RatesQuery } from './types'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
+import { RateInfo, RatesContract } from '../types'
 
 @Injectable()
-export class RatesAdoService extends AndrQueryService {
+export class RatesService extends AdoService {
   constructor(
-    @InjectPinoLogger(RatesAdoService.name)
+    @InjectPinoLogger(RatesService.name)
     protected readonly logger: PinoLogger,
-    @InjectLCDClient()
-    protected readonly lcdService: LCDClient,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
+    @Inject(WasmService)
+    protected readonly wasmService: WasmService,
   ) {
-    super(logger, lcdService, cosmService)
+    super(logger, wasmService)
   }
 
   public async payments(contractAddress: string): Promise<RateInfo[]> {
@@ -26,12 +21,12 @@ export class RatesAdoService extends AndrQueryService {
     }
 
     try {
-      const ratesInfo = await this.cosmService.queryContractSmart(contractAddress, query)
+      const ratesInfo = await this.wasmService.queryContract(contractAddress, query)
       console.log(ratesInfo)
-      return (ratesInfo as RatesQuery).payments
-    } catch (err) {
+      return (ratesInfo as RatesContract).payments
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 }

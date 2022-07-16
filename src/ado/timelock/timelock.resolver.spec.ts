@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { TimelockAdoResolver } from './timelock.resolver'
-import { TimelockAdoService } from './timelock.service'
+import { TimelockResolver } from './timelock.resolver'
+import { TimelockService } from './timelock.service'
 
-describe('TimelockAdoResolver', () => {
-  let resolver: TimelockAdoResolver
+describe('TimelockResolver', () => {
+  let resolver: TimelockResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TimelockAdoResolver, { provide: TimelockAdoService, useValue: {} }],
+      providers: [TimelockResolver, { provide: TimelockService, useValue: {} }],
     }).compile()
 
-    resolver = module.get<TimelockAdoResolver>(TimelockAdoResolver)
+    resolver = module.get<TimelockResolver>(TimelockResolver)
   })
 
   it('should be defined', () => {

@@ -3,7 +3,7 @@ import { AdoContract, AdoContractError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 
 @ObjectType()
-export class AppContract extends AdoContract {
+export class AdoAppContract extends AdoContract {
   @Field(() => AppConfig)
   config!: Promise<AppConfig>
 
@@ -50,12 +50,12 @@ export class AppComponentAddress {
   address!: string
 }
 
-export const AppContractResult = createUnionType({
-  name: 'AppContractResult',
-  types: () => [AppContract, AdoContractError] as const,
+export const AdoAppContractResult = createUnionType({
+  name: 'AdoAppContractResult',
+  types: () => [AdoAppContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.App) {
-      return AppContract
+      return AdoAppContract
     }
 
     return AdoContractError

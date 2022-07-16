@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
-import { TimelockAdoResolver } from './timelock.resolver'
-import { TimelockAdoService } from './timelock.service'
+import { WasmModule } from 'src/wasm/wasm.module'
+import { TimelockResolver } from './timelock.resolver'
+import { TimelockService } from './timelock.service'
 
 @Module({
-  providers: [TimelockAdoResolver, TimelockAdoService],
+  imports: [WasmModule],
+  providers: [TimelockResolver, TimelockService],
 })
-export class TimelockAdoModule {}
+export class TimelockModule {}

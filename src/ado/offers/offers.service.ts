@@ -1,19 +1,20 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { LCDClientError } from 'src/ado/common/errors'
-import { AndrSearchOptions } from 'src/ado/common/interfaces'
-import { InjectCosmClient } from 'src/cosm'
-import { OfferResponse } from './types'
+import { WasmService } from 'src/wasm/wasm.service'
+import { AdoService } from '../ado.service'
+import { OfferResponse } from '../types'
+import { AndrSearchOptions } from '../types/andr-search-options.input'
 
 @Injectable()
-export class OffersAdoService {
+export class OffersService extends AdoService {
   constructor(
-    @InjectPinoLogger(OffersAdoService.name)
-    private readonly logger: PinoLogger,
-    @InjectCosmClient()
-    protected readonly cosmService: CosmWasmClient,
-  ) {}
+    @InjectPinoLogger(OffersService.name)
+    readonly logger: PinoLogger,
+    @Inject(WasmService)
+    readonly wasmService: WasmService,
+  ) {
+    super(logger, wasmService)
+  }
 
   public async offer(contractAddress: string, tokenId: string): Promise<OfferResponse> {
     const query = {
@@ -23,12 +24,12 @@ export class OffersAdoService {
     }
 
     try {
-      const offerResponse = await this.cosmService.queryContractSmart(contractAddress, query)
+      const offerResponse = await this.wasmService.queryContract(contractAddress, query)
       return offerResponse as OfferResponse
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
 
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -44,11 +45,11 @@ export class OffersAdoService {
     }
 
     try {
-      const offers = await this.cosmService.queryContractSmart(contractAddress, query)
+      const offers = await this.wasmService.queryContract(contractAddress, query)
       return offers.allOffers ?? []
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 }

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { WasmModule } from 'src/wasm/wasm.module'
-import { PrimitiveAdoResolver } from './primitive.resolver'
-import { PrimitiveAdoService } from './primitive.service'
+import { PrimitiveResolver } from './primitive.resolver'
+import { PrimitiveService } from './primitive.service'
 
 @Module({
   imports: [WasmModule],
-  providers: [PrimitiveAdoResolver, PrimitiveAdoService],
+  providers: [PrimitiveResolver, PrimitiveService],
 })
-export class PrimitiveAdoModule {}
+export class PrimitiveModule {}

@@ -45,7 +45,7 @@ export class AdoService {
           } else if (contractInfo.queries_expected.includes(CROWDFUND_QUERY)) {
             adoType = AdoType.Crowdfund
           } else if (contractInfo.queries_expected.includes(NFT_QUERY)) {
-            adoType = AdoType.NFTCollectible
+            adoType = AdoType.NFT
           } else if (contractInfo.queries_expected.includes(SPLITTER_QUERY)) {
             adoType = AdoType.Splitter
           } else if (contractInfo.queries_expected.includes(VAULT_QUERY)) {

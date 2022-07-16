@@ -24,19 +24,20 @@ export enum OrderBy {
 }
 
 export enum AdoType {
+  Addresslist = 'Addresslist',
   Ado = 'Ado',
+  Anchor = 'Anchor',
   App = 'App',
+  Auction = 'Auction',
   Crowdfund = 'Crowdfund',
   CW20Token = 'CW20Token',
-  NFTCollectible = 'NFTCollectible',
+  NFT = 'NFT',
+  Offers = 'Offers',
   Primitive = 'Primitive',
+  Rates = 'Rates',
+  Receipt = 'Receipt',
   Splitter = 'Splitter',
   Timelock = 'Timelock',
-  AddressList = 'Address List',
-  Auction = 'Auction',
-  Receipt = 'Receipt',
-  AdoOffers = 'ADO Offers',
-  Rates = 'Rates',
   Vault = 'Vault',
 }
 

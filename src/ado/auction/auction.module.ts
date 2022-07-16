@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
-import { AuctionAdoResolver } from './auction.resolver'
-import { AuctionAdoService } from './auction.service'
+import { WasmModule } from 'src/wasm/wasm.module'
+import { AuctionResolver } from './auction.resolver'
+import { AuctionService } from './auction.service'
 
 @Module({
-  providers: [AuctionAdoResolver, AuctionAdoService],
+  imports: [WasmModule],
+  providers: [AuctionResolver, AuctionService],
 })
-export class AuctionAdoModule {}
+export class AuctionModule {}

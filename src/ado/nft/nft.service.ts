@@ -1,16 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { LCDClientError } from 'src/ado/common/errors'
-import { AndrSearchOptions } from 'src/ado/common/interfaces'
 import { AllNftInfo, NftApproval, NftContractInfo, TransferAgreement } from 'src/ado/types'
 import { NftInfo, NftOwnerInfo, NftContract } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
+import { AndrSearchOptions } from '../types/andr-search-options.input'
 
 @Injectable()
-export class NftCollectibleAdoService extends AdoService {
+export class NftService extends AdoService {
   constructor(
-    @InjectPinoLogger(NftCollectibleAdoService.name)
+    @InjectPinoLogger(NftService.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -55,9 +54,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const minterInfo = await this.wasmService.queryContract(contractAddress, query)
       return (minterInfo as NftContract).minter
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -72,9 +71,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const ownerInfo = await this.wasmService.queryContract(contractAddress, query)
       return ownerInfo as NftOwnerInfo
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -94,9 +93,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const allOperators = await this.wasmService.queryContract(contractAddress, query)
       return allOperators.operators ?? []
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -117,9 +116,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const approvedForAll = await this.wasmService.queryContract(contractAddress, query)
       return approvedForAll as NftApproval
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -134,9 +133,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const approvals = await this.wasmService.queryContract(contractAddress, query)
       return approvals as NftApproval[]
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -148,9 +147,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const numTokens = await this.wasmService.queryContract(contractAddress, query)
       return numTokens.count ?? 0
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -164,9 +163,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const nftInfo = await this.wasmService.queryContract(contractAddress, query)
       return nftInfo as NftInfo
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -181,9 +180,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const allNftInfo = await this.wasmService.queryContract(contractAddress, query)
       return allNftInfo as AllNftInfo
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -197,9 +196,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const isArchived = await this.wasmService.queryContract(contractAddress, query)
       return isArchived as boolean
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -213,9 +212,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const transferAgreement = await this.wasmService.queryContract(contractAddress, query)
       return transferAgreement as TransferAgreement
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -229,10 +228,10 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const tokenResponse = await this.wasmService.queryContract(contractAddress, query)
       return tokenResponse.tokens ?? []
-    } catch (err) {
+    } catch (err: any) {
       console.log(err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -244,10 +243,10 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const tokenResponse = await this.wasmService.queryContract(contractAddress, query)
       return tokenResponse.tokens ?? []
-    } catch (err) {
+    } catch (err: any) {
       console.log(err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 
@@ -259,9 +258,9 @@ export class NftCollectibleAdoService extends AdoService {
     try {
       const contractInfo = await this.wasmService.queryContract(contractAddress, query)
       return contractInfo as NftContractInfo
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new LCDClientError(err)
+      throw new Error(err)
     }
   }
 }
