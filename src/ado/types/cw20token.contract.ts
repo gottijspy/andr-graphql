@@ -4,11 +4,11 @@ import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class CW20TokenContract extends AdoContract {
-  @Field(() => TokenInfo)
-  tokenInfo!: Promise<TokenInfo>
+  @Field(() => TokenInfo, { nullable: true })
+  tokenInfo?: Promise<TokenInfo>
 
-  @Field(() => [TxInfo])
-  tx!: Promise<TxInfo[]>
+  // @Field(() => [TxInfo])
+  // tx!: Promise<TxInfo[]>
 }
 
 @ObjectType()
@@ -50,8 +50,8 @@ export class TxInfo {
   gasWanted!: number
 }
 
-export const Cw20TokenContractResult = createUnionType({
-  name: 'Cw20TokenContractResult',
+export const Cw20TokenResult = createUnionType({
+  name: 'Cw20TokenResult',
   types: () => [CW20TokenContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.CW20Token) {

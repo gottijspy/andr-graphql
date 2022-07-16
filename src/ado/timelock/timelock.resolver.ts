@@ -1,15 +1,18 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoContractError, Escrow, TimelockContract, TimelockContractResult, TypeMismatchError } from '../types'
+import { AdoResolver } from '../ado.resolver'
+import { AdoContractError, Escrow, TimelockContract, TimelockResult, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 import { TimelockService } from './timelock.service'
 
 @Resolver(TimelockContract)
-export class TimelockResolver {
-  constructor(private readonly timelockService: TimelockService) {}
+export class TimelockResolver extends AdoResolver {
+  constructor(private readonly timelockService: TimelockService) {
+    super(timelockService)
+  }
 
-  @Query(() => TimelockContractResult)
-  public async timelock(@Args('address') address: string): Promise<typeof TimelockContractResult> {
+  @Query(() => TimelockResult)
+  public async timelock(@Args('address') address: string): Promise<typeof TimelockResult> {
     const contractInfo = await this.timelockService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -21,21 +24,6 @@ export class TimelockResolver {
 
     const typeError = new TypeMismatchError(AdoType.Timelock, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() timelock: TimelockContract): Promise<string> {
-    return this.timelockService.owner(timelock.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() timelock: TimelockContract): Promise<string[]> {
-    return this.timelockService.operators(timelock.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(@Parent() timelock: TimelockContract, @Args('operator') operator: string): Promise<boolean> {
-    return this.timelockService.isOperator(timelock.address, operator)
   }
 
   @ResolveField(() => Escrow)

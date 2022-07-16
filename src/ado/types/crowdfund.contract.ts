@@ -5,17 +5,17 @@ import { AdoType } from 'src/ado/types/ado.enums'
 
 @ObjectType()
 export class CrowdfundContract extends AdoContract {
-  @Field(() => CrowdfundState)
-  state!: Promise<CrowdfundState>
+  @Field(() => CrowdfundState, { nullable: true })
+  state?: Promise<CrowdfundState>
 
-  @Field(() => CrowdfundConfig)
-  config!: Promise<CrowdfundConfig>
+  @Field(() => CrowdfundConfig, { nullable: true })
+  config?: Promise<CrowdfundConfig>
 
-  @Field(() => [String])
-  availableTokens!: Promise<string[]>
+  @Field(() => [String], { nullable: true })
+  availableTokens?: Promise<string[]>
 
-  @Field(() => Boolean)
-  isTokenAvailable!: Promise<boolean>
+  @Field(() => Boolean, { nullable: true })
+  isTokenAvailable?: Promise<boolean>
 }
 
 @ObjectType()
@@ -54,8 +54,8 @@ export class CrowdfundConfig {
   can_mint_after_sale!: Promise<boolean>
 }
 
-export const CrowdfundContractResult = createUnionType({
-  name: 'CrowdfundContractResult',
+export const CrowdfundResult = createUnionType({
+  name: 'CrowdfundResult',
   types: () => [CrowdfundContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Crowdfund) {

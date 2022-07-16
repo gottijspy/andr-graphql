@@ -82,8 +82,8 @@ export class AdoContractError {
   error!: string
 }
 
-export const AdoContractResult = createUnionType({
-  name: 'AdoContractResult',
+export const AdoResult = createUnionType({
+  name: 'AdoResult',
   types: () => [AdoContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.queries_expected && contract.queries_expected.includes(ANDR_QUERY)) {

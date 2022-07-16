@@ -1,47 +1,46 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { AdoContract, AdoContractError, Coin } from 'src/ado/types'
-import { AnythingScalar } from 'src/anything.scalar'
 import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class NftContract extends AdoContract {
   //FIX: Unknown Variant minter
-  @Field(() => String)
-  minter!: Promise<string>
+  @Field(() => String, { nullable: true })
+  minter?: Promise<string>
 
-  @Field(() => NftOwnerInfo)
-  ownerOf!: Promise<NftOwnerInfo>
+  @Field(() => NftOwnerInfo, { nullable: true })
+  ownerOf?: Promise<NftOwnerInfo>
 
-  @Field(() => [NftApproval])
-  allOperators!: Promise<NftApproval[]>
+  @Field(() => [NftApproval], { nullable: true })
+  allOperators?: Promise<NftApproval[]>
 
-  @Field(() => [NftApproval])
-  approvals!: Promise<NftApproval[]>
+  @Field(() => [NftApproval], { nullable: true })
+  approvals?: Promise<NftApproval[]>
 
-  @Field(() => NftApproval)
-  approval!: Promise<NftApproval>
+  @Field(() => NftApproval, { nullable: true })
+  approval?: Promise<NftApproval>
 
-  @Field(() => Int)
-  numTokens!: Promise<number>
+  @Field(() => Int, { nullable: true })
+  numTokens?: Promise<number>
 
-  @Field(() => NftInfo)
-  nftInfo!: Promise<NftInfo>
+  @Field(() => NftInfo, { nullable: true })
+  nftInfo?: Promise<NftInfo>
 
-  @Field(() => AllNftInfo)
-  allNftInfo!: Promise<AllNftInfo>
+  @Field(() => AllNftInfo, { nullable: true })
+  allNftInfo?: Promise<AllNftInfo>
 
-  @Field(() => Boolean)
-  isArchived!: Promise<boolean>
+  @Field(() => Boolean, { nullable: true })
+  isArchived?: Promise<boolean>
 
-  @Field(() => [String])
-  tokens!: Promise<string[]>
+  @Field(() => [String], { nullable: true })
+  tokens?: Promise<string[]>
 
-  @Field(() => [String])
-  allTokens!: Promise<string[]>
+  @Field(() => [String], { nullable: true })
+  allTokens?: Promise<string[]>
 
-  @Field(() => NftContractInfo)
-  contractInfo!: Promise<NftContractInfo>
+  @Field(() => NftContractInfo, { nullable: true })
+  contractInfo?: Promise<NftContractInfo>
 }
 
 @ObjectType()
@@ -80,7 +79,7 @@ export class NftContractInfo {
 @ObjectType()
 export class NftNumTokens {
   @Field(() => Int, { nullable: true })
-  count!: number
+  count?: number
 }
 
 @ObjectType()
@@ -89,7 +88,7 @@ export class NftInfo {
   tokenUri?: string
 
   //WARN: extension is of anytype, so attribute selection is not possible
-  @Field(() => AnythingScalar, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   extension?: Promise<any>
 }
 
@@ -126,8 +125,8 @@ export class TransferAgreement {
   agreement?: Agreement
 }
 
-export const NftContractResult = createUnionType({
-  name: 'NftContractResult',
+export const NftResult = createUnionType({
+  name: 'NftResult',
   types: () => [NftContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.NFT) {

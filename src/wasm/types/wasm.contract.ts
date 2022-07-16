@@ -1,5 +1,5 @@
 import { createUnionType, Field, Int, InterfaceType, ObjectType } from '@nestjs/graphql'
-import { AnythingScalar } from 'src/anything.scalar'
+import GraphQLJSON from 'graphql-type-json'
 
 @InterfaceType()
 export abstract class BaseContract {
@@ -69,7 +69,7 @@ export class WasmContractError {
 
 @ObjectType()
 export class WasmContractQueryError extends WasmContractError {
-  @Field(() => AnythingScalar)
+  @Field(() => GraphQLJSON)
   queryMsg!: Record<string, unknown>
 }
 

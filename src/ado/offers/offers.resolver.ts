@@ -1,15 +1,18 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoContractError, OfferResponse, OffersContract, OffersContractResult, TypeMismatchError } from '../types'
+import { AdoResolver } from '../ado.resolver'
+import { AdoContractError, OfferResponse, OffersContract, OffersResult, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 import { OffersService } from './offers.service'
 
 @Resolver(OffersContract)
-export class OffersResolver {
-  constructor(private readonly offersService: OffersService) {}
+export class OffersResolver extends AdoResolver {
+  constructor(private readonly offersService: OffersService) {
+    super(offersService)
+  }
 
-  @Query(() => OffersContractResult)
-  public async offers(@Args('address') address: string): Promise<typeof OffersContractResult> {
+  @Query(() => OffersResult)
+  public async offers(@Args('address') address: string): Promise<typeof OffersResult> {
     const contractInfo = await this.offersService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo

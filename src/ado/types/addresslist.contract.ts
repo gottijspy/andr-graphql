@@ -4,18 +4,18 @@ import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class AddresslistContract extends AdoContract {
-  @Field(() => AddresslistResponse)
-  includesAddress!: Promise<AddresslistResponse>
+  @Field(() => AddresslistResponse, { nullable: true })
+  includesAddress?: Promise<AddresslistResponse>
 }
 
 @ObjectType()
 export class AddresslistResponse {
-  @Field(() => Boolean)
-  included!: boolean
+  @Field(() => Boolean, { nullable: true })
+  included?: boolean
 }
 
-export const AddresslistContractResult = createUnionType({
-  name: 'AddresslistContractResult',
+export const AddresslistResult = createUnionType({
+  name: 'AddresslistResult',
   types: () => [AddresslistContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Addresslist) {

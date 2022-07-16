@@ -4,11 +4,11 @@ import { AdoContract, AdoContractError, Coin } from './ado.contract'
 
 @ObjectType()
 export class VaultContract extends AdoContract {
-  @Field(() => [Coin])
-  balance!: Promise<Coin[]>
+  @Field(() => [Coin], { nullable: true })
+  balance?: Promise<Coin[]>
 
-  @Field(() => AndrStrategy)
-  strategyAddress!: Promise<AndrStrategy>
+  @Field(() => AndrStrategy, { nullable: true })
+  strategyAddress?: Promise<AndrStrategy>
 }
 
 @ObjectType()
@@ -20,8 +20,8 @@ export class AndrStrategy {
   address?: string
 }
 
-export const VaultContractResult = createUnionType({
-  name: 'VaultContractResult',
+export const VaultResult = createUnionType({
+  name: 'VaultResult',
   types: () => [VaultContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Vault) {

@@ -1,16 +1,19 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AllNftInfo, NftApproval, NftContractInfo, NftInfo, NftOwnerInfo, TransferAgreement } from 'src/ado/types'
-import { NftContract, NftContractResult, AdoContractError, TypeMismatchError } from 'src/ado/types'
+import { NftContract, NftResult, AdoContractError, TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
+import { AdoResolver } from '../ado.resolver'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 import { NftService } from './nft.service'
 
 @Resolver(NftContract)
-export class NftResolver {
-  constructor(private readonly nftService: NftService) {}
+export class NftResolver extends AdoResolver {
+  constructor(private readonly nftService: NftService) {
+    super(nftService)
+  }
 
-  @Query(() => NftContractResult)
-  public async nft(@Args('address') address: string): Promise<typeof NftContractResult> {
+  @Query(() => NftResult)
+  public async nft(@Args('address') address: string): Promise<typeof NftResult> {
     const contractInfo = await this.nftService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -22,21 +25,6 @@ export class NftResolver {
 
     const typeError = new TypeMismatchError(AdoType.NFT, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() nft: NftContract): Promise<string> {
-    return this.nftService.owner(nft.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() nft: NftContract): Promise<string[]> {
-    return this.nftService.operators(nft.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(@Parent() nft: NftContract, @Args('operator') operator: string): Promise<boolean> {
-    return this.nftService.isOperator(nft.address, operator)
   }
 
   //FIX: unknown variant minter

@@ -1,14 +1,17 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoContractError, RateInfo, RatesContract, RatesContractResult, TypeMismatchError } from '../types'
+import { AdoResolver } from '../ado.resolver'
+import { AdoContractError, RateInfo, RatesContract, RatesResult, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { RatesService } from './rates.service'
 
 @Resolver(RatesContract)
-export class RatesResolver {
-  constructor(private readonly ratesService: RatesService) {}
+export class RatesResolver extends AdoResolver {
+  constructor(private readonly ratesService: RatesService) {
+    super(ratesService)
+  }
 
-  @Query(() => RatesContractResult)
-  public async rates(@Args('address') address: string): Promise<typeof RatesContractResult> {
+  @Query(() => RatesResult)
+  public async rates(@Args('address') address: string): Promise<typeof RatesResult> {
     const contractInfo = await this.ratesService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -20,21 +23,6 @@ export class RatesResolver {
 
     const typeError = new TypeMismatchError(AdoType.Rates, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() rates: RatesContract): Promise<string> {
-    return this.ratesService.owner(rates.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() rates: RatesContract): Promise<string[]> {
-    return this.ratesService.operators(rates.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(@Parent() rates: RatesContract, @Args('operator') operator: string): Promise<boolean> {
-    return this.ratesService.isOperator(rates.address, operator)
   }
 
   @ResolveField(() => [RateInfo])

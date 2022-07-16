@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { AdoAppResolver } from './app.resolver'
-import { AdoAppService } from './app.service'
+import { AdoAppResolver } from './adoapp.resolver'
+import { AdoAppService } from './adoapp.service'
 
 describe('AdoAppResolver', () => {
   let resolver: AdoAppResolver

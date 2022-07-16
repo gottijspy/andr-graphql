@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { WasmService } from 'src/wasm/wasm.service'
-import { AdoContract, AdoContractError, AdoContractResult } from './types'
+import { AdoContract, AdoContractError, AdoResult } from './types'
 import {
   ANDR_QUERY,
   APP_QUERY,
@@ -24,7 +24,7 @@ export class AdoService {
     protected readonly wasmService: WasmService,
   ) {}
 
-  public async getContract(address: string): Promise<typeof AdoContractResult> {
+  public async getContract(address: string): Promise<typeof AdoResult> {
     try {
       const contractInfo = await this.wasmService.getContract(address)
       if ('error' in contractInfo) {

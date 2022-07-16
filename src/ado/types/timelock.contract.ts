@@ -5,11 +5,11 @@ import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class TimelockContract extends AdoContract {
-  @Field(() => Escrow)
-  getLockedFunds!: Promise<Escrow>
+  @Field(() => Escrow, { nullable: true })
+  getLockedFunds?: Promise<Escrow>
 
-  @Field(() => [Escrow])
-  getLockedFundsForRecipient!: Promise<Escrow[]>
+  @Field(() => [Escrow], { nullable: true })
+  getLockedFundsForRecipient?: Promise<Escrow[]>
 }
 
 @ObjectType()
@@ -23,8 +23,8 @@ export class EscrowCondition {
 
 @ObjectType()
 export class Escrow {
-  @Field(() => [Coin])
-  coins!: Coin[]
+  @Field(() => [Coin], { nullable: true })
+  coins?: Coin[]
 
   @Field(() => EscrowCondition, { nullable: true })
   condition?: EscrowCondition
@@ -39,8 +39,8 @@ export class LockedFunds {
   funds?: Escrow
 }
 
-export const TimelockContractResult = createUnionType({
-  name: 'TimelockContractResult',
+export const TimelockResult = createUnionType({
+  name: 'TimelockResult',
   types: () => [TimelockContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Timelock) {

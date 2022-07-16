@@ -6,36 +6,36 @@ import { AdoType } from './ado.enums'
 @ObjectType()
 export class OffersContract extends AdoContract {
   //ERR: LCDClientError
-  @Field(() => OfferResponse)
-  offer!: Promise<OfferResponse>
+  @Field(() => OfferResponse, { nullable: true })
+  offer?: Promise<OfferResponse>
 
-  @Field(() => [OfferResponse])
-  allOffers!: Promise<OfferResponse[]>
+  @Field(() => [OfferResponse], { nullable: true })
+  allOffers?: Promise<OfferResponse[]>
 }
 
 @ObjectType()
 export class OfferResponse {
-  @Field()
-  denom!: string
+  @Field({ nullable: true })
+  denom?: string
 
-  @Field(() => Int)
-  offerAmount!: number
+  @Field(() => Int, { nullable: true })
+  offerAmount?: number
 
-  @Field(() => Int)
-  remainingAmount!: number
+  @Field(() => Int, { nullable: true })
+  remainingAmount?: number
 
-  @Field(() => Int)
-  taxAmount!: number
+  @Field(() => Int, { nullable: true })
+  taxAmount?: number
 
-  @Field(() => GraphQLJSON)
-  expiration!: JSON
+  @Field(() => GraphQLJSON, { nullable: true })
+  expiration?: JSON
 
-  @Field()
-  purchaser!: string
+  @Field({ nullable: true })
+  purchaser?: string
 }
 
-export const OffersContractResult = createUnionType({
-  name: 'OffersContractResult',
+export const OffersResult = createUnionType({
+  name: 'OffersResult',
   types: () => [OffersContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Offers) {

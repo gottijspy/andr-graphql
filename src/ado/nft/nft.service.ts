@@ -53,7 +53,7 @@ export class NftService extends AdoService {
 
     try {
       const minterInfo = await this.wasmService.queryContract(contractAddress, query)
-      return (minterInfo as NftContract).minter
+      return (minterInfo as NftContract).minter ?? ''
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       throw new Error(err)

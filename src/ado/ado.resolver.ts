@@ -1,13 +1,13 @@
 import { Args, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
 import { AdoService } from './ado.service'
-import { AdoContract, AdoContractResult } from './types/ado.contract'
+import { AdoContract, AdoResult } from './types/ado.contract'
 
 @Resolver(AdoContract)
 export class AdoResolver {
   constructor(private readonly adoService: AdoService) {}
 
-  @Query(() => AdoContractResult)
-  public async ado(@Args('address') address: string): Promise<typeof AdoContractResult> {
+  @Query(() => AdoResult)
+  public async ado(@Args('address') address: string): Promise<typeof AdoResult> {
     return this.adoService.getContract(address)
   }
 

@@ -1,10 +1,10 @@
-export { AdoContract, TypeMismatchError, AdoContractError, Coin, AdoContractResult } from './ado.contract'
-export { AddresslistContract, AddresslistResponse, AddresslistContractResult } from './addresslist.contract'
-export { AnchorContract, AnchorContractResult } from './anchor.contract'
-export { AdoAppContract, AppComponent, AppComponentAddress, AppConfig, AdoAppContractResult } from './adoapp.contract'
-export { AuctionContract, AuctionContractResult } from './auction.contract'
-export { CrowdfundConfig, CrowdfundState, CrowdfundContract, CrowdfundContractResult } from './crowdfund.contract'
-export { CW20TokenContract, TokenInfo, TxInfo, Cw20TokenContractResult } from './cw20token.contract'
+export { AdoContract, TypeMismatchError, AdoContractError, Coin, AdoResult } from './ado.contract'
+export { AddresslistContract, AddresslistResponse, AddresslistResult } from './addresslist.contract'
+export { AnchorContract, AnchorResult } from './anchor.contract'
+export { AdoAppContract, AppComponent, AppComponentAddress, AppConfig, AdoAppResult } from './adoapp.contract'
+export { AuctionContract, AuctionResult } from './auction.contract'
+export { CrowdfundConfig, CrowdfundState, CrowdfundContract, CrowdfundResult } from './crowdfund.contract'
+export { CW20TokenContract, TokenInfo, TxInfo, Cw20TokenResult } from './cw20token.contract'
 export {
   AllNftInfo,
   NftApproval,
@@ -13,12 +13,12 @@ export {
   NftOwnerInfo,
   TransferAgreement,
   NftContract,
-  NftContractResult,
+  NftResult,
 } from './nft.contract'
-export { OffersContract, OfferResponse, OffersContractResult } from './offers.contract'
-export { PrimitiveContract, PrimitiveResponse, PrimitiveContractResult } from './primitive.contract'
-export { Rate, RateInfo, RatesContract, RatesContractResult } from './rates.contract'
-export { ReceiptContract, ReceiptContractResult } from './receipt.contract'
-export { Splitter, SplitterContract, SplitterContractResult } from './splitter.contract'
-export { Escrow, EscrowCondition, LockedFunds, TimelockContract, TimelockContractResult } from './timelock.contract'
-export { VaultContract, AndrStrategy, VaultContractResult } from './vault.contract'
+export { OffersContract, OfferResponse, OffersResult } from './offers.contract'
+export { PrimitiveContract, PrimitiveResponse, PrimitiveResult } from './primitive.contract'
+export { Rate, RateInfo, RatesContract, RatesResult } from './rates.contract'
+export { ReceiptContract, ReceiptResult } from './receipt.contract'
+export { Splitter, SplitterContract, SplitterResult } from './splitter.contract'
+export { Escrow, EscrowCondition, LockedFunds, TimelockContract, TimelockResult } from './timelock.contract'
+export { VaultContract, AndrStrategy, VaultResult } from './vault.contract'

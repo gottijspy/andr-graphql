@@ -4,20 +4,20 @@ import { AdoType } from 'src/ado/types/ado.enums'
 
 @ObjectType()
 export class AdoAppContract extends AdoContract {
-  @Field(() => AppConfig)
-  config!: Promise<AppConfig>
+  @Field(() => AppConfig, { nullable: true })
+  config?: Promise<AppConfig>
 
-  @Field(() => String)
-  getAddress!: Promise<string>
+  @Field(() => String, { nullable: true })
+  getAddress?: Promise<string>
 
-  @Field(() => [AppComponentAddress])
-  addresses!: Promise<AppComponentAddress[]>
+  @Field(() => [AppComponentAddress], { nullable: true })
+  addresses?: Promise<AppComponentAddress[]>
 
-  @Field(() => Boolean)
-  componentExists!: Promise<boolean>
+  @Field(() => Boolean, { nullable: true })
+  componentExists?: Promise<boolean>
 
-  @Field(() => [AppComponent])
-  components!: Promise<AppComponent[]>
+  @Field(() => [AppComponent], { nullable: true })
+  components?: Promise<AppComponent[]>
 }
 
 @ObjectType()
@@ -50,8 +50,8 @@ export class AppComponentAddress {
   address!: string
 }
 
-export const AdoAppContractResult = createUnionType({
-  name: 'AdoAppContractResult',
+export const AdoAppResult = createUnionType({
+  name: 'AdoAppResult',
   types: () => [AdoAppContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.App) {

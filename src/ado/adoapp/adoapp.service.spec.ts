@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
-import { AdoAppService } from './app.service'
+import { AdoAppService } from './adoapp.service'
 
 describe('AdoAppService', () => {
   let service: AdoAppService

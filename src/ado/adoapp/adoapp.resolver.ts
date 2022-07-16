@@ -1,15 +1,25 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoAppContract, AdoContractError, TypeMismatchError, AdoAppContractResult } from 'src/ado/types'
-import { AppComponent, AppComponentAddress, AppConfig } from 'src/ado/types'
+import {
+  AppComponent,
+  AppComponentAddress,
+  AppConfig,
+  AdoAppContract,
+  AdoContractError,
+  TypeMismatchError,
+  AdoAppResult,
+} from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
-import { AdoAppService } from './app.service'
+import { AdoResolver } from '../ado.resolver'
+import { AdoAppService } from './adoapp.service'
 
 @Resolver(AdoAppContract)
-export class AdoAppResolver {
-  constructor(private readonly adoAppService: AdoAppService) {}
+export class AdoAppResolver extends AdoResolver {
+  constructor(private readonly adoAppService: AdoAppService) {
+    super(adoAppService)
+  }
 
-  @Query(() => AdoAppContractResult)
-  public async app(@Args('address') address: string): Promise<typeof AdoAppContractResult> {
+  @Query(() => AdoAppResult)
+  public async app(@Args('address') address: string): Promise<typeof AdoAppResult> {
     const contractInfo = await this.adoAppService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -21,21 +31,6 @@ export class AdoAppResolver {
 
     const typeError = new TypeMismatchError(AdoType.App, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() app: AdoAppContract): Promise<string> {
-    return this.adoAppService.owner(app.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() app: AdoAppContract): Promise<string[]> {
-    return this.adoAppService.operators(app.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(@Parent() app: AdoAppContract, @Args('operator') operator: string): Promise<boolean> {
-    return this.adoAppService.isOperator(app.address, operator)
   }
 
   @ResolveField(() => AppConfig)

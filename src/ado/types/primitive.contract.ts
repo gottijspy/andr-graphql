@@ -5,8 +5,8 @@ import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class PrimitiveContract extends AdoContract {
-  @Field(() => PrimitiveResponse)
-  getValue!: Promise<PrimitiveResponse>
+  @Field(() => PrimitiveResponse, { nullable: true })
+  getValue?: Promise<PrimitiveResponse>
 }
 
 @ObjectType()
@@ -18,8 +18,8 @@ export class PrimitiveResponse {
   value?: JSON
 }
 
-export const PrimitiveContractResult = createUnionType({
-  name: 'PrimitiveContractResult',
+export const PrimitiveResult = createUnionType({
+  name: 'PrimitiveResult',
   types: () => [PrimitiveContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Primitive) {

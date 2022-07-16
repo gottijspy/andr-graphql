@@ -8,7 +8,7 @@ import { join } from 'path'
 import pino from 'pino'
 import { AddresslistModule } from './ado/addresslist/addresslist.module'
 import { AdoModule } from './ado/ado.module'
-import { AdoAppModule } from './ado/adoapp/app.module'
+import { AdoAppModule } from './ado/adoapp/adoapp.module'
 import { AnchorModule } from './ado/anchor/anchor.module'
 import { AuctionModule } from './ado/auction/auction.module'
 import { CrowdfundModule } from './ado/crowdfund/crowdfund.module'
@@ -21,7 +21,6 @@ import { SplitterModule } from './ado/splitter/splitter.module'
 import { TimelockModule } from './ado/timelock/timelock.module'
 import { registerEnums } from './ado/types/ado.enums'
 import { VaultModule } from './ado/vault/vault.module'
-import { AnythingScalar } from './anything.scalar'
 import { AppResolver } from './app.resolver'
 import { CosmModule } from './cosm'
 import { validate } from './env.validation'
@@ -90,23 +89,6 @@ import { WasmModule } from './wasm/wasm.module'
         }
       },
     }),
-    // TerraModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (config: ConfigService) => {
-    //     const URL = config.get<string>('RPC_URL')
-    //     const chainID = config.get<string>('CHAIN_ID')
-
-    //     if (!URL || !chainID) {
-    //       throw new Error('Invalid RPC_URL or CHAIN_ID variables.')
-    //     }
-
-    //     return {
-    //       URL,
-    //       chainID,
-    //     }
-    //   },
-    // }),
     AddresslistModule,
     AdoModule,
     AdoOffersModule,
@@ -124,6 +106,6 @@ import { WasmModule } from './wasm/wasm.module'
     TxModule,
     WasmModule,
   ],
-  providers: [AppResolver, AnythingScalar],
+  providers: [AppResolver],
 })
 export class AppModule {}

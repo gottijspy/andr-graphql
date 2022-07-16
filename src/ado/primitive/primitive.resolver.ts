@@ -2,19 +2,22 @@ import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import {
   AdoContractError,
   PrimitiveContract,
-  PrimitiveContractResult,
+  PrimitiveResult,
   PrimitiveResponse,
   TypeMismatchError,
 } from 'src/ado/types'
+import { AdoResolver } from '../ado.resolver'
 import { AdoType } from '../types/ado.enums'
 import { PrimitiveService } from './primitive.service'
 
 @Resolver(PrimitiveContract)
-export class PrimitiveResolver {
-  constructor(private readonly primitiveService: PrimitiveService) {}
+export class PrimitiveResolver extends AdoResolver {
+  constructor(private readonly primitiveService: PrimitiveService) {
+    super(primitiveService)
+  }
 
-  @Query(() => PrimitiveContractResult)
-  public async primitive(@Args('address') address: string): Promise<typeof PrimitiveContractResult> {
+  @Query(() => PrimitiveResult)
+  public async primitive(@Args('address') address: string): Promise<typeof PrimitiveResult> {
     const contractInfo = await this.primitiveService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -26,24 +29,6 @@ export class PrimitiveResolver {
 
     const typeError = new TypeMismatchError(AdoType.Primitive, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() primitive: PrimitiveContract): Promise<string> {
-    return this.primitiveService.owner(primitive.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() primitive: PrimitiveContract): Promise<string[]> {
-    return this.primitiveService.operators(primitive.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(
-    @Parent() primitive: PrimitiveContract,
-    @Args('operator') operator: string,
-  ): Promise<boolean> {
-    return this.primitiveService.isOperator(primitive.address, operator)
   }
 
   @ResolveField(() => PrimitiveResponse)

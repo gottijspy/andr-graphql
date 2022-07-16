@@ -1,21 +1,17 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import {
-  AdoContractError,
-  AndrStrategy,
-  Coin,
-  TypeMismatchError,
-  VaultContract,
-  VaultContractResult,
-} from 'src/ado/types'
+import { AdoContractError, AndrStrategy, Coin, TypeMismatchError, VaultContract, VaultResult } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
+import { AdoResolver } from '../ado.resolver'
 import { VaultService } from './vault.service'
 
 @Resolver(VaultContract)
-export class VaultResolver {
-  constructor(private readonly vaultService: VaultService) {}
+export class VaultResolver extends AdoResolver {
+  constructor(private readonly vaultService: VaultService) {
+    super(vaultService)
+  }
 
-  @Query(() => VaultContractResult)
-  public async vault(@Args('address') address: string): Promise<typeof VaultContractResult> {
+  @Query(() => VaultResult)
+  public async vault(@Args('address') address: string): Promise<typeof VaultResult> {
     const contractInfo = await this.vaultService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -27,21 +23,6 @@ export class VaultResolver {
 
     const typeError = new TypeMismatchError(AdoType.Vault, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() vault: VaultContract): Promise<string> {
-    return this.vaultService.owner(vault.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() vault: VaultContract): Promise<string[]> {
-    return this.vaultService.operators(vault.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(@Parent() vault: VaultContract, @Args('operator') operator: string): Promise<boolean> {
-    return this.vaultService.isOperator(vault.address, operator)
   }
 
   @ResolveField(() => [Coin])

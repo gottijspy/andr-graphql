@@ -7,8 +7,8 @@ export class AnchorContract extends AdoContract {
   //WARN: Anchor queries need to be defined
 }
 
-export const AnchorContractResult = createUnionType({
-  name: 'AnchorContractResult',
+export const AnchorResult = createUnionType({
+  name: 'AnchorResult',
   types: () => [AnchorContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Anchor) {

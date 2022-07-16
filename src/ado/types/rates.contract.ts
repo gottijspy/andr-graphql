@@ -5,66 +5,54 @@ import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class RatesContract extends AdoContract {
-  @Field()
-  contractAddress!: string
-
-  @Field(() => String)
-  owner!: Promise<string>
-
-  @Field(() => [String])
-  operators!: Promise<string[]>
-
-  @Field(() => Boolean)
-  isOperator!: Promise<boolean>
-
-  @Field(() => [RateInfo])
-  payments!: Promise<RateInfo[]>
+  @Field(() => [RateInfo], { nullable: true })
+  payments?: Promise<RateInfo[]>
 }
 
 @ObjectType()
 export class PercentRate {
-  @Field(() => Float)
-  decimal!: number
+  @Field(() => Float, { nullable: true })
+  decimal?: number
 }
 
 @ObjectType()
 export class ADORate {
-  @Field()
-  address!: string
+  @Field({ nullable: true })
+  address?: string
 
-  @Field()
+  @Field({ nullable: true })
   key?: string
 }
 
 @ObjectType()
 export class Rate {
-  @Field(() => Coin)
+  @Field(() => Coin, { nullable: true })
   flat?: Coin
 
-  @Field(() => PercentRate)
+  @Field(() => PercentRate, { nullable: true })
   percent?: PercentRate
 
-  @Field(() => ADORate)
+  @Field(() => ADORate, { nullable: true })
   external?: ADORate
 }
 
 @ObjectType()
 export class RateInfo {
-  @Field(() => Rate)
-  rate!: Rate
+  @Field(() => Rate, { nullable: true })
+  rate?: Rate
 
-  @Field()
-  is_additive!: boolean
+  @Field(() => Boolean, { nullable: true })
+  is_additive?: boolean
 
-  @Field()
+  @Field({ nullable: true })
   description?: string
 
   @Field(() => [GraphQLJSON], { nullable: true })
   receivers?: JSON[]
 }
 
-export const RatesContractResult = createUnionType({
-  name: 'RatesContractResult',
+export const RatesResult = createUnionType({
+  name: 'RatesResult',
   types: () => [RatesContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Rates) {

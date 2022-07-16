@@ -1,7 +1,8 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { AdoResolver } from '../ado.resolver'
 import {
   AddresslistContract,
-  AddresslistContractResult,
+  AddresslistResult,
   AddresslistResponse,
   AdoContractError,
   TypeMismatchError,
@@ -10,11 +11,13 @@ import { AdoType } from '../types/ado.enums'
 import { AddresslistService } from './addresslist.service'
 
 @Resolver(AddresslistContract)
-export class AddresslistResolver {
-  constructor(private readonly addresslistService: AddresslistService) {}
+export class AddresslistResolver extends AdoResolver {
+  constructor(private readonly addresslistService: AddresslistService) {
+    super(addresslistService)
+  }
 
-  @Query(() => AddresslistContractResult)
-  public async addresslist(@Args('address') address: string): Promise<typeof AddresslistContractResult> {
+  @Query(() => AddresslistResult)
+  public async addresslist(@Args('address') address: string): Promise<typeof AddresslistResult> {
     const contractInfo = await this.addresslistService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -26,24 +29,6 @@ export class AddresslistResolver {
 
     const typeError = new TypeMismatchError(AdoType.Addresslist, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() addressList: AddresslistContract): Promise<string> {
-    return this.addresslistService.owner(addressList.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() addressList: AddresslistContract): Promise<string[]> {
-    return this.addresslistService.operators(addressList.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(
-    @Parent() addressList: AddresslistContract,
-    @Args('operator') operator: string,
-  ): Promise<boolean> {
-    return this.addresslistService.isOperator(addressList.address, operator)
   }
 
   @ResolveField(() => AddresslistResponse)

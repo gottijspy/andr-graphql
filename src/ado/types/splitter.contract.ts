@@ -5,30 +5,30 @@ import { AdoType } from './ado.enums'
 
 @ObjectType()
 export class SplitterContract extends AdoContract {
-  @Field(() => Splitter)
-  config!: Promise<Splitter>
+  @Field(() => Splitter, { nullable: true })
+  config?: Promise<Splitter>
 }
 
 @ObjectType()
 export class AddressPercent {
-  @Field(() => GraphQLJSON)
+  @Field(() => GraphQLJSON, { nullable: true })
   recipient?: JSON
 
-  @Field(() => String)
-  percent!: string
+  @Field(() => String, { nullable: true })
+  percent?: string
 }
 
 @ObjectType()
 export class Splitter {
-  @Field(() => [AddressPercent])
-  recipients!: AddressPercent[]
+  @Field(() => [AddressPercent], { nullable: true })
+  recipients?: AddressPercent[]
 
-  @Field(() => Boolean)
-  locked!: boolean
+  @Field(() => Boolean, { nullable: true })
+  locked?: boolean
 }
 
-export const SplitterContractResult = createUnionType({
-  name: 'SplitterContractResult',
+export const SplitterResult = createUnionType({
+  name: 'SplitterResult',
   types: () => [SplitterContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Splitter) {

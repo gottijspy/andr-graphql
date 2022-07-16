@@ -1,15 +1,18 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { CrowdfundConfig, CrowdfundContract, CrowdfundState } from 'src/ado/types'
-import { CrowdfundContractResult, TypeMismatchError, AdoContractError } from 'src/ado/types'
+import { CrowdfundResult, TypeMismatchError, AdoContractError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
+import { AdoResolver } from '../ado.resolver'
 import { CrowdfundService } from './crowdfund.service'
 
 @Resolver(CrowdfundContract)
-export class CrowdfundResolver {
-  constructor(private readonly crowdfundService: CrowdfundService) {}
+export class CrowdfundResolver extends AdoResolver {
+  constructor(private readonly crowdfundService: CrowdfundService) {
+    super(crowdfundService)
+  }
 
-  @Query(() => CrowdfundContractResult)
-  public async crowdfund(@Args('address') address: string): Promise<typeof CrowdfundContractResult> {
+  @Query(() => CrowdfundResult)
+  public async crowdfund(@Args('address') address: string): Promise<typeof CrowdfundResult> {
     const contractInfo = await this.crowdfundService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -21,24 +24,6 @@ export class CrowdfundResolver {
 
     const typeError = new TypeMismatchError(AdoType.Crowdfund, contractInfo.adoType)
     return { ...typeError } as AdoContractError
-  }
-
-  @ResolveField(() => String)
-  public async owner(@Parent() crowdfund: CrowdfundContract): Promise<string> {
-    return this.crowdfundService.owner(crowdfund.address)
-  }
-
-  @ResolveField(() => [String])
-  public async operators(@Parent() crowdfund: CrowdfundContract): Promise<string[]> {
-    return this.crowdfundService.operators(crowdfund.address)
-  }
-
-  @ResolveField(() => Boolean)
-  public async isOperator(
-    @Parent() crowdfund: CrowdfundContract,
-    @Args('operator') operator: string,
-  ): Promise<boolean> {
-    return this.crowdfundService.isOperator(crowdfund.address, operator)
   }
 
   @ResolveField(() => CrowdfundState)

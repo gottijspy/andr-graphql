@@ -7,8 +7,8 @@ export class ReceiptContract extends AdoContract {
   //WARN: Auction queries need to be defined
 }
 
-export const ReceiptContractResult = createUnionType({
-  name: 'ReceiptContractResult',
+export const ReceiptResult = createUnionType({
+  name: 'ReceiptResult',
   types: () => [ReceiptContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.Auction) {
