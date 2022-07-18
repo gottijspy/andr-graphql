@@ -1,0 +1,7 @@
+export const LOGGER_ERROR_CONTRACT_TEXT = 'Error getting wasm contract: %s'
+export const LOGGER_ERROR_QUERY_TEXT = 'Error executing the wasm contract %s query: %s'
+export const INVALID_REQUEST_TEXT = 'invalid request'
+export const NOT_FOUND_TEXT = 'not found'
+export const NOT_FOUND_ERR = 'invalid contract address or contract not found'
+export const INTERNAL_CONTRACT_ERR = 'Failed to fetch contract'
+export const INVALID_QUERY_ERR = 'invalid query or query execution failed'

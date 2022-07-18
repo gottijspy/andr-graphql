@@ -1,6 +1,7 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { AdoResolver } from '../ado.resolver'
-import { AdoContractError, RateInfo, RatesContract, RatesResult, TypeMismatchError } from '../types'
+import { RateInfo, RatesContract, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { RatesService } from './rates.service'
 
@@ -10,8 +11,8 @@ export class RatesResolver extends AdoResolver {
     super(ratesService)
   }
 
-  @Query(() => RatesResult)
-  public async rates(@Args('address') address: string): Promise<typeof RatesResult> {
+  @Query(() => RatesContract)
+  public async rates(@Args('address') address: string): Promise<RatesContract> {
     const contractInfo = await this.ratesService.getContract(address)
     if ('error' in contractInfo) {
       return contractInfo
@@ -22,7 +23,7 @@ export class RatesResolver extends AdoResolver {
     }
 
     const typeError = new TypeMismatchError(AdoType.Rates, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => [RateInfo])

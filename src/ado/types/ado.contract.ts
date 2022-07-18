@@ -66,10 +66,12 @@ export class Coin {
 export class TypeMismatchError {
   constructor(expectedType: AdoType, observedType: AdoType) {
     this.code = 1
+    this.errorType = 'TYPE_MISMATCH'
     this.error = `TypeError: expecting ${expectedType} contract, found: ${observedType}`
   }
 
   code?: number
+  errorType!: string
   error!: string
 }
 

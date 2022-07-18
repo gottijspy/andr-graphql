@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { AppComponent, AppComponentAddress, AppConfig } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
-import { DEFAULT_CATCH_ERR } from '../types/ado.constants'
+import { APP_QUERY_COMPONENT_NAME, DEFAULT_CATCH_ERR, INVALID_QUERY_ERR } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
 export class AdoAppService extends AdoService {
@@ -17,55 +19,53 @@ export class AdoAppService extends AdoService {
   }
 
   public async config(address: string): Promise<AppConfig> {
-    const queryMsg = {
-      config: {},
-    }
-
     try {
-      const config = await this.wasmService.queryContract(address, queryMsg)
+      const config = await this.wasmService.queryContract(address, queryMsgs.adoapp.config)
       return config as AppConfig
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
   public async getAddresses(address: string): Promise<AppComponentAddress[]> {
-    const queryMsg = {
-      get_addresses: {},
-    }
-
     try {
-      const addresses = await this.wasmService.queryContract(address, queryMsg)
+      const addresses = await this.wasmService.queryContract(address, queryMsgs.adoapp.get_addresses)
       return addresses as AppComponentAddress[]
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
   public async getAddress(address: string, name: string): Promise<string> {
-    const queryMsg = {
-      get_address: {
-        name: name,
-      },
-    }
+    const queryMsgStr = JSON.stringify(queryMsgs.adoapp.get_address).replace(APP_QUERY_COMPONENT_NAME, name)
+    const queryMsg = JSON.parse(queryMsgStr)
 
     try {
       const addressResult = await this.wasmService.queryContract(address, queryMsg)
       return addressResult
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
   public async componentExists(address: string, name: string): Promise<boolean> {
-    const queryMsg = {
-      component_exists: {
-        name: name,
-      },
-    }
+    const queryMsgStr = JSON.stringify(queryMsgs.adoapp.component_exists).replace(APP_QUERY_COMPONENT_NAME, name)
+    const queryMsg = JSON.parse(queryMsgStr)
 
     try {
       const componentResult = await this.wasmService.queryContract(address, queryMsg)
@@ -73,22 +73,26 @@ export class AdoAppService extends AdoService {
       return componentResult
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
   public async getComponents(contractAddress: string): Promise<AppComponent[]> {
-    const queryMsg = {
-      get_components: {},
-    }
-
     try {
-      const components = await this.wasmService.queryContract(contractAddress, queryMsg)
+      const components = await this.wasmService.queryContract(contractAddress, queryMsgs.adoapp.get_components)
       console.log(components)
       return components as AppComponent[]
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 }

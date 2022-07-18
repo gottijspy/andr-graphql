@@ -1,6 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { AdoResolver } from '../ado.resolver'
-import { AdoContractError, AnchorContract, AnchorResult, TypeMismatchError } from '../types'
+import { AnchorContract, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { AnchorService } from './anchor.service'
 
@@ -10,18 +11,14 @@ export class AnchorResolver extends AdoResolver {
     super(anchorService)
   }
 
-  @Query(() => AnchorResult)
-  public async anchor(@Args('address') address: string): Promise<typeof AnchorResult> {
+  @Query(() => AnchorContract)
+  public async anchor(@Args('address') address: string): Promise<AnchorContract> {
     const contractInfo = await this.anchorService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Anchor) {
       return contractInfo as AnchorContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Anchor, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 }

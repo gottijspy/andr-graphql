@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
 import { OfferResponse } from '../types'
+import { INVALID_QUERY_ERR } from '../types/ado.constants'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 
 @Injectable()
@@ -29,7 +31,11 @@ export class OffersService extends AdoService {
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
 
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -49,7 +55,11 @@ export class OffersService extends AdoService {
       return offers.allOffers ?? []
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 }

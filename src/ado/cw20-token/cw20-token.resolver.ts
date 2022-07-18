@@ -1,5 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoContractError, CW20TokenContract, Cw20TokenResult, TokenInfo, TypeMismatchError } from 'src/ado/types'
+import { UserInputError } from 'apollo-server'
+import { CW20TokenContract, TokenInfo, TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { AdoResolver } from '../ado.resolver'
 import { CW20TokenService } from './cw20-token.service'
@@ -10,19 +11,15 @@ export class CW20TokenResolver extends AdoResolver {
     super(cw20tokenService)
   }
 
-  @Query(() => Cw20TokenResult)
-  public async cw20token(@Args('address') address: string): Promise<typeof Cw20TokenResult> {
+  @Query(() => CW20TokenContract)
+  public async cw20token(@Args('address') address: string): Promise<CW20TokenContract> {
     const contractInfo = await this.cw20tokenService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.CW20Token) {
       return contractInfo as CW20TokenContract
     }
 
     const typeError = new TypeMismatchError(AdoType.CW20Token, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => TokenInfo)

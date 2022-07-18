@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { AllNftInfo, NftApproval, NftContractInfo, TransferAgreement } from 'src/ado/types'
 import { NftInfo, NftOwnerInfo, NftContract } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
+import { INVALID_QUERY_ERR, NFT_QUERY_INCLUDE_EXPIRED, NFT_QUERY_TOKEN_ID } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 
 @Injectable()
@@ -17,63 +20,37 @@ export class NftService extends AdoService {
     super(logger, wasmService)
   }
 
-  // public async getNftContract(address: string): Promise<typeof NftContractResult>{
-  //   try {
-  //     const contractInfo = await this.getContract(address)
-  //     console.log(contractInfo)
-  //     if ('queries_expected' in contractInfo) {
-  //       if (contractInfo.queries_expected && contractInfo.queries_expected.includes(NFT_QUERY)) {
-  //         return contractInfo as NftContract
-  //       }
-  //     }
-
-  //     console.log('Message')
-  //     if ('message' in contractInfo) {
-  //       if (contractInfo.message){
-  //         return { code: contractInfo.code ?? -1, message: contractInfo.message }
-  //       }
-  //     }
-
-  //     return { code: 1, message: INVALID_ADO_NFT }
-  //   } catch(err: any) {
-  //     this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
-  //     const errMsg = err.toString()
-  //     if (errMsg) {
-  //       return { code: -1, message: errMsg } as AdoContractError
-  //     }
-
-  //     throw new Error(err)
-  //   }
-  // }
-
   public async minter(contractAddress: string): Promise<string> {
-    const query = {
-      minter: {},
-    }
-
     try {
-      const minterInfo = await this.wasmService.queryContract(contractAddress, query)
+      const minterInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.nft.minter)
       return (minterInfo as NftContract).minter ?? ''
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
   public async ownerOf(contractAddress: string, tokenId: string, includeExpired: boolean): Promise<NftOwnerInfo> {
-    const query = {
-      owner_of: {
-        token_id: tokenId,
-        include_expired: includeExpired,
-      },
-    }
+    const queryMsgStr = JSON.stringify(queryMsgs.nft.owner_of)
+      .replace(NFT_QUERY_TOKEN_ID, tokenId)
+      .replace(NFT_QUERY_INCLUDE_EXPIRED, String(includeExpired))
+    const queryMsg = JSON.parse(queryMsgStr)
 
     try {
-      const ownerInfo = await this.wasmService.queryContract(contractAddress, query)
+      const ownerInfo = await this.wasmService.queryContract(contractAddress, queryMsg)
+      console.log(ownerInfo)
       return ownerInfo as NftOwnerInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -95,7 +72,11 @@ export class NftService extends AdoService {
       return allOperators.operators ?? []
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -118,7 +99,11 @@ export class NftService extends AdoService {
       return approvedForAll as NftApproval
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -135,7 +120,11 @@ export class NftService extends AdoService {
       return approvals as NftApproval[]
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -149,7 +138,11 @@ export class NftService extends AdoService {
       return numTokens.count ?? 0
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -165,7 +158,11 @@ export class NftService extends AdoService {
       return nftInfo as NftInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -179,10 +176,15 @@ export class NftService extends AdoService {
 
     try {
       const allNftInfo = await this.wasmService.queryContract(contractAddress, query)
+      console.log(allNftInfo)
       return allNftInfo as AllNftInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -198,7 +200,11 @@ export class NftService extends AdoService {
       return isArchived as boolean
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -214,7 +220,11 @@ export class NftService extends AdoService {
       return transferAgreement as TransferAgreement
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -231,7 +241,11 @@ export class NftService extends AdoService {
     } catch (err: any) {
       console.log(err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -246,7 +260,11 @@ export class NftService extends AdoService {
     } catch (err: any) {
       console.log(err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 
@@ -260,7 +278,11 @@ export class NftService extends AdoService {
       return contractInfo as NftContractInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 }

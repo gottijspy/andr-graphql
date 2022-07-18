@@ -1,6 +1,7 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { CrowdfundConfig, CrowdfundContract, CrowdfundState } from 'src/ado/types'
-import { CrowdfundResult, TypeMismatchError, AdoContractError } from 'src/ado/types'
+import { TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { AdoResolver } from '../ado.resolver'
 import { CrowdfundService } from './crowdfund.service'
@@ -11,19 +12,15 @@ export class CrowdfundResolver extends AdoResolver {
     super(crowdfundService)
   }
 
-  @Query(() => CrowdfundResult)
-  public async crowdfund(@Args('address') address: string): Promise<typeof CrowdfundResult> {
+  @Query(() => CrowdfundContract)
+  public async crowdfund(@Args('address') address: string): Promise<CrowdfundContract> {
     const contractInfo = await this.crowdfundService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Crowdfund) {
       return contractInfo as CrowdfundContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Crowdfund, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => CrowdfundState)

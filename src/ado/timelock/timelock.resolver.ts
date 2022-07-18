@@ -1,6 +1,7 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { AdoResolver } from '../ado.resolver'
-import { AdoContractError, Escrow, TimelockContract, TimelockResult, TypeMismatchError } from '../types'
+import { Escrow, TimelockContract, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 import { TimelockService } from './timelock.service'
@@ -11,19 +12,15 @@ export class TimelockResolver extends AdoResolver {
     super(timelockService)
   }
 
-  @Query(() => TimelockResult)
-  public async timelock(@Args('address') address: string): Promise<typeof TimelockResult> {
+  @Query(() => TimelockContract)
+  public async timelock(@Args('address') address: string): Promise<TimelockContract> {
     const contractInfo = await this.timelockService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Timelock) {
       return contractInfo as TimelockContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Timelock, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => Escrow)

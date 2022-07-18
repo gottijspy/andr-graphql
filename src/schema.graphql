@@ -31,8 +31,6 @@ type AddresslistResponse {
   included: Boolean
 }
 
-union AddresslistResult = AddresslistContract | AdoContractError
-
 type AdoAppContract implements BaseAdoContract {
   address: String!
   addresses: [AppComponentAddress!]
@@ -52,8 +50,6 @@ type AdoAppContract implements BaseAdoContract {
   queries_expected: [String!]
 }
 
-union AdoAppResult = AdoAppContract | AdoContractError
-
 type AdoContract implements BaseAdoContract {
   address: String!
   admin: String
@@ -67,13 +63,6 @@ type AdoContract implements BaseAdoContract {
   owner: String!
   queries_expected: [String!]
 }
-
-type AdoContractError {
-  code: Int
-  error: String!
-}
-
-union AdoResult = AdoContract | AdoContractError
 
 enum AdoType {
   Addresslist
@@ -120,8 +109,6 @@ type AnchorContract implements BaseAdoContract {
   owner: String!
   queries_expected: [String!]
 }
-
-union AnchorResult = AdoContractError | AnchorContract
 
 enum AndrOrderBy {
   Asc
@@ -224,8 +211,6 @@ type CrowdfundContract implements BaseAdoContract {
   state: CrowdfundState
 }
 
-union CrowdfundResult = AdoContractError | CrowdfundContract
-
 type CrowdfundState {
   amount_sold: Int
   amount_to_send: Int
@@ -236,8 +221,6 @@ type CrowdfundState {
   price: Coin
   recipient: JSON
 }
-
-union Cw20TokenResult = AdoContractError | CW20TokenContract
 
 type Escrow {
   coins: [Coin!]
@@ -302,8 +285,6 @@ type NftOwnerInfo {
   owner: String
 }
 
-union NftResult = AdoContractError | NftContract
-
 type OfferResponse {
   denom: String
   expiration: JSON
@@ -329,8 +310,6 @@ type OffersContract implements BaseAdoContract {
   queries_expected: [String!]
 }
 
-union OffersResult = AdoContractError | OffersContract
-
 type PercentRate {
   decimal: Float
 }
@@ -355,23 +334,21 @@ type PrimitiveResponse {
   value: JSON
 }
 
-union PrimitiveResult = AdoContractError | PrimitiveContract
-
 type Query {
-  addresslist(address: String!): AddresslistResult!
-  ado(address: String!): AdoResult!
-  anchor(address: String!): AnchorResult!
-  app(address: String!): AdoAppResult!
-  crowdfund(address: String!): CrowdfundResult!
-  cw20token(address: String!): Cw20TokenResult!
-  nft(address: String!): NftResult!
-  offers(address: String!): OffersResult!
+  addresslist(address: String!): AddresslistContract!
+  ado(address: String!): AdoContract!
+  anchor(address: String!): AnchorContract!
+  app(address: String!): AdoAppContract!
+  crowdfund(address: String!): CrowdfundContract!
+  cw20token(address: String!): CW20TokenContract!
+  nft(address: String!): NftContract!
+  offers(address: String!): OffersContract!
   ping: String!
-  primitive(address: String!): PrimitiveResult!
-  rates(address: String!): RatesResult!
-  splitter(address: String!): SplitterResult!
-  timelock(address: String!): TimelockResult!
-  vault(address: String!): VaultResult!
+  primitive(address: String!): PrimitiveContract!
+  rates(address: String!): RatesContract!
+  splitter(address: String!): SplitterContract!
+  timelock(address: String!): TimelockContract!
+  vault(address: String!): VaultContract!
   wasm(address: String!): WasmContractResult!
 }
 
@@ -403,8 +380,6 @@ type RatesContract implements BaseAdoContract {
   queries_expected: [String!]
 }
 
-union RatesResult = AdoContractError | RatesContract
-
 type Splitter {
   locked: Boolean
   recipients: [AddressPercent!]
@@ -425,8 +400,6 @@ type SplitterContract implements BaseAdoContract {
   queries_expected: [String!]
 }
 
-union SplitterResult = AdoContractError | SplitterContract
-
 type TimelockContract implements BaseAdoContract {
   address: String!
   admin: String
@@ -442,8 +415,6 @@ type TimelockContract implements BaseAdoContract {
   owner: String!
   queries_expected: [String!]
 }
-
-union TimelockResult = AdoContractError | TimelockContract
 
 type TokenInfo {
   decimals: Int!
@@ -472,8 +443,6 @@ type VaultContract implements BaseAdoContract {
   queries_expected: [String!]
   strategyAddress(strategy: String!): AndrStrategy
 }
-
-union VaultResult = AdoContractError | VaultContract
 
 type WasmContract implements BaseContract {
   address: String!

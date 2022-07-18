@@ -1,5 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoContractError, Splitter, SplitterContract, SplitterResult, TypeMismatchError } from 'src/ado/types'
+import { UserInputError } from 'apollo-server'
+import { Splitter, SplitterContract, TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { AdoResolver } from '../ado.resolver'
 import { SplitterService } from './splitter.service'
@@ -10,19 +11,15 @@ export class SplitterResolver extends AdoResolver {
     super(splitterService)
   }
 
-  @Query(() => SplitterResult)
-  public async splitter(@Args('address') address: string): Promise<typeof SplitterResult> {
+  @Query(() => SplitterContract)
+  public async splitter(@Args('address') address: string): Promise<SplitterContract> {
     const contractInfo = await this.splitterService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Splitter) {
       return contractInfo as SplitterContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Splitter, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => Splitter)

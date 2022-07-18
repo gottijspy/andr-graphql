@@ -1,6 +1,7 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { AdoResolver } from '../ado.resolver'
-import { AdoContractError, OfferResponse, OffersContract, OffersResult, TypeMismatchError } from '../types'
+import { OfferResponse, OffersContract, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
 import { OffersService } from './offers.service'
@@ -11,19 +12,15 @@ export class OffersResolver extends AdoResolver {
     super(offersService)
   }
 
-  @Query(() => OffersResult)
-  public async offers(@Args('address') address: string): Promise<typeof OffersResult> {
+  @Query(() => OffersContract)
+  public async offers(@Args('address') address: string): Promise<OffersContract> {
     const contractInfo = await this.offersService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Offers) {
       return contractInfo as OffersContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Offers, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => OfferResponse)

@@ -1,13 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import {
-  AppComponent,
-  AppComponentAddress,
-  AppConfig,
-  AdoAppContract,
-  AdoContractError,
-  TypeMismatchError,
-  AdoAppResult,
-} from 'src/ado/types'
+import { UserInputError } from 'apollo-server'
+import { AppComponent, AppComponentAddress, AppConfig, AdoAppContract, TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { AdoResolver } from '../ado.resolver'
 import { AdoAppService } from './adoapp.service'
@@ -18,19 +11,20 @@ export class AdoAppResolver extends AdoResolver {
     super(adoAppService)
   }
 
-  @Query(() => AdoAppResult)
-  public async app(@Args('address') address: string): Promise<typeof AdoAppResult> {
+  @Query(() => AdoAppContract)
+  public async app(@Args('address') address: string): Promise<AdoAppContract> {
     const contractInfo = await this.adoAppService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
+    // if ('error' in contractInfo) {
+    //   return contractInfo
+    // }
 
     if (contractInfo.adoType && contractInfo.adoType == AdoType.App) {
       return contractInfo as AdoAppContract
     }
 
     const typeError = new TypeMismatchError(AdoType.App, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
+    //return { ...typeError } as AdoContractError
   }
 
   @ResolveField(() => AppConfig)

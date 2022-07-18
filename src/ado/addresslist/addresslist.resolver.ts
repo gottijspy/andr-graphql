@@ -1,12 +1,7 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { AdoResolver } from '../ado.resolver'
-import {
-  AddresslistContract,
-  AddresslistResult,
-  AddresslistResponse,
-  AdoContractError,
-  TypeMismatchError,
-} from '../types'
+import { AddresslistContract, AddresslistResponse, TypeMismatchError } from '../types'
 import { AdoType } from '../types/ado.enums'
 import { AddresslistService } from './addresslist.service'
 
@@ -16,19 +11,15 @@ export class AddresslistResolver extends AdoResolver {
     super(addresslistService)
   }
 
-  @Query(() => AddresslistResult)
-  public async addresslist(@Args('address') address: string): Promise<typeof AddresslistResult> {
+  @Query(() => AddresslistContract)
+  public async addresslist(@Args('address') address: string): Promise<AddresslistContract> {
     const contractInfo = await this.addresslistService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Addresslist) {
       return contractInfo as AddresslistContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Addresslist, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => AddresslistResponse)

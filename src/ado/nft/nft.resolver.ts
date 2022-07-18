@@ -1,6 +1,7 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UserInputError } from 'apollo-server'
 import { AllNftInfo, NftApproval, NftContractInfo, NftInfo, NftOwnerInfo, TransferAgreement } from 'src/ado/types'
-import { NftContract, NftResult, AdoContractError, TypeMismatchError } from 'src/ado/types'
+import { NftContract, TypeMismatchError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { AdoResolver } from '../ado.resolver'
 import { AndrSearchOptions } from '../types/andr-search-options.input'
@@ -12,19 +13,15 @@ export class NftResolver extends AdoResolver {
     super(nftService)
   }
 
-  @Query(() => NftResult)
-  public async nft(@Args('address') address: string): Promise<typeof NftResult> {
+  @Query(() => NftContract)
+  public async nft(@Args('address') address: string): Promise<NftContract> {
     const contractInfo = await this.nftService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.NFT) {
       return contractInfo as NftContract
     }
 
     const typeError = new TypeMismatchError(AdoType.NFT, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   //FIX: unknown variant minter

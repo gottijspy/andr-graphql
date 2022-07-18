@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { TokenInfo } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
+import { INVALID_QUERY_ERR } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
 export class CW20TokenService extends AdoService {
@@ -16,17 +19,17 @@ export class CW20TokenService extends AdoService {
   }
 
   public async tokenInfo(contractAddress: string): Promise<TokenInfo> {
-    const query = {
-      token_info: {},
-    }
-
     try {
-      const tokenInfo = await this.wasmService.queryContract(contractAddress, query)
+      const tokenInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.cw20token.token_info)
       console.log(tokenInfo)
       return tokenInfo as TokenInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 

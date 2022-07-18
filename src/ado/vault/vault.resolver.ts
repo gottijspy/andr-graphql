@@ -1,5 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoContractError, AndrStrategy, Coin, TypeMismatchError, VaultContract, VaultResult } from 'src/ado/types'
+import { UserInputError } from 'apollo-server'
+import { AndrStrategy, Coin, TypeMismatchError, VaultContract } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { AdoResolver } from '../ado.resolver'
 import { VaultService } from './vault.service'
@@ -10,19 +11,15 @@ export class VaultResolver extends AdoResolver {
     super(vaultService)
   }
 
-  @Query(() => VaultResult)
-  public async vault(@Args('address') address: string): Promise<typeof VaultResult> {
+  @Query(() => VaultContract)
+  public async vault(@Args('address') address: string): Promise<VaultContract> {
     const contractInfo = await this.vaultService.getContract(address)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
-
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Vault) {
       return contractInfo as VaultContract
     }
 
     const typeError = new TypeMismatchError(AdoType.Vault, contractInfo.adoType)
-    return { ...typeError } as AdoContractError
+    throw new UserInputError(typeError.error, { ...typeError })
   }
 
   @ResolveField(() => [Coin])

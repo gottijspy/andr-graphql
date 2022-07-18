@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
 import { RateInfo, RatesContract } from '../types'
+import { INVALID_QUERY_ERR } from '../types/ado.constants'
 
 @Injectable()
 export class RatesService extends AdoService {
@@ -26,7 +28,11 @@ export class RatesService extends AdoService {
       return (ratesInfo as RatesContract).payments ?? []
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
-      throw new Error(err)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
     }
   }
 }
