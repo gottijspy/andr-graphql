@@ -26,7 +26,7 @@
     "test"
   ],
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "0.28.7",
+    "@cosmjs/cosmwasm-stargate": "^0.28.11",
     "@nestjs/apollo": "^10.0.17",
     "@nestjs/common": "^9.0.3",
     "@nestjs/config": "^2.2.0",
@@ -103,8 +103,5 @@
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"
     }
-  },
-  "engines": {
-    "node": "14.x"
   }
 }
