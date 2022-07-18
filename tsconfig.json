@@ -21,7 +21,7 @@
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
+    //"resolveJsonModule": true,
     //"esModuleInterop": true,
     //"strictBindCallApply": false,
     //"forceConsistentCasingInFileNames": false
