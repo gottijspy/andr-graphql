@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { getLoggerToken } from 'nestjs-pino'
+import { getCosmToken } from 'src/cosm'
 import { TxService } from './tx.service'
 
 describe('TxService', () => {
@@ -6,7 +8,19 @@ describe('TxService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TxService],
+      providers: [
+        TxService,
+        {
+          provide: getLoggerToken(TxService.name),
+          useValue: {
+            error: jest.fn(),
+          },
+        },
+        {
+          provide: getCosmToken(),
+          useValue: {},
+        },
+      ],
     }).compile()
 
     service = module.get<TxService>(TxService)

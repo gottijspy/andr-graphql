@@ -4,7 +4,8 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
 import { Escrow, LockedFunds } from '../types'
-import { INVALID_QUERY_ERR } from '../types/ado.constants'
+import { INVALID_QUERY_ERR, TIMELOCK_QUERY_OWNER, TIMELOCK_QUERY_RECIPIENT } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
 export class TimelockService extends AdoService {
@@ -18,15 +19,13 @@ export class TimelockService extends AdoService {
   }
 
   public async getLockedFunds(contractAddress: string, owner: string, recipient: string): Promise<Escrow> {
-    const query = {
-      get_locked_funds: {
-        owner: owner,
-        recipient: recipient,
-      },
-    }
+    const queryMsgStr = JSON.stringify(queryMsgs.timelock.locked_funds)
+      .replace(TIMELOCK_QUERY_OWNER, owner)
+      .replace(TIMELOCK_QUERY_RECIPIENT, recipient)
+    const queryMsg = JSON.parse(queryMsgStr)
 
     try {
-      const lockedFunds = await this.wasmService.queryContract(contractAddress, query)
+      const lockedFunds = await this.wasmService.queryContract(contractAddress, queryMsg)
       console.log(lockedFunds)
       return (lockedFunds as LockedFunds).funds ?? ({} as Escrow)
     } catch (err: any) {

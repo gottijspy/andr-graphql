@@ -1,4 +1,4 @@
-import { createUnionType, Field, Int, InterfaceType, ObjectType } from '@nestjs/graphql'
+import { ArgsType, createUnionType, Field, Int, InterfaceType, ObjectType } from '@nestjs/graphql'
 import GraphQLJSON from 'graphql-type-json'
 
 @InterfaceType()
@@ -56,6 +56,15 @@ export class WasmContract implements BaseContract {
 
   @Field(() => [String], { nullable: true })
   queries_expected?: string[]
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  queryMsg?: JSON
+}
+
+@ArgsType()
+export class WasmQueryArgs {
+  @Field(() => GraphQLJSON)
+  message!: Record<string, any>
 }
 
 @ObjectType()

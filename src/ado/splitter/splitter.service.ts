@@ -5,6 +5,7 @@ import { Splitter, SplitterContract } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
 import { INVALID_QUERY_ERR } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
 export class SplitterService extends AdoService {
@@ -18,12 +19,8 @@ export class SplitterService extends AdoService {
   }
 
   public async config(contractAddress: string): Promise<Splitter> {
-    const query = {
-      get_splitter_config: {},
-    }
-
     try {
-      const splitter = await this.wasmService.queryContract(contractAddress, query)
+      const splitter = await this.wasmService.queryContract(contractAddress, queryMsgs.splitter.config)
       console.log(splitter.config)
       return (splitter as SplitterContract).config ?? {}
     } catch (err: any) {

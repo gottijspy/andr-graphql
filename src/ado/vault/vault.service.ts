@@ -4,7 +4,8 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { AndrStrategy, Coin } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
-import { INVALID_QUERY_ERR } from '../types/ado.constants'
+import { INVALID_QUERY_ERR, VAULT_QUERY_ADDRESS, VAULT_QUERY_STRATEGY } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
 export class VaultService extends AdoService {
@@ -18,14 +19,11 @@ export class VaultService extends AdoService {
   }
 
   public async balance(contractAddress: string, address: string): Promise<Coin[]> {
-    const query = {
-      balance: {
-        address: address,
-      },
-    }
+    const queryMsgStr = JSON.stringify(queryMsgs.vault.balance).replace(VAULT_QUERY_ADDRESS, address)
+    const queryMsg = JSON.parse(queryMsgStr)
 
     try {
-      const queryResponse = await this.wasmService.queryContract(contractAddress, query)
+      const queryResponse = await this.wasmService.queryContract(contractAddress, queryMsg)
       return queryResponse as Coin[]
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -38,14 +36,11 @@ export class VaultService extends AdoService {
   }
 
   public async strategyAddress(contractAddress: string, strategy: string): Promise<AndrStrategy> {
-    const query = {
-      strategy_address: {
-        strategy: strategy,
-      },
-    }
+    const queryMsgStr = JSON.stringify(queryMsgs.vault.strategy_address).replace(VAULT_QUERY_STRATEGY, strategy)
+    const queryMsg = JSON.parse(queryMsgStr)
 
     try {
-      const queryResponse = await this.wasmService.queryContract(contractAddress, query)
+      const queryResponse = await this.wasmService.queryContract(contractAddress, queryMsg)
       return queryResponse as AndrStrategy
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

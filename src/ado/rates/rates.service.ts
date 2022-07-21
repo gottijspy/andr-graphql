@@ -5,6 +5,7 @@ import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
 import { RateInfo, RatesContract } from '../types'
 import { INVALID_QUERY_ERR } from '../types/ado.constants'
+import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
 export class RatesService extends AdoService {
@@ -18,12 +19,8 @@ export class RatesService extends AdoService {
   }
 
   public async payments(contractAddress: string): Promise<RateInfo[]> {
-    const query = {
-      payments: {},
-    }
-
     try {
-      const ratesInfo = await this.wasmService.queryContract(contractAddress, query)
+      const ratesInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.rates.payments)
       console.log(ratesInfo)
       return (ratesInfo as RatesContract).payments ?? []
     } catch (err: any) {

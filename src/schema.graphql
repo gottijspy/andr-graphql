@@ -348,8 +348,9 @@ type Query {
   rates(address: String!): RatesContract!
   splitter(address: String!): SplitterContract!
   timelock(address: String!): TimelockContract!
+  tx: TxSearchResult!
   vault(address: String!): VaultContract!
-  wasm(address: String!): WasmContractResult!
+  wasm(address: String!): WasmContract!
 }
 
 type Rate {
@@ -428,6 +429,23 @@ type TransferAgreement {
   tokenId: String
 }
 
+type TxInfo {
+  code: Int
+  gasUsed: Int
+  gasWanted: Int
+  hash: String!
+  height: Int!
+  rawLog: String
+  tx: JSON
+}
+
+type TxSearchResult {
+  byAccount(maxHeight: Int, minHeight: Int, sentFromOrTo: String!): [TxInfo!]
+  byContract(address: String!, maxHeight: Int, minHeight: Int): [TxInfo!]
+  byHash(hash: String!): TxInfo
+  byHeight(height: Float!): [TxInfo!]
+}
+
 type VaultContract implements BaseAdoContract {
   address: String!
   admin: String
@@ -452,11 +470,5 @@ type WasmContract implements BaseContract {
   ibcPortId: String
   label: String!
   queries_expected: [String!]
+  queryMsg(message: JSON!): JSON
 }
-
-type WasmContractError {
-  code: Int
-  error: String!
-}
-
-union WasmContractResult = WasmContract | WasmContractError

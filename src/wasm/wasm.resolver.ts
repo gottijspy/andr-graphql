@@ -1,19 +1,21 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
-import { WasmContract, WasmContractResult } from './types/wasm.contract'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import GraphQLJSON from 'graphql-type-json'
+import { WasmQueryArgs, WasmContract } from './types/wasm.contract'
 import { WasmService } from './wasm.service'
 
 @Resolver(WasmContract)
 export class WasmResolver {
   constructor(private readonly wasmService: WasmService) {}
 
-  @Query(() => WasmContractResult)
-  public async wasm(@Args('address') address: string): Promise<typeof WasmContractResult> {
+  @Query(() => WasmContract)
+  public async wasm(@Args('address') address: string): Promise<WasmContract> {
     const contractInfo = await this.wasmService.getContract(address)
-    console.log(contractInfo)
-    if ('error' in contractInfo) {
-      return contractInfo
-    }
+    return contractInfo
+  }
 
-    return contractInfo as WasmContract
+  @ResolveField(() => GraphQLJSON)
+  public async queryMsg(@Parent() wasm: WasmContract, @Args() queryArgs: WasmQueryArgs): Promise<JSON> {
+    const queryInfo = await this.wasmService.queryContract(wasm.address, queryArgs.message)
+    return queryInfo
   }
 }
