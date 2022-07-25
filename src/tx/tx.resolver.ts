@@ -1,6 +1,6 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { TxService } from './tx.service'
-import { TxFilterParams, TxSearchResult, TxInfo } from './types/tx.result'
+import { TxFilterParams, TxSearchResult, TxInfo, TxSearchByTagArgs } from './types/tx.result'
 
 @Resolver(TxSearchResult)
 export class TxResolver {
@@ -24,26 +24,32 @@ export class TxResolver {
   }
 
   @ResolveField(() => [TxInfo])
-  public async byContract(@Args('address') address: string, @Args() searchParams?: TxFilterParams): Promise<TxInfo[]> {
-    const queryInfo = await this.txService.byContract(address, searchParams)
+  public async byContract(@Args('address') address: string, @Args() filterParams?: TxFilterParams): Promise<TxInfo[]> {
+    const queryInfo = await this.txService.byContract(address, filterParams)
     return queryInfo
   }
 
   @ResolveField(() => [TxInfo])
   public async byAccount(
     @Args('sentFromOrTo') sentFromOrTo: string,
-    @Args() searchParams?: TxFilterParams,
+    @Args() filterParams?: TxFilterParams,
   ): Promise<TxInfo[]> {
-    const queryInfo = await this.txService.byAccount(sentFromOrTo, searchParams)
+    const queryInfo = await this.txService.byAccount(sentFromOrTo, filterParams)
     return queryInfo
   }
 
   @ResolveField(() => [TxInfo])
   public async byOwner(
     @Args('walletAddress') walletAddress: string,
-    @Args() searchParams?: TxFilterParams,
+    @Args() filterParams?: TxFilterParams,
   ): Promise<TxInfo[]> {
-    const queryInfo = await this.txService.byOwner(walletAddress, searchParams)
+    const queryInfo = await this.txService.byOwner(walletAddress, filterParams)
+    return queryInfo
+  }
+
+  @ResolveField(() => [TxInfo])
+  public async byTag(@Args() searchTags: TxSearchByTagArgs, @Args() filterParams?: TxFilterParams): Promise<TxInfo[]> {
+    const queryInfo = await this.txService.byTag(searchTags, filterParams)
     return queryInfo
   }
 }

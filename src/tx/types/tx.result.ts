@@ -22,6 +22,15 @@ export class TxFilterParams {
   maxHeight?: number
 }
 
+@ArgsType()
+export class TxSearchByTagArgs {
+  @Field(() => GraphQLJSON)
+  tags!: Array<{
+    readonly key: string
+    readonly value: string
+  }>
+}
+
 @ObjectType()
 export class TxInfo {
   @Field(() => Int)
@@ -62,4 +71,7 @@ export class TxSearchResult {
 
   @Field(() => [TxInfo], { nullable: true })
   byOwner?: TxInfo[]
+
+  @Field(() => [TxInfo], { nullable: true })
+  byTag?: TxInfo[]
 }

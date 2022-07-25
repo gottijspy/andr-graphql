@@ -37,7 +37,6 @@ export class WasmService {
       }
 
       throw new ApolloError(INTERNAL_CONTRACT_ERR)
-      //return this.parseError(err)
     }
   }
 
@@ -47,24 +46,7 @@ export class WasmService {
       return queryResult
     } catch (err: any) {
       this.logger.error({ err }, LOGGER_ERROR_QUERY_TEXT, address, queryMsg)
-      //const errMsg = err.toString()
-      // console.log(errMsg)
-      // if (errMsg && errMsg.includes(INVALID_REQUEST_TEXT)) {
-      //   throw new UserInputError(NOT_FOUND_ERR)
-      // }
-
       throw new ApolloError(INVALID_QUERY_ERR, 'WASM_QUERYMSG_ERROR', { queryMsg })
-      // const wasmContractError = this.parseError(err)
-
-      // // if (wasmContractError.error) {
-      // //   throw { ...wasmContractError, queryMsg } as WasmContractQueryError
-      // // }
-
-      // throw new ApolloError(wasmContractError)
-      //   wasmContractError.error ?
-      //   { ...wasmContractError, queryMsg } as WasmContractQueryError
-      //   : err )
-      //return wasmContractError.error ? ({ ...wasmContractError, queryMsg } as WasmContractQueryError) : new Error(err)
     }
   }
 
@@ -84,27 +66,27 @@ export class WasmService {
       return queries
     }
   }
-
-  // private parseError(error: any): WasmContractError {
-  //   const emptyError: WasmContractError = { code: -1, error: '' }
-  //   try {
-  //     const errMsg = error.toString()
-  //     console.log(errMsg)
-  //     if (!errMsg) {
-  //       return emptyError
-  //     }
-
-  //     let errNum = -1
-  //     const pattern = /(\d+)/g
-  //     const current = pattern.exec(errMsg)
-  //     if (current && current[0]) {
-  //       errNum = Number(current[0])
-  //     }
-
-  //     return { code: errNum, error: errMsg } as WasmContractError
-  //   } catch (err: any) {
-  //     this.logger.error({ err, error }, 'Error parsing error into WasmContractError')
-  //     return emptyError
-  //   }
-  // }
 }
+
+// private parseError(error: any): WasmContractError {
+//   const emptyError: WasmContractError = { code: -1, error: '' }
+//   try {
+//     const errMsg = error.toString()
+//     console.log(errMsg)
+//     if (!errMsg) {
+//       return emptyError
+//     }
+
+//     let errNum = -1
+//     const pattern = /(\d+)/g
+//     const current = pattern.exec(errMsg)
+//     if (current && current[0]) {
+//       errNum = Number(current[0])
+//     }
+
+//     return { code: errNum, error: errMsg } as WasmContractError
+//   } catch (err: any) {
+//     this.logger.error({ err, error }, 'Error parsing error into WasmContractError')
+//     return emptyError
+//   }
+// }
