@@ -6,9 +6,6 @@ import { AdoType } from './ado.enums'
 export class CW20TokenContract extends AdoContract {
   @Field(() => TokenInfo, { nullable: true })
   tokenInfo?: Promise<TokenInfo>
-
-  // @Field(() => [TxInfo])
-  // tx!: Promise<TxInfo[]>
 }
 
 @ObjectType()
@@ -24,30 +21,6 @@ export class TokenInfo {
 
   @Field(() => Float)
   total_supply!: number
-}
-
-@ObjectType()
-export class TxInfo {
-  @Field(() => Int)
-  height!: number
-
-  @Field(() => String)
-  hash!: string
-
-  @Field(() => Int)
-  code!: number
-
-  @Field(() => String)
-  rawLog!: string
-
-  @Field(() => [Int])
-  tx!: Uint8Array
-
-  @Field(() => Int)
-  gasUsed!: number
-
-  @Field(() => Int)
-  gasWanted!: number
 }
 
 export const Cw20TokenResult = createUnionType({

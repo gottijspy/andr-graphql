@@ -1,7 +1,6 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { TxInfo } from 'src/ado/types'
 import { TxService } from './tx.service'
-import { TxFilterParams, TxSearchResult } from './types/tx.result'
+import { TxFilterParams, TxSearchResult, TxInfo } from './types/tx.result'
 
 @Resolver(TxSearchResult)
 export class TxResolver {
@@ -36,6 +35,15 @@ export class TxResolver {
     @Args() searchParams?: TxFilterParams,
   ): Promise<TxInfo[]> {
     const queryInfo = await this.txService.byAccount(sentFromOrTo, searchParams)
+    return queryInfo
+  }
+
+  @ResolveField(() => [TxInfo])
+  public async byOwner(
+    @Args('walletAddress') walletAddress: string,
+    @Args() searchParams?: TxFilterParams,
+  ): Promise<TxInfo[]> {
+    const queryInfo = await this.txService.byOwner(walletAddress, searchParams)
     return queryInfo
   }
 }

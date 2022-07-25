@@ -2,16 +2,16 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { TxInfo } from 'src/ado/types'
 import { InjectCosmClient } from 'src/cosm'
 import {
   INTERNAL_TX_QUERY_ERR,
   LOG_ERR_TX_QRY_ACCT_TXT,
   LOG_ERR_TX_QRY_CNTRCT_TXT,
   LOG_ERR_TX_QRY_HT_TXT,
+  LOG_ERR_TX_QRY_OWNR_TXT,
   LOG_ERR_TX_QRY_TXT,
 } from './types/tx.constants'
-import { TxFilterParams } from './types/tx.result'
+import { TxFilterParams, TxInfo } from './types/tx.result'
 
 @Injectable()
 export class TxService {
@@ -67,6 +67,22 @@ export class TxService {
       return txInfo as TxInfo[]
     } catch (err: any) {
       this.logger.error({ err }, LOG_ERR_TX_QRY_ACCT_TXT, sentFromOrTo)
+      throw new ApolloError(INTERNAL_TX_QUERY_ERR)
+    }
+  }
+
+  public async byOwner(walletAddress: string, filterParams?: TxFilterParams): Promise<TxInfo[]> {
+    try {
+      const txInfo = await this.cosmWasmClient.searchTx(
+        {
+          tags: [{ key: 'wasm.owner', value: walletAddress }],
+        },
+        filterParams,
+      )
+
+      return txInfo as TxInfo[]
+    } catch (err: any) {
+      this.logger.error({ err }, LOG_ERR_TX_QRY_OWNR_TXT, walletAddress)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
     }
   }

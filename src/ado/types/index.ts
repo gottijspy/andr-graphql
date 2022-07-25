@@ -4,7 +4,7 @@ export { AnchorContract, AnchorResult } from './anchor.contract'
 export { AdoAppContract, AppComponent, AppComponentAddress, AppConfig, AdoAppResult } from './adoapp.contract'
 export { AuctionContract, AuctionResult } from './auction.contract'
 export { CrowdfundConfig, CrowdfundState, CrowdfundContract, CrowdfundResult } from './crowdfund.contract'
-export { CW20TokenContract, TokenInfo, TxInfo, Cw20TokenResult } from './cw20token.contract'
+export { CW20TokenContract, TokenInfo, Cw20TokenResult } from './cw20token.contract'
 export {
   AllNftInfo,
   NftApproval,

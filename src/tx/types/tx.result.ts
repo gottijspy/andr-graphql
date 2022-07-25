@@ -59,4 +59,7 @@ export class TxSearchResult {
 
   @Field(() => [TxInfo], { nullable: true })
   byAccount?: TxInfo[]
+
+  @Field(() => [TxInfo], { nullable: true })
+  byOwner?: TxInfo[]
 }
