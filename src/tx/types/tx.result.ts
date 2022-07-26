@@ -45,6 +45,12 @@ export class TxInfo {
   @Field({ nullable: true })
   rawLog?: string
 
+  @Field(() => [TxLog], { nullable: true })
+  txLog?: TxLog[]
+
+  @Field(() => [TxEvent], { nullable: true })
+  events?: TxEvent[]
+
   @Field(() => GraphQLJSON, { nullable: true })
   tx?: Uint8Array
 
@@ -53,6 +59,30 @@ export class TxInfo {
 
   @Field(() => Int, { nullable: true })
   gasWanted?: number
+}
+
+@ObjectType()
+export class TxLog {
+  @Field(() => [TxEvent])
+  events!: TxEvent[]
+}
+
+@ObjectType()
+export class TxEvent {
+  @Field()
+  type!: string
+
+  @Field(() => [TxEventAttribute])
+  attributes!: TxEventAttribute[]
+}
+
+@ObjectType()
+export class TxEventAttribute {
+  @Field()
+  key!: string
+
+  @Field()
+  value!: string
 }
 
 @ObjectType()

@@ -146,6 +146,12 @@ type AppConfig {
   owner: String!
 }
 
+type AssetResult {
+  adoType: String
+  contractAddress: String
+  height: Int
+}
+
 interface BaseAdoContract {
   address: String!
   admin: String
@@ -339,6 +345,7 @@ type Query {
   ado(address: String!): AdoContract!
   anchor(address: String!): AnchorContract!
   app(address: String!): AdoAppContract!
+  assets(walletAddress: String!): [AssetResult!]!
   crowdfund(address: String!): CrowdfundContract!
   cw20token(address: String!): CW20TokenContract!
   nft(address: String!): NftContract!
@@ -429,14 +436,30 @@ type TransferAgreement {
   tokenId: String
 }
 
+type TxEvent {
+  attributes: [TxEventAttribute!]!
+  type: String!
+}
+
+type TxEventAttribute {
+  key: String!
+  value: String!
+}
+
 type TxInfo {
   code: Int
+  events: [TxEvent!]
   gasUsed: Int
   gasWanted: Int
   hash: String!
   height: Int!
   rawLog: String
   tx: JSON
+  txLog: [TxLog!]
+}
+
+type TxLog {
+  events: [TxEvent!]!
 }
 
 type TxSearchResult {

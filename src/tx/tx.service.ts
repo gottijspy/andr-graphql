@@ -1,4 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+//import { decodeTxRaw } from '@cosmjs/proto-signing'
 import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
@@ -12,7 +13,7 @@ import {
   LOG_ERR_TX_QRY_TAG_TXT,
   LOG_ERR_TX_QRY_TXT,
 } from './types/tx.constants'
-import { TxFilterParams, TxInfo, TxSearchByTagArgs } from './types/tx.result'
+import { TxFilterParams, TxInfo, TxLog, TxSearchByTagArgs } from './types/tx.result'
 
 @Injectable()
 export class TxService {
@@ -25,8 +26,11 @@ export class TxService {
 
   public async byHash(hash: string): Promise<TxInfo> {
     try {
-      const txInfo = await this.cosmWasmClient.getTx(hash)
-      return txInfo as TxInfo
+      const IndexedTx = await this.cosmWasmClient.getTx(hash)
+
+      let txInfo = IndexedTx as TxInfo
+      txInfo = this.parseTx(txInfo)
+      return txInfo
     } catch (err: any) {
       this.logger.error({ err }, LOG_ERR_TX_QRY_TXT, hash)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
@@ -35,8 +39,11 @@ export class TxService {
 
   public async byHeight(height: number): Promise<TxInfo[]> {
     try {
-      const txInfo = await this.cosmWasmClient.searchTx({ height: height })
-      return txInfo as TxInfo[]
+      const indexedTxs = await this.cosmWasmClient.searchTx({ height: height })
+
+      let txInfo = indexedTxs as TxInfo[]
+      txInfo = txInfo.map((tx) => this.parseTx(tx))
+      return txInfo
     } catch (err: any) {
       this.logger.error({ err }, LOG_ERR_TX_QRY_HT_TXT, height)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
@@ -45,7 +52,7 @@ export class TxService {
 
   public async byContract(contractAddress: string, filterParams?: TxFilterParams): Promise<TxInfo[]> {
     try {
-      const txInfo = await this.cosmWasmClient.searchTx(
+      const indexedTxs = await this.cosmWasmClient.searchTx(
         {
           tags: [
             { key: 'execute._contract_address', value: contractAddress },
@@ -55,7 +62,9 @@ export class TxService {
         filterParams,
       )
 
-      return txInfo as TxInfo[]
+      let txInfo = indexedTxs as TxInfo[]
+      txInfo = txInfo.map((tx) => this.parseTx(tx))
+      return txInfo
     } catch (err: any) {
       this.logger.error({ err }, LOG_ERR_TX_QRY_CNTRCT_TXT, contractAddress)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
@@ -64,8 +73,11 @@ export class TxService {
 
   public async byAccount(sentFromOrTo: string, filterParams?: TxFilterParams): Promise<TxInfo[]> {
     try {
-      const txInfo = await this.cosmWasmClient.searchTx({ sentFromOrTo: sentFromOrTo }, filterParams)
-      return txInfo as TxInfo[]
+      const indexedTxs = await this.cosmWasmClient.searchTx({ sentFromOrTo: sentFromOrTo }, filterParams)
+
+      let txInfo = indexedTxs as TxInfo[]
+      txInfo = txInfo.map((tx) => this.parseTx(tx))
+      return txInfo
     } catch (err: any) {
       this.logger.error({ err }, LOG_ERR_TX_QRY_ACCT_TXT, sentFromOrTo)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
@@ -74,7 +86,7 @@ export class TxService {
 
   public async byOwner(walletAddress: string, filterParams?: TxFilterParams): Promise<TxInfo[]> {
     try {
-      const txInfo = await this.cosmWasmClient.searchTx(
+      const indexedTxs = await this.cosmWasmClient.searchTx(
         {
           tags: [
             { key: 'wasm.owner', value: walletAddress },
@@ -84,7 +96,9 @@ export class TxService {
         filterParams,
       )
 
-      return txInfo as TxInfo[]
+      let txInfo = indexedTxs as TxInfo[]
+      txInfo = txInfo.map((tx) => this.parseTx(tx))
+      return txInfo
     } catch (err: any) {
       this.logger.error({ err }, LOG_ERR_TX_QRY_OWNR_TXT, walletAddress)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
@@ -94,12 +108,29 @@ export class TxService {
   public async byTag(tags: TxSearchByTagArgs, filterParams?: TxFilterParams): Promise<TxInfo[]> {
     try {
       console.log(tags)
-      const txInfo = await this.cosmWasmClient.searchTx(tags, filterParams)
-      return txInfo as TxInfo[]
+      const indexedTxs = await this.cosmWasmClient.searchTx(tags, filterParams)
+
+      let txInfo = indexedTxs as TxInfo[]
+      txInfo = txInfo.map((tx) => this.parseTx(tx))
+      return txInfo
     } catch (err: any) {
       console.log(err)
       this.logger.error({ err }, LOG_ERR_TX_QRY_TAG_TXT, tags)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
     }
+  }
+
+  private parseTx(tx: TxInfo): TxInfo {
+    if (tx.rawLog) {
+      tx.txLog = JSON.parse(tx.rawLog) as TxLog[]
+      tx.events = tx.txLog.flatMap((log) => log.events)
+      //[ ...rawLogJSON[0].events ]
+    }
+
+    // if (tx.tx){
+    //   console.log(decodeTxRaw(tx.tx))
+    // }
+
+    return tx
   }
 }

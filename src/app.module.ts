@@ -22,6 +22,7 @@ import { TimelockModule } from './ado/timelock/timelock.module'
 import { registerEnums } from './ado/types/ado.enums'
 import { VaultModule } from './ado/vault/vault.module'
 import { AppResolver } from './app.resolver'
+import { AssetsModule } from './assets/assets.module'
 import { CosmModule } from './cosm'
 import { validate } from './env.validation'
 import { TxModule } from './tx/tx.module'
@@ -105,6 +106,7 @@ import { WasmModule } from './wasm/wasm.module'
     VaultModule,
     TxModule,
     WasmModule,
+    AssetsModule,
   ],
   providers: [AppResolver],
 })

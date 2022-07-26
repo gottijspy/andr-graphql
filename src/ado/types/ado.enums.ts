@@ -24,21 +24,21 @@ export enum OrderBy {
 }
 
 export enum AdoType {
-  Addresslist = 'Addresslist',
-  Ado = 'Ado',
-  Anchor = 'Anchor',
+  Addresslist = 'addresslist',
+  Ado = 'ado',
+  Anchor = 'anchor',
   App = 'App',
-  Auction = 'Auction',
-  Crowdfund = 'Crowdfund',
-  CW20Token = 'CW20Token',
-  NFT = 'NFT',
-  Offers = 'Offers',
-  Primitive = 'Primitive',
-  Rates = 'Rates',
-  Receipt = 'Receipt',
-  Splitter = 'Splitter',
-  Timelock = 'Timelock',
-  Vault = 'Vault',
+  Auction = 'auction',
+  Crowdfund = 'crowdfund',
+  CW20Token = 'cw20token',
+  NFT = 'nft',
+  Offers = 'offers',
+  Primitive = 'primitive',
+  Rates = 'rates',
+  Receipt = 'receipt',
+  Splitter = 'splitter',
+  Timelock = 'timelock',
+  Vault = 'vault',
 }
 
 //ERR: TS enums vs Rust enums

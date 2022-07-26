@@ -4,5 +4,6 @@ import { TxService } from './tx.service'
 
 @Module({
   providers: [TxResolver, TxService],
+  exports: [TxService],
 })
 export class TxModule {}
