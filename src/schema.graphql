@@ -150,6 +150,7 @@ type AssetResult {
   adoType: String
   contractAddress: String
   height: Int
+  timestamp: String
 }
 
 interface BaseAdoContract {

@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AssetsService } from './assets.service'
 import { AssetResult } from './types/assets.result'
 
@@ -9,6 +9,12 @@ export class AssetsResolver {
   @Query(() => [AssetResult])
   public async assets(@Args('walletAddress') walletAddress: string): Promise<AssetResult[]> {
     return this.assetsService.getAssets(walletAddress)
+  }
+
+  @ResolveField(() => String)
+  public async timestamp(@Parent() asset: AssetResult): Promise<string | undefined> {
+    if (!asset.height) return
+    return this.assetsService.getTimestamp(asset.height)
   }
 
   // @ResolveField(() => AssetInfoResult)

@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { InjectCosmClient } from 'src/cosm'
+import { BlockInfo } from './types/block.result'
 import {
   INTERNAL_TX_QUERY_ERR,
   LOG_ERR_TX_QRY_ACCT_TXT,
@@ -107,15 +108,23 @@ export class TxService {
 
   public async byTag(tags: TxSearchByTagArgs, filterParams?: TxFilterParams): Promise<TxInfo[]> {
     try {
-      console.log(tags)
       const indexedTxs = await this.cosmWasmClient.searchTx(tags, filterParams)
 
       let txInfo = indexedTxs as TxInfo[]
       txInfo = txInfo.map((tx) => this.parseTx(tx))
       return txInfo
     } catch (err: any) {
-      console.log(err)
       this.logger.error({ err }, LOG_ERR_TX_QRY_TAG_TXT, tags)
+      throw new ApolloError(INTERNAL_TX_QUERY_ERR)
+    }
+  }
+
+  public async getBlockInfo(height: number): Promise<BlockInfo> {
+    try {
+      const blockInfo = await this.cosmWasmClient.getBlock(height)
+      return blockInfo as BlockInfo
+    } catch (err: any) {
+      this.logger.error({ err }, LOG_ERR_TX_QRY_HT_TXT, height)
       throw new ApolloError(INTERNAL_TX_QUERY_ERR)
     }
   }

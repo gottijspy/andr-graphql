@@ -11,6 +11,9 @@ export class AssetResult {
   @Field(() => Int, { nullable: true })
   height?: number
 
+  @Field({ nullable: true })
+  timestamp?: string
+
   // @Field(() => AssetInfoResult, { nullable: true })
   // assetInfo?: AdoAppContract | AdoContract
 }

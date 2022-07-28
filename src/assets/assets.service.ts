@@ -19,6 +19,13 @@ export class AssetsService {
     return assets.filter((a) => a != null) as AssetResult[]
   }
 
+  public async getTimestamp(height: number): Promise<string | undefined> {
+    const blockInfo = await this.txService.getBlockInfo(height)
+
+    if (!blockInfo) return
+    return blockInfo.header?.time
+  }
+
   private getAsset(tx: TxInfo): AssetResult | null {
     const instantiate = tx.txLog?.find((log) => log.events.map((ev) => ev.type).includes('instantiate'))
 
