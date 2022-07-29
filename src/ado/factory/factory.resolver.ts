@@ -12,7 +12,7 @@ export class FactoryResolver extends AdoResolver {
   }
 
   @Query(() => FactoryContract)
-  public async factoty(@Args('address') address: string): Promise<FactoryContract> {
+  public async factory(@Args('address') address: string): Promise<FactoryContract> {
     const contractInfo = await this.factoryService.getContract(address)
     if (contractInfo.adoType && contractInfo.adoType == AdoType.Factory) {
       return contractInfo as FactoryContract
