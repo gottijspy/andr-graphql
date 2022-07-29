@@ -31,6 +31,7 @@ export enum AdoType {
   Auction = 'auction',
   Crowdfund = 'crowdfund',
   CW20Token = 'cw20token',
+  Factory = 'factory',
   NFT = 'nft',
   Offers = 'offers',
   Primitive = 'primitive',

@@ -47,7 +47,6 @@ export class NftService extends AdoService {
 
     try {
       const ownerInfo = await this.wasmService.queryContract(contractAddress, queryMsg)
-      console.log(ownerInfo)
       return ownerInfo as NftOwnerInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -166,7 +165,6 @@ export class NftService extends AdoService {
 
     try {
       const allNftInfo = await this.wasmService.queryContract(contractAddress, queryMsg)
-      console.log(allNftInfo)
       return allNftInfo as AllNftInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -220,7 +218,6 @@ export class NftService extends AdoService {
       const tokenResponse = await this.wasmService.queryContract(contractAddress, queryMsg)
       return tokenResponse.tokens ?? []
     } catch (err: any) {
-      console.log(err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {
         throw err
@@ -235,7 +232,6 @@ export class NftService extends AdoService {
       const tokenResponse = await this.wasmService.queryContract(contractAddress, queryMsgs.nft.all_tokens)
       return tokenResponse.tokens ?? []
     } catch (err: any) {
-      console.log(err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {
         throw err

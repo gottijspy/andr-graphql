@@ -36,7 +36,6 @@ export class CrowdfundService extends AdoService {
   public async config(address: string): Promise<CrowdfundConfig> {
     try {
       const crowdfundConfig = await this.wasmService.queryContract(address, queryMsgs.crowdfund.config)
-      console.log(crowdfundConfig)
       return crowdfundConfig
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)

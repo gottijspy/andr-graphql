@@ -21,7 +21,6 @@ export class SplitterService extends AdoService {
   public async config(contractAddress: string): Promise<Splitter> {
     try {
       const splitter = await this.wasmService.queryContract(contractAddress, queryMsgs.splitter.config)
-      console.log(splitter.config)
       return (splitter as SplitterContract).config ?? {}
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

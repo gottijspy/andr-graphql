@@ -19,8 +19,6 @@ export class AssetsResolver {
 
   // @ResolveField(() => AssetInfoResult)
   // public async assetInfo(@Parent() asset: AssetResult): Promise<typeof AssetInfoResult> {
-  //   console.log(asset)
-  //   console.log(AdoType[AdoType.App].toLowerCase())
   //   if (asset.adoType === AdoType[AdoType.App].toLowerCase()) {
   //     console.log('app is true')
   //     return { address: asset.contractAddress } as AdoAppContract

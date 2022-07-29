@@ -25,10 +25,8 @@ export class PrimitiveService extends AdoService {
 
     try {
       const queryResponse = await this.wasmService.queryContract(contractAddress, queryMsg)
-      console.log(queryResponse)
       return queryResponse
     } catch (err: any) {
-      console.log('error: ' + err)
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {
         throw err

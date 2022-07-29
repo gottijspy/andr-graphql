@@ -13,6 +13,7 @@ import { AnchorModule } from './ado/anchor/anchor.module'
 import { AuctionModule } from './ado/auction/auction.module'
 import { CrowdfundModule } from './ado/crowdfund/crowdfund.module'
 import { CW20TokenModule } from './ado/cw20-token/cw20-token.module'
+import { FactoryModule } from './ado/factory/factory.module'
 import { NftModule } from './ado/nft/nft.module'
 import { AdoOffersModule } from './ado/offers/offers.module'
 import { PrimitiveModule } from './ado/primitive/primitive.module'
@@ -98,6 +99,7 @@ import { WasmModule } from './wasm/wasm.module'
     AuctionModule,
     CrowdfundModule,
     CW20TokenModule,
+    FactoryModule,
     NftModule,
     PrimitiveModule,
     RatesModule,

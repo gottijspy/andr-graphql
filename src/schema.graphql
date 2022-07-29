@@ -72,6 +72,7 @@ enum AdoType {
   Auction
   CW20Token
   Crowdfund
+  Factory
   NFT
   Offers
   Primitive
@@ -240,6 +241,21 @@ type EscrowCondition {
   miniumFunds: [Coin!]
 }
 
+type FactoryContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
+  code_id(key: String!): Int
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
+  operators: [String!]!
+  owner: String!
+  queries_expected: [String!]
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -349,6 +365,7 @@ type Query {
   assets(walletAddress: String!): [AssetResult!]!
   crowdfund(address: String!): CrowdfundContract!
   cw20token(address: String!): CW20TokenContract!
+  factoty(address: String!): FactoryContract!
   nft(address: String!): NftContract!
   offers(address: String!): OffersContract!
   ping: String!

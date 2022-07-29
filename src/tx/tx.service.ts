@@ -137,7 +137,7 @@ export class TxService {
     }
 
     // if (tx.tx){
-    //   console.log(decodeTxRaw(tx.tx))
+    //   const txRaw = decodeTxRaw(tx.tx))
     // }
 
     return tx

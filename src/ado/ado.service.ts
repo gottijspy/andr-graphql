@@ -11,6 +11,7 @@ import {
   CROWDFUND_QUERY,
   CW20Token_QUERY,
   DEFAULT_CATCH_ERR,
+  FACTORY_QUERY,
   INVALID_ADO_ERR,
   INVALID_QUERY_ERR,
   NFT_QUERY,
@@ -51,6 +52,8 @@ export class AdoService {
         adoType = AdoType.CW20Token
       } else if (contractInfo.queries_expected.includes(CROWDFUND_QUERY)) {
         adoType = AdoType.Crowdfund
+      } else if (contractInfo.queries_expected.includes(FACTORY_QUERY)) {
+        adoType = AdoType.Factory
       } else if (contractInfo.queries_expected.includes(NFT_QUERY)) {
         adoType = AdoType.NFT
       } else if (contractInfo.queries_expected.includes(SPLITTER_QUERY)) {

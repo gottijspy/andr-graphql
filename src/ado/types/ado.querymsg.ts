@@ -3,6 +3,7 @@ import {
   ANDR_QUERY_OPERATOR,
   APP_QUERY_COMPONENT_NAME,
   CROWDFUND_QUERY_TOKEN_ID,
+  FACTORY_QUERY_KEY,
   NFT_QUERY_INCLUDE_EXPIRED,
   NFT_QUERY_OWNER,
   NFT_QUERY_SPENDER,
@@ -83,6 +84,13 @@ export const queryMsgs = {
   cw20token: {
     token_info: {
       token_info: {},
+    },
+  },
+  factory: {
+    code_id: {
+      code_id: {
+        key: FACTORY_QUERY_KEY,
+      },
     },
   },
   nft: {

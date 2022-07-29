@@ -21,7 +21,6 @@ export class RatesService extends AdoService {
   public async payments(contractAddress: string): Promise<RateInfo[]> {
     try {
       const ratesInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.rates.payments)
-      console.log(ratesInfo)
       return (ratesInfo as RatesContract).payments ?? []
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

@@ -69,7 +69,6 @@ export class AdoAppService extends AdoService {
 
     try {
       const componentResult = await this.wasmService.queryContract(address, queryMsg)
-      console.log(componentResult)
       return componentResult
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
@@ -84,7 +83,6 @@ export class AdoAppService extends AdoService {
   public async getComponents(contractAddress: string): Promise<AppComponent[]> {
     try {
       const components = await this.wasmService.queryContract(contractAddress, queryMsgs.adoapp.get_components)
-      console.log(components)
       return components as AppComponent[]
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, contractAddress)

@@ -72,7 +72,6 @@ export class WasmService {
 //   const emptyError: WasmContractError = { code: -1, error: '' }
 //   try {
 //     const errMsg = error.toString()
-//     console.log(errMsg)
 //     if (!errMsg) {
 //       return emptyError
 //     }

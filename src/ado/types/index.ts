@@ -5,6 +5,7 @@ export { AdoAppContract, AppComponent, AppComponentAddress, AppConfig, AdoAppRes
 export { AuctionContract, AuctionResult } from './auction.contract'
 export { CrowdfundConfig, CrowdfundState, CrowdfundContract, CrowdfundResult } from './crowdfund.contract'
 export { CW20TokenContract, TokenInfo, Cw20TokenResult } from './cw20token.contract'
+export { FactoryContract } from './factory.contract'
 export {
   AllNftInfo,
   NftApproval,
