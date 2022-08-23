@@ -2,6 +2,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
+import { MongooseModule } from '@nestjs/mongoose'
 // import { ThrottlerModule } from '@nestjs/throttler'
 import { LoggerModule } from 'nestjs-pino'
 import { join } from 'path'
@@ -53,14 +54,25 @@ import { WasmModule } from './wasm/wasm.module'
         return { pinoHttp }
       },
     }),
-    //     ThrottlerModule.forRootAsync({
-    //       imports: [ConfigModule],
-    //       inject: [ConfigService],
-    //       useFactory: (config: ConfigService) => ({
-    //         ttl: parseInt(config.get<string>('THROTTLE_TTL', '60'), 10),
-    //         limit: parseInt(config.get<string>('THROTTLE_LIMIT', '20'), 10),
-    //       }),
-    //     }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        uri: config.get<string>('MONGODB_URI'), // Loaded from .ENV
+      }),
+    }),
+    // ThrottlerModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (config: ConfigService) => ({
+    //     ttl: parseInt(config.get<string>('THROTTLE_TTL', '60'), 10),
+    //     limit: parseInt(config.get<string>('THROTTLE_LIMIT', '20'), 10),
+    //   }),
+    // }),
+    // Persisted queries are enabled and are using an unbounded cache.
+    // Your server is vulnerable to denial of service attacks via memory exhaustion.
+    // Set `cache: "bounded"` or `persistedQueries: false` in your ApolloServer constructor, or
+    // see https://go.apollo.dev/s/cache-backends for other alternatives.
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       imports: [ConfigModule],
       inject: [ConfigService],

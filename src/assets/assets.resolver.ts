@@ -1,24 +1,25 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Ado } from 'src/ado/types/ado.schema'
 import { AssetsService } from './assets.service'
-import { AssetResult } from './types/assets.result'
+import { PaginationArgs } from './types/assets.result'
 
-@Resolver(AssetResult)
+@Resolver(Ado)
 export class AssetsResolver {
   constructor(private readonly assetsService: AssetsService) {}
 
-  @Query(() => [AssetResult])
-  public async assets(@Args('walletAddress') walletAddress: string): Promise<AssetResult[]> {
-    return this.assetsService.getAssets(walletAddress)
+  @Query(() => [Ado])
+  public async assets(@Args('walletAddress') walletAddress: string, @Args() filter: PaginationArgs): Promise<Ado[]> {
+    return this.assetsService.getIndexedAdos(walletAddress, filter.limit, filter.offset)
   }
 
-  @ResolveField(() => String)
-  public async timestamp(@Parent() asset: AssetResult): Promise<string | undefined> {
-    if (!asset.height) return
-    return this.assetsService.getTimestamp(asset.height)
-  }
+  // @ResolveField(() => String)
+  // public async timestamp(@Parent() asset: AssetResult): Promise<string | undefined> {
+  //   if (!asset.height) return
+  //   return this.assetsService.getTimestamp(asset.height)
+  // }
 
   // @ResolveField(() => AssetInfoResult)
-  // public async assetInfo(@Parent() asset: AssetResult): Promise<typeof AssetInfoResult> {
+  // public async assetInfo(@Parent() asset: Ado): Promise<typeof AssetInfoResult> {
   //   if (asset.adoType === AdoType[AdoType.App].toLowerCase()) {
   //     console.log('app is true')
   //     return { address: asset.contractAddress } as AdoAppContract

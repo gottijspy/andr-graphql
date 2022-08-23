@@ -31,6 +31,19 @@ type AddresslistResponse {
   included: Boolean
 }
 
+type Ado {
+  _id: ID!
+  address: String!
+  adoType: String!
+  appContract: String
+  chainId: String
+  instantiateHash: String
+  instantiateHeight: Int
+  lastUpdatedHash: String
+  lastUpdatedHeight: Int
+  owner: String!
+}
+
 type AdoAppContract implements BaseAdoContract {
   address: String!
   addresses: [AppComponentAddress!]
@@ -145,13 +158,6 @@ type AppComponentAddress {
 type AppConfig {
   name: String!
   owner: String!
-}
-
-type AssetResult {
-  adoType: String
-  contractAddress: String
-  height: Int
-  timestamp: String
 }
 
 interface BaseAdoContract {
@@ -362,10 +368,10 @@ type Query {
   ado(address: String!): AdoContract!
   anchor(address: String!): AnchorContract!
   app(address: String!): AdoAppContract!
-  assets(walletAddress: String!): [AssetResult!]!
+  assets(limit: Int = 10, offset: Int = 0, walletAddress: String!): [Ado!]!
   crowdfund(address: String!): CrowdfundContract!
   cw20token(address: String!): CW20TokenContract!
-  factoty(address: String!): FactoryContract!
+  factory(address: String!): FactoryContract!
   nft(address: String!): NftContract!
   offers(address: String!): OffersContract!
   ping: String!

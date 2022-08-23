@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { ArgsType, Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class AssetResult {
@@ -13,19 +13,13 @@ export class AssetResult {
 
   @Field({ nullable: true })
   timestamp?: string
-
-  // @Field(() => AssetInfoResult, { nullable: true })
-  // assetInfo?: AdoAppContract | AdoContract
 }
 
-// export const AssetInfoResult = createUnionType({
-//   name: 'AssetInfoResult',
-//   types: () => [AdoAppContract, AdoContract] as const,
-//   resolveType: (asset) => {
-//     if (asset.adoType === AdoType[AdoType.App].toLowerCase()) {
-//       return AdoAppContract
-//     }
+@ArgsType()
+export class PaginationArgs {
+  @Field(() => Int)
+  offset = 0
 
-//     return AdoContract
-//   },
-// })
+  @Field(() => Int)
+  limit = 10
+}

@@ -1,5 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { ApolloError, UserInputError } from 'apollo-server'
+import { Model } from 'mongoose'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
+import { DEFAULT_CATCH_ERR, MONGO_QUERY_ERROR } from 'src/ado/types/ado.constants'
+import { Ado } from 'src/ado/types/ado.schema'
 import { TxService } from 'src/tx/tx.service'
 import { TxInfo } from 'src/tx/types/tx.result'
 import { AssetResult } from './types/assets.result'
@@ -11,6 +16,8 @@ export class AssetsService {
     protected readonly logger: PinoLogger,
     @Inject(TxService)
     protected readonly txService: TxService,
+    @InjectModel(Ado.name)
+    private adoModel?: Model<Ado>,
   ) {}
 
   public async getAssets(walletAddress: string): Promise<AssetResult[]> {
@@ -45,5 +52,21 @@ export class AssetsService {
     }
 
     return asset
+  }
+
+  public async getIndexedAdos(owner: string, limit: number, offset: number): Promise<Ado[]> {
+    try {
+      const ados = await this.adoModel?.find({ owner: owner }).limit(limit).skip(offset)
+      if (!ados || !ados.length) return []
+
+      return ados
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, owner)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(MONGO_QUERY_ERROR, owner)
+    }
   }
 }
