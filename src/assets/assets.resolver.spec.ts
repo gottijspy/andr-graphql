@@ -10,7 +10,7 @@ describe('AssetsResolver', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AssetsResolver, 
+        AssetsResolver,
         { provide: AssetsService, useValue: {} },
         { provide: AppService, useValue: {} },
         { provide: CW721Service, useValue: {} },
