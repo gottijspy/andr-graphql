@@ -1,9 +1,10 @@
-import { createUnionType, Field, ObjectType } from '@nestjs/graphql'
+import { ArgsType, createUnionType, Field, ObjectType } from '@nestjs/graphql'
 import { AdoContract, AdoContractError } from 'src/ado/types'
 import { AdoType } from 'src/ado/types/ado.enums'
+import { NftInfo } from '../../cw721/types'
 
 @ObjectType()
-export class AdoAppContract extends AdoContract {
+export class AppContract extends AdoContract {
   @Field(() => AppConfig, { nullable: true })
   config?: Promise<AppConfig>
 
@@ -30,6 +31,15 @@ export class AppComponent {
 
   @Field()
   instantiate_msg!: string
+
+  @Field({ nullable: true })
+  address?: string
+
+  @Field(() => AdoContract, { nullable: true })
+  ado?: Promise<AdoContract>
+
+  @Field(() => [NftInfo], { nullable: true })
+  tokens?: Promise<NftInfo[]>
 }
 
 @ObjectType()
@@ -50,12 +60,18 @@ export class AppComponentAddress {
   address!: string
 }
 
+@ArgsType()
+export class ComponentFilterArgs {
+  @Field(() => AdoType, { nullable: true })
+  adoType?: AdoType
+}
+
 export const AdoAppResult = createUnionType({
   name: 'AdoAppResult',
-  types: () => [AdoAppContract, AdoContractError] as const,
+  types: () => [AppContract, AdoContractError] as const,
   resolveType: (contract) => {
     if (contract.adoType == AdoType.App) {
-      return AdoAppContract
+      return AppContract
     }
 
     return AdoContractError

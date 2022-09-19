@@ -8,9 +8,9 @@ import { INVALID_QUERY_ERR } from '../types/ado.constants'
 import { queryMsgs } from '../types/ado.querymsg'
 
 @Injectable()
-export class CW20TokenService extends AdoService {
+export class CW20Service extends AdoService {
   constructor(
-    @InjectPinoLogger(CW20TokenService.name)
+    @InjectPinoLogger(CW20Service.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -20,7 +20,7 @@ export class CW20TokenService extends AdoService {
 
   public async tokenInfo(contractAddress: string): Promise<TokenInfo> {
     try {
-      const tokenInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.cw20token.token_info)
+      const tokenInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.cw20.token_info)
       return tokenInfo as TokenInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

@@ -1,18 +1,42 @@
 import { ArgsType, Field, Int, ObjectType } from '@nestjs/graphql'
+import { AdoType } from 'src/ado/types/ado.enums'
+import { AppComponent } from 'src/app/types'
+import { NftInfo } from 'src/cw721/types'
 
 @ObjectType()
 export class AssetResult {
-  @Field({ nullable: true })
-  adoType?: string
+  @Field()
+  owner!: string
 
-  @Field({ nullable: true })
-  contractAddress?: string
+  @Field()
+  address!: string
+
+  @Field()
+  adoType!: string
 
   @Field(() => Int, { nullable: true })
-  height?: number
+  instantiateHeight?: number
+
+  @Field(() => Int, { nullable: true })
+  lastUpdatedHeight?: number
 
   @Field({ nullable: true })
-  timestamp?: string
+  instantiateHash?: string
+
+  @Field({ nullable: true })
+  lastUpdatedHash?: string
+
+  @Field({ nullable: true })
+  appContract?: string
+
+  @Field({ nullable: true })
+  chainId?: string
+
+  @Field(() => [AppComponent], { nullable: true })
+  components?: AppComponent[]
+
+  @Field(() => [NftInfo], { nullable: true })
+  tokens?: NftInfo[]
 }
 
 @ArgsType()
@@ -22,4 +46,10 @@ export class PaginationArgs {
 
   @Field(() => Int)
   limit = 10
+}
+
+@ArgsType()
+export class AssetFilterArgs extends PaginationArgs {
+  @Field(() => AdoType, { nullable: true })
+  adoType?: AdoType
 }

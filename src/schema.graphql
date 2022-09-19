@@ -31,38 +31,6 @@ type AddresslistResponse {
   included: Boolean
 }
 
-type Ado {
-  _id: ID!
-  address: String!
-  adoType: String!
-  appContract: String
-  chainId: String
-  instantiateHash: String
-  instantiateHeight: Int
-  lastUpdatedHash: String
-  lastUpdatedHeight: Int
-  owner: String!
-}
-
-type AdoAppContract implements BaseAdoContract {
-  address: String!
-  addresses: [AppComponentAddress!]
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  componentExists(name: String!): Boolean
-  components: [AppComponent!]
-  config: AppConfig
-  creator: String!
-  getAddress(name: String!): String
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-}
-
 type AdoContract implements BaseAdoContract {
   address: String!
   admin: String
@@ -78,22 +46,32 @@ type AdoContract implements BaseAdoContract {
 }
 
 enum AdoType {
-  Addresslist
-  Ado
-  Anchor
+  AddressList
   App
   Auction
-  CW20Token
+  CW20
+  CW20Staking
+  CW721
+  CW721Bids
+  CW721Timelock
   Crowdfund
   Factory
-  NFT
-  Offers
+  Gumball
+  Lockdrop
+  MerkleAirdrop
+  NftStaking
   Primitive
+  RateLimitingWithdrawals
   Rates
   Receipt
   Splitter
   Timelock
+  Unknown
   Vault
+  Vesting
+  WeightedDistributionSplitter
+  WeightedSplitter
+  WrappedCW721
 }
 
 type Agreement {
@@ -108,20 +86,6 @@ type AgreementAmount {
 type AllNftInfo {
   access: NftOwnerInfo
   info: NftInfo
-}
-
-type AnchorContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
 }
 
 enum AndrOrderBy {
@@ -145,9 +109,12 @@ enum AndrStrategyType {
 }
 
 type AppComponent {
+  address: String
+  ado: AdoContract
   ado_type: String!
   instantiate_msg: String!
   name: String!
+  tokens(attributes: [SearchAttribute!]): [NftInfo!]
 }
 
 type AppComponentAddress {
@@ -158,6 +125,39 @@ type AppComponentAddress {
 type AppConfig {
   name: String!
   owner: String!
+}
+
+type AppContract implements BaseAdoContract {
+  address: String!
+  addresses: [AppComponentAddress!]
+  admin: String
+  adoType: AdoType!
+  codeId: Int!
+  componentExists(name: String!): Boolean
+  components: [AppComponent!]
+  config: AppConfig
+  creator: String!
+  getAddress(name: String!): String
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
+  operators: [String!]!
+  owner: String!
+  queries_expected: [String!]
+}
+
+type AssetResult {
+  address: String!
+  adoType: String!
+  appContract: String
+  chainId: String
+  components: [AppComponent!]
+  instantiateHash: String
+  instantiateHeight: Int
+  lastUpdatedHash: String
+  lastUpdatedHeight: Int
+  owner: String!
+  tokens(attributes: [SearchAttribute!]): [NftInfo!]
 }
 
 interface BaseAdoContract {
@@ -182,7 +182,7 @@ interface BaseContract {
   queries_expected: [String!]
 }
 
-type CW20TokenContract implements BaseAdoContract {
+type CW20Contract implements BaseAdoContract {
   address: String!
   admin: String
   adoType: AdoType!
@@ -195,6 +195,34 @@ type CW20TokenContract implements BaseAdoContract {
   owner: String!
   queries_expected: [String!]
   tokenInfo: TokenInfo
+}
+
+type CW721Contract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo
+  allOperators(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]
+  allTokens(options: AndrSearchOptions): [String!]
+  approval(includeExpired: Boolean!, spender: String!, tokenId: String!): NftApproval
+  approvals(includeExpired: Boolean!, tokenId: String!): [NftApproval!]
+  codeId: Int!
+  contractInfo: NftContractInfo
+  creator: String!
+  ibcPortId: String
+  isArchived(tokenId: String!): Boolean
+  isOperator(operator: String!): Boolean!
+  label: String!
+  minter: String
+  nftInfo(tokenId: String!): NftInfo
+  numTokens: Int
+  operators: [String!]!
+  owner: String!
+  ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo
+  queries_expected: [String!]
+  searchTokens(attributes: [SearchAttribute!]): [NftInfo!]
+  tokens(options: AndrSearchOptions, owner: String!): [String!]
+  transferAgreement(tokenId: String!): TransferAgreement!
 }
 
 type Coin {
@@ -267,36 +295,15 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
+type MetadataAttribute {
+  display_type: String
+  trait_type: String!
+  value: String!
+}
+
 type NftApproval {
   expires: JSON
   spender: String
-}
-
-type NftContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo
-  allOperators(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]
-  allTokens(options: AndrSearchOptions): [String!]
-  approval(includeExpired: Boolean!, spender: String!, tokenId: String!): NftApproval
-  approvals(includeExpired: Boolean!, tokenId: String!): [NftApproval!]
-  codeId: Int!
-  contractInfo: NftContractInfo
-  creator: String!
-  ibcPortId: String
-  isArchived(tokenId: String!): Boolean
-  isOperator(operator: String!): Boolean!
-  label: String!
-  minter: String
-  nftInfo(tokenId: String!): NftInfo
-  numTokens: Int
-  operators: [String!]!
-  owner: String!
-  ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo
-  queries_expected: [String!]
-  tokens(options: AndrSearchOptions, owner: String!): [String!]
-  transferAgreement(tokenId: String!): TransferAgreement!
 }
 
 type NftContractInfo {
@@ -305,38 +312,13 @@ type NftContractInfo {
 }
 
 type NftInfo {
-  extension: JSON
+  extension: TokenExtension
   tokenUri: String
 }
 
 type NftOwnerInfo {
   approvals: [NftApproval!]
   owner: String
-}
-
-type OfferResponse {
-  denom: String
-  expiration: JSON
-  offerAmount: Int
-  purchaser: String
-  remainingAmount: Int
-  taxAmount: Int
-}
-
-type OffersContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  allOffers(options: AndrSearchOptions!, purchaser: String!): [OfferResponse!]
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  offer(tokenId: String!): OfferResponse
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
 }
 
 type PercentRate {
@@ -366,14 +348,12 @@ type PrimitiveResponse {
 type Query {
   addresslist(address: String!): AddresslistContract!
   ado(address: String!): AdoContract!
-  anchor(address: String!): AnchorContract!
-  app(address: String!): AdoAppContract!
-  assets(limit: Int = 10, offset: Int = 0, walletAddress: String!): [Ado!]!
+  app(address: String!): AppContract!
+  assets(adoType: AdoType, limit: Int = 10, offset: Int = 0, walletAddress: String!): [AssetResult!]!
   crowdfund(address: String!): CrowdfundContract!
-  cw20token(address: String!): CW20TokenContract!
+  cw20(address: String!): CW20Contract!
+  cw721(address: String!): CW721Contract!
   factory(address: String!): FactoryContract!
-  nft(address: String!): NftContract!
-  offers(address: String!): OffersContract!
   ping: String!
   primitive(address: String!): PrimitiveContract!
   rates(address: String!): RatesContract!
@@ -412,6 +392,11 @@ type RatesContract implements BaseAdoContract {
   queries_expected: [String!]
 }
 
+input SearchAttribute {
+  trait_type: String!
+  value: String
+}
+
 type Splitter {
   locked: Boolean
   recipients: [AddressPercent!]
@@ -446,6 +431,18 @@ type TimelockContract implements BaseAdoContract {
   operators: [String!]!
   owner: String!
   queries_expected: [String!]
+}
+
+type TokenExtension {
+  animation_url: String
+  attributes: [MetadataAttribute!]!
+  description: String
+  external_url: String
+  image: String!
+  image_data: String
+  name: String!
+  publisher: String!
+  youtube_url: String
 }
 
 type TokenInfo {

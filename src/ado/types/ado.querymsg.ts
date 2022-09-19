@@ -81,7 +81,7 @@ export const queryMsgs = {
       },
     },
   },
-  cw20token: {
+  cw20: {
     token_info: {
       token_info: {},
     },
@@ -93,7 +93,7 @@ export const queryMsgs = {
       },
     },
   },
-  nft: {
+  cw721: {
     minter: {
       minter: {},
     },

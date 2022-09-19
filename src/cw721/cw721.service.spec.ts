@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
-import { OffersService } from './offers.service'
+import { CW721Service } from './cw721.service'
 
-describe('OffersService', () => {
-  let service: OffersService
+describe('CW721Service', () => {
+  let service: CW721Service
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        OffersService,
+        CW721Service,
         {
-          provide: getLoggerToken(OffersService.name),
+          provide: getLoggerToken(CW721Service.name),
           useValue: {
             error: jest.fn(),
           },
@@ -23,7 +23,7 @@ describe('OffersService', () => {
       ],
     }).compile()
 
-    service = module.get<OffersService>(OffersService)
+    service = module.get<CW721Service>(CW721Service)
   })
 
   it('should be defined', () => {

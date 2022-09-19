@@ -3,7 +3,7 @@ import { AdoContract, AdoContractError } from 'src/ado/types/ado.contract'
 import { AdoType } from './ado.enums'
 
 @ObjectType()
-export class CW20TokenContract extends AdoContract {
+export class CW20Contract extends AdoContract {
   @Field(() => TokenInfo, { nullable: true })
   tokenInfo?: Promise<TokenInfo>
 }
@@ -25,10 +25,10 @@ export class TokenInfo {
 
 export const Cw20TokenResult = createUnionType({
   name: 'Cw20TokenResult',
-  types: () => [CW20TokenContract, AdoContractError] as const,
+  types: () => [CW20Contract, AdoContractError] as const,
   resolveType: (contract) => {
-    if (contract.adoType == AdoType.CW20Token) {
-      return CW20TokenContract
+    if (contract.adoType == AdoType.CW20) {
+      return CW20Contract
     }
 
     return AdoContractError

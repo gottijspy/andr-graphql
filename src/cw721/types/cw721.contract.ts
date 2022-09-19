@@ -1,10 +1,10 @@
-import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
+import { ArgsType, createUnionType, Field, InputType, Int, ObjectType } from '@nestjs/graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { AdoContract, AdoContractError, Coin } from 'src/ado/types'
-import { AdoType } from './ado.enums'
+import { AdoType } from '../../ado/types/ado.enums'
 
 @ObjectType()
-export class NftContract extends AdoContract {
+export class CW721Contract extends AdoContract {
   //FIX: Unknown Variant minter
   @Field(() => String, { nullable: true })
   minter?: Promise<string>
@@ -38,6 +38,9 @@ export class NftContract extends AdoContract {
 
   @Field(() => [String], { nullable: true })
   allTokens?: Promise<string[]>
+
+  @Field(() => [NftInfo], { nullable: true })
+  searchTokens?: Promise<NftInfo[]>
 
   @Field(() => NftContractInfo, { nullable: true })
   contractInfo?: Promise<NftContractInfo>
@@ -83,13 +86,58 @@ export class NftNumTokens {
 }
 
 @ObjectType()
+export class MetadataAttribute {
+  @Field()
+  trait_type!: string
+  @Field()
+  value!: string
+  @Field({ nullable: true })
+  display_type?: string
+}
+
+@ObjectType()
+export class TokenExtension {
+  @Field()
+  name!: string
+  @Field()
+  publisher!: string
+  @Field({ nullable: true })
+  description?: string
+  @Field(() => [MetadataAttribute])
+  attributes!: MetadataAttribute[]
+  @Field()
+  image!: string
+  @Field({ nullable: true })
+  image_data?: string
+  @Field({ nullable: true })
+  external_url?: string
+  @Field({ nullable: true })
+  animation_url?: string
+  @Field({ nullable: true })
+  youtube_url?: string
+}
+
+@InputType()
+export class SearchAttribute {
+  @Field()
+  trait_type!: string
+  @Field({ nullable: true })
+  value?: string
+}
+
+@ArgsType()
+export class AttributeSearchOptions {
+  @Field(() => [SearchAttribute], { nullable: true })
+  attributes?: SearchAttribute[]
+}
+
+@ObjectType()
 export class NftInfo {
   @Field({ nullable: true })
   tokenUri?: string
 
-  //WARN: extension is of anytype, so attribute selection is not possible
-  @Field(() => GraphQLJSON, { nullable: true })
-  extension?: Promise<any>
+  @Field(() => TokenExtension, { nullable: true })
+  extension?: TokenExtension
 }
 
 @ObjectType()
@@ -127,10 +175,10 @@ export class TransferAgreement {
 
 export const NftResult = createUnionType({
   name: 'NftResult',
-  types: () => [NftContract, AdoContractError] as const,
+  types: () => [CW721Contract, AdoContractError] as const,
   resolveType: (contract) => {
-    if (contract.adoType == AdoType.NFT) {
-      return NftContract
+    if (contract.adoType == AdoType.CW721) {
+      return CW721Contract
     }
 
     return AdoContractError

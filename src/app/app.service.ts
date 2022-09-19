@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { AppComponent, AppComponentAddress, AppConfig } from 'src/ado/types'
+import { AppComponent, AppComponentAddress, AppConfig } from 'src/app/types'
 import { WasmService } from 'src/wasm/wasm.service'
-import { AdoService } from '../ado.service'
-import { APP_QUERY_COMPONENT_NAME, DEFAULT_CATCH_ERR, INVALID_QUERY_ERR } from '../types/ado.constants'
-import { queryMsgs } from '../types/ado.querymsg'
+import { AdoService } from '../ado/ado.service'
+import { APP_QUERY_COMPONENT_NAME, DEFAULT_CATCH_ERR, INVALID_QUERY_ERR } from '../ado/types/ado.constants'
+import { queryMsgs } from '../ado/types/ado.querymsg'
 
 @Injectable()
-export class AdoAppService extends AdoService {
+export class AppService extends AdoService {
   constructor(
-    @InjectPinoLogger(AdoAppService.name)
+    @InjectPinoLogger(AppService.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -82,8 +82,11 @@ export class AdoAppService extends AdoService {
 
   public async getComponents(contractAddress: string): Promise<AppComponent[]> {
     try {
-      const components = await this.wasmService.queryContract(contractAddress, queryMsgs.adoapp.get_components)
-      return components as AppComponent[]
+      const components: AppComponent[] = await this.wasmService.queryContract(
+        contractAddress,
+        queryMsgs.adoapp.get_components,
+      )
+      return components
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {

@@ -29,47 +29,22 @@ export class AdoService {
     protected readonly wasmService: WasmService,
   ) {}
 
-  public async getContract(address: string): Promise<AdoContract> {
+  public async getContract(address: string, adoType?: AdoType): Promise<AdoContract> {
     try {
       const contractInfo = await this.wasmService.getContract(address)
-      // if ('error' in contractInfo) {
-      //   return { code: contractInfo.code ?? -1, error: contractInfo.error } as AdoContractError
-      // }
-
-      //if ('queries_expected' in contractInfo) {
-      if (!contractInfo.queries_expected || !contractInfo.queries_expected.includes(ANDR_QUERY)) {
-        throw new UserInputError(INVALID_ADO_ERR)
-      }
-
       const adoContractInfo = contractInfo as AdoContract
-      let adoType = AdoType.Ado
 
-      if (contractInfo.queries_expected.includes(APP_QUERY)) {
-        adoType = AdoType.App
-      } else if (contractInfo.queries_expected.includes(CW20Token_QUERY)) {
-        adoType = AdoType.CW20Token
-      } else if (contractInfo.queries_expected.includes(CW20Token_QUERY)) {
-        adoType = AdoType.CW20Token
-      } else if (contractInfo.queries_expected.includes(CROWDFUND_QUERY)) {
-        adoType = AdoType.Crowdfund
-      } else if (contractInfo.queries_expected.includes(FACTORY_QUERY)) {
-        adoType = AdoType.Factory
-      } else if (contractInfo.queries_expected.includes(NFT_QUERY)) {
-        adoType = AdoType.NFT
-      } else if (contractInfo.queries_expected.includes(SPLITTER_QUERY)) {
-        adoType = AdoType.Splitter
-      } else if (contractInfo.queries_expected.includes(VAULT_QUERY)) {
-        adoType = AdoType.Vault
-      } else if (contractInfo.queries_expected.length === 1) {
-        // only andr_query exists for Primitive
-        adoType = AdoType.Primitive
+      if (!adoType) {
+        contractInfo.queries_expected = await this.wasmService.getContractQueries(address)
+        if (!contractInfo.queries_expected || !contractInfo.queries_expected.includes(ANDR_QUERY)) {
+          throw new UserInputError(INVALID_ADO_ERR)
+        }
+
+        adoType = this.getAdoType(contractInfo.queries_expected)
       }
 
       adoContractInfo.adoType = adoType
       return adoContractInfo
-      //}
-
-      //return { code: 1, error: INVALID_ADO } as AdoContractError
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
       if (err instanceof UserInputError || err instanceof ApolloError) {
@@ -123,5 +98,30 @@ export class AdoService {
 
       throw new ApolloError(INVALID_QUERY_ERR)
     }
+  }
+
+  private getAdoType(allowed_quries: string[]): AdoType {
+    let adoType = AdoType.Unknown
+
+    if (allowed_quries.includes(APP_QUERY)) {
+      adoType = AdoType.App
+    } else if (allowed_quries.includes(CW20Token_QUERY)) {
+      adoType = AdoType.CW20
+    } else if (allowed_quries.includes(CROWDFUND_QUERY)) {
+      adoType = AdoType.Crowdfund
+    } else if (allowed_quries.includes(FACTORY_QUERY)) {
+      adoType = AdoType.Factory
+    } else if (allowed_quries.includes(NFT_QUERY)) {
+      adoType = AdoType.CW721
+    } else if (allowed_quries.includes(SPLITTER_QUERY)) {
+      adoType = AdoType.Splitter
+    } else if (allowed_quries.includes(VAULT_QUERY)) {
+      adoType = AdoType.Vault
+    } else if (allowed_quries.length === 1) {
+      // only andr_query exists for Primitive
+      adoType = AdoType.Primitive
+    }
+
+    return adoType
   }
 }

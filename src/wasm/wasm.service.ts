@@ -25,9 +25,10 @@ export class WasmService {
   public async getContract(address: string): Promise<WasmContract> {
     try {
       const contractInfo = await this.cosmWasmClient.getContract(address)
-      const queries = await this.getContractQueries(address)
+      return contractInfo as WasmContract
 
-      return { ...contractInfo, queries_expected: queries } as WasmContract
+      //const queries = await this.getContractQueries(address)
+      //return { ...contractInfo, queries_expected: queries } as WasmContract
     } catch (err: any) {
       this.logger.error({ err }, LOGGER_ERROR_CONTRACT_TEXT, address)
 
@@ -50,7 +51,7 @@ export class WasmService {
     }
   }
 
-  private async getContractQueries(address: string): Promise<string[]> {
+  public async getContractQueries(address: string): Promise<string[]> {
     let queries: string[] = []
     const pattern = /`.*?`/g
     let current: any

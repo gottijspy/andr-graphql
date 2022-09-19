@@ -18,7 +18,7 @@ export const AddresslistResult = createUnionType({
   name: 'AddresslistResult',
   types: () => [AddresslistContract, AdoContractError] as const,
   resolveType: (contract) => {
-    if (contract.adoType == AdoType.Addresslist) {
+    if (contract.adoType == AdoType.AddressList) {
       return AddresslistContract
     }
 

@@ -1,23 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { AllNftInfo, NftApproval, NftContractInfo, TransferAgreement } from 'src/ado/types'
-import { NftInfo, NftOwnerInfo, NftContract } from 'src/ado/types'
 import { WasmService } from 'src/wasm/wasm.service'
-import { AdoService } from '../ado.service'
+import { AdoService } from '../ado/ado.service'
 import {
   INVALID_QUERY_ERR,
   NFT_QUERY_INCLUDE_EXPIRED,
   NFT_QUERY_OWNER,
   NFT_QUERY_TOKEN_ID,
-} from '../types/ado.constants'
-import { queryMsgs } from '../types/ado.querymsg'
-import { AndrSearchOptions } from '../types/andr-search-options.input'
+} from '../ado/types/ado.constants'
+import { queryMsgs } from '../ado/types/ado.querymsg'
+import { AndrSearchOptions } from '../ado/types/andr-search-options.input'
+import { NftInfo, NftOwnerInfo, CW721Contract } from './types'
+import { AllNftInfo, NftApproval, NftContractInfo, TransferAgreement } from './types'
+import { SearchAttribute } from './types/cw721.contract'
 
 @Injectable()
-export class NftService extends AdoService {
+export class CW721Service extends AdoService {
   constructor(
-    @InjectPinoLogger(NftService.name)
+    @InjectPinoLogger(CW721Service.name)
     protected readonly logger: PinoLogger,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
@@ -27,8 +28,8 @@ export class NftService extends AdoService {
 
   public async minter(contractAddress: string): Promise<string> {
     try {
-      const minterInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.nft.minter)
-      return (minterInfo as NftContract).minter ?? ''
+      const minterInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.cw721.minter)
+      return (minterInfo as CW721Contract).minter ?? ''
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {
@@ -40,7 +41,7 @@ export class NftService extends AdoService {
   }
 
   public async ownerOf(contractAddress: string, tokenId: string, includeExpired: boolean): Promise<NftOwnerInfo> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.owner_of)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.owner_of)
       .replace(NFT_QUERY_TOKEN_ID, tokenId)
       .replace(NFT_QUERY_INCLUDE_EXPIRED, String(includeExpired))
     const queryMsg = JSON.parse(queryMsgStr)
@@ -64,7 +65,7 @@ export class NftService extends AdoService {
     includeExpired: boolean,
     options?: AndrSearchOptions,
   ): Promise<NftApproval[]> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.all_operators)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.all_operators)
       .replace(NFT_QUERY_OWNER, owner)
       .replace(NFT_QUERY_INCLUDE_EXPIRED, String(includeExpired))
     const queryMsg = JSON.parse(queryMsgStr)
@@ -88,7 +89,7 @@ export class NftService extends AdoService {
     spender: string,
     includeExpired: boolean,
   ): Promise<NftApproval> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.approval)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.approval)
       .replace(NFT_QUERY_TOKEN_ID, tokenId)
       .replace(NFT_QUERY_OWNER, spender)
       .replace(NFT_QUERY_INCLUDE_EXPIRED, String(includeExpired))
@@ -108,7 +109,7 @@ export class NftService extends AdoService {
   }
 
   public async approvals(contractAddress: string, tokenId: string, includeExpired: boolean): Promise<NftApproval[]> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.approvals)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.approvals)
       .replace(NFT_QUERY_TOKEN_ID, tokenId)
       .replace(NFT_QUERY_INCLUDE_EXPIRED, String(includeExpired))
     const queryMsg = JSON.parse(queryMsgStr)
@@ -128,7 +129,7 @@ export class NftService extends AdoService {
 
   public async numTokens(contractAddress: string): Promise<number> {
     try {
-      const numTokens = await this.wasmService.queryContract(contractAddress, queryMsgs.nft.num_tokens)
+      const numTokens = await this.wasmService.queryContract(contractAddress, queryMsgs.cw721.num_tokens)
       return numTokens.count ?? 0
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -141,7 +142,7 @@ export class NftService extends AdoService {
   }
 
   public async nftInfo(contractAddress: string, tokenId: string): Promise<NftInfo> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.nft_info).replace(NFT_QUERY_TOKEN_ID, tokenId)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.nft_info).replace(NFT_QUERY_TOKEN_ID, tokenId)
     const queryMsg = JSON.parse(queryMsgStr)
 
     try {
@@ -158,7 +159,7 @@ export class NftService extends AdoService {
   }
 
   public async allNftInfo(contractAddress: string, tokenId: string, includeExpired: boolean): Promise<AllNftInfo> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.all_nft_info)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.all_nft_info)
       .replace(NFT_QUERY_TOKEN_ID, tokenId)
       .replace(NFT_QUERY_INCLUDE_EXPIRED, String(includeExpired))
     const queryMsg = JSON.parse(queryMsgStr)
@@ -177,7 +178,7 @@ export class NftService extends AdoService {
   }
 
   public async isArchived(contractAddress: string, tokenId: string): Promise<boolean> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.is_archived).replace(NFT_QUERY_TOKEN_ID, tokenId)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.is_archived).replace(NFT_QUERY_TOKEN_ID, tokenId)
     const queryMsg = JSON.parse(queryMsgStr)
 
     try {
@@ -194,7 +195,7 @@ export class NftService extends AdoService {
   }
 
   public async transferAgreement(contractAddress: string, tokenId: string): Promise<TransferAgreement> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.transfer_agreeement).replace(NFT_QUERY_TOKEN_ID, tokenId)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.transfer_agreeement).replace(NFT_QUERY_TOKEN_ID, tokenId)
     const queryMsg = JSON.parse(queryMsgStr)
 
     try {
@@ -211,7 +212,7 @@ export class NftService extends AdoService {
   }
 
   public async tokens(contractAddress: string, owner: string, options?: AndrSearchOptions): Promise<string[]> {
-    const queryMsgStr = JSON.stringify(queryMsgs.nft.tokens).replace(NFT_QUERY_OWNER, owner)
+    const queryMsgStr = JSON.stringify(queryMsgs.cw721.tokens).replace(NFT_QUERY_OWNER, owner)
     const queryMsg = JSON.parse(queryMsgStr)
 
     try {
@@ -229,8 +230,49 @@ export class NftService extends AdoService {
 
   public async allTokens(contractAddress: string, options?: AndrSearchOptions): Promise<string[]> {
     try {
-      const tokenResponse = await this.wasmService.queryContract(contractAddress, queryMsgs.nft.all_tokens)
+      const tokenResponse = await this.wasmService.queryContract(contractAddress, queryMsgs.cw721.all_tokens)
       return tokenResponse.tokens ?? []
+    } catch (err: any) {
+      this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
+    }
+  }
+
+  public async searchTokens(contractAddress: string, attributes?: SearchAttribute[]): Promise<NftInfo[]> {
+    try {
+      const response = await this.wasmService.queryContract(contractAddress, queryMsgs.cw721.all_tokens)
+      const tokens: NftInfo[] = await Promise.all(
+        response.tokens.map(async (tokenId: string) => {
+          return this.nftInfo(contractAddress, tokenId)
+        }),
+      )
+
+      console.log(attributes)
+      console.log(tokens)
+      if (!attributes?.length) return tokens
+
+      // filter tokens by search attributes
+      const filteredTokens = tokens.filter((token) => {
+        console.log(token.extension?.attributes)
+        const containsAttribute = token.extension?.attributes.some((tokenAttr) => {
+          return attributes.some((attr) => {
+            if (attr.value !== undefined) {
+              return attr.trait_type === tokenAttr.trait_type && attr.value === tokenAttr.value
+            }
+
+            return attr.trait_type === tokenAttr.trait_type
+          })
+        })
+
+        console.log(containsAttribute)
+        return containsAttribute
+      })
+
+      return filteredTokens
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {
@@ -243,7 +285,7 @@ export class NftService extends AdoService {
 
   public async contractInfo(contractAddress: string): Promise<NftContractInfo> {
     try {
-      const contractInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.nft.contract_info)
+      const contractInfo = await this.wasmService.queryContract(contractAddress, queryMsgs.cw721.contract_info)
       return contractInfo as NftContractInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)

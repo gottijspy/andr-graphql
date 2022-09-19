@@ -14,11 +14,11 @@ export class AddresslistResolver extends AdoResolver {
   @Query(() => AddresslistContract)
   public async addresslist(@Args('address') address: string): Promise<AddresslistContract> {
     const contractInfo = await this.addresslistService.getContract(address)
-    if (contractInfo.adoType && contractInfo.adoType == AdoType.Addresslist) {
+    if (contractInfo.adoType && contractInfo.adoType == AdoType.AddressList) {
       return contractInfo as AddresslistContract
     }
 
-    const typeError = new TypeMismatchError(AdoType.Addresslist, contractInfo.adoType)
+    const typeError = new TypeMismatchError(AdoType.AddressList, contractInfo.adoType)
     throw new UserInputError(typeError.error, { ...typeError })
   }
 
