@@ -1,19 +1,12 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { AdoType } from 'src/ado/types/ado.enums'
-import { AppService } from 'src/app/app.service'
 import { AppComponent } from 'src/app/types'
-import { CW721Service } from 'src/cw721/cw721.service'
-import { AttributeSearchOptions, NftInfo } from 'src/cw721/types'
 import { AssetsService } from './assets.service'
-import { AssetFilterArgs, AssetResult } from './types'
+import { AssetFilterArgs, AppComponentFilterArgs, AssetResult } from './types'
 
 @Resolver(AssetResult)
 export class AssetsResolver {
-  constructor(
-    private readonly assetsService: AssetsService,
-    private readonly appService: AppService,
-    private readonly cw721Service: CW721Service,
-  ) {}
+  constructor(private readonly assetsService: AssetsService) {}
 
   @Query(() => [AssetResult])
   public async assets(
@@ -24,26 +17,20 @@ export class AssetsResolver {
   }
 
   @ResolveField(() => [AppComponent])
-  public async components(@Parent() asset: AssetResult): Promise<AppComponent[]> {
+  public async components(
+    @Parent() asset: AssetResult,
+    @Args() filter?: AppComponentFilterArgs,
+  ): Promise<AppComponent[]> {
     if (asset.adoType !== AdoType.App) return []
-
-    const [components, addresses] = await Promise.all([
-      this.appService.getComponents(asset.address),
-      this.appService.getAddresses(asset.address),
-    ])
-    //const componentAddresses = await this.appService.getAddresses(ado.address);
-    return components.map((item) => {
-      const componentAddress = addresses.find((addr) => addr.name == item.name)
-      if (componentAddress) item.address = componentAddress.address
-      return item
-    })
+    const components = await this.assetsService.getComponents(asset.address, asset.chainId, filter?.componentType)
+    return components
   }
 
-  @ResolveField(() => [NftInfo])
-  public async tokens(@Parent() asset: AssetResult, @Args() filters?: AttributeSearchOptions): Promise<NftInfo[]> {
-    if (asset.adoType !== AdoType.CW721) return []
-    return this.cw721Service.searchTokens(asset.address, filters?.attributes)
-  }
+  // @ResolveField(() => [NftInfo])
+  // public async tokens(@Parent() asset: AssetResult, @Args() filters?: AttributeSearchOptions): Promise<NftInfo[]> {
+  //   if (!(asset.adoType === AdoType.CW721 || asset.adoType === AdoType.App)) return []
+  //   return this.assetsService.getTokens(asset.address, asset.adoType)
+  // }
 
   // @ResolveField(() => String)
   // public async timestamp(@Parent() asset: AssetResult): Promise<string | undefined> {

@@ -49,6 +49,12 @@ export class PaginationArgs {
 }
 
 @ArgsType()
+export class AppComponentFilterArgs extends PaginationArgs {
+  @Field(() => AdoType, { nullable: true })
+  componentType?: AdoType
+}
+
+@ArgsType()
 export class AssetFilterArgs extends PaginationArgs {
   @Field(() => AdoType, { nullable: true })
   adoType?: AdoType

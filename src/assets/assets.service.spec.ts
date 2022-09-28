@@ -1,6 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
+import { AppService } from 'src/app/app.service'
 import { TxService } from 'src/tx/tx.service'
 import { AssetsService } from './assets.service'
 
@@ -19,6 +20,10 @@ describe('AssetsService', () => {
         },
         {
           provide: TxService,
+          useValue: {},
+        },
+        {
+          provide: AppService,
           useValue: {},
         },
         {

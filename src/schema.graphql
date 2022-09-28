@@ -112,6 +112,7 @@ type AppComponent {
   address: String
   ado: AdoContract
   ado_type: String!
+  component: AdoContract!
   instantiate_msg: String!
   name: String!
   tokens(attributes: [SearchAttribute!]): [NftInfo!]
@@ -151,13 +152,13 @@ type AssetResult {
   adoType: String!
   appContract: String
   chainId: String
-  components: [AppComponent!]
+  components(componentType: AdoType, limit: Int = 10, offset: Int = 0): [AppComponent!]
   instantiateHash: String
   instantiateHeight: Int
   lastUpdatedHash: String
   lastUpdatedHeight: Int
   owner: String!
-  tokens(attributes: [SearchAttribute!]): [NftInfo!]
+  tokens: [NftInfo!]
 }
 
 interface BaseAdoContract {

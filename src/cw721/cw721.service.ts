@@ -251,13 +251,10 @@ export class CW721Service extends AdoService {
         }),
       )
 
-      console.log(attributes)
-      console.log(tokens)
       if (!attributes?.length) return tokens
 
       // filter tokens by search attributes
       const filteredTokens = tokens.filter((token) => {
-        console.log(token.extension?.attributes)
         const containsAttribute = token.extension?.attributes.some((tokenAttr) => {
           return attributes.some((attr) => {
             if (attr.value !== undefined) {
@@ -268,7 +265,6 @@ export class CW721Service extends AdoService {
           })
         })
 
-        console.log(containsAttribute)
         return containsAttribute
       })
 

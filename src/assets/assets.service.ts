@@ -6,6 +6,8 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { DEFAULT_CATCH_ERR, MONGO_QUERY_ERROR } from 'src/ado/types/ado.constants'
 import { AdoType } from 'src/ado/types/ado.enums'
 import { Ado } from 'src/ado/types/ado.schema'
+import { AppService } from 'src/app/app.service'
+import { AppComponent } from 'src/app/types'
 import { TxService } from 'src/tx/tx.service'
 import { AssetResult } from './types'
 
@@ -16,6 +18,8 @@ export class AssetsService {
     protected readonly logger: PinoLogger,
     @Inject(TxService)
     protected readonly txService: TxService,
+    @Inject(AppService)
+    protected readonly appService: AppService,
     @InjectModel(Ado.name)
     private adoModel?: Model<Ado>,
   ) {}
@@ -74,4 +78,43 @@ export class AssetsService {
       throw new ApolloError(MONGO_QUERY_ERROR, owner)
     }
   }
+
+  public async getComponents(address: string, chainId?: string, adoType?: AdoType): Promise<AppComponent[]> {
+    console.log({ chainId: chainId, address: address })
+    const [components, addresses] = await Promise.all([
+      this.appService.getComponents(address, chainId),
+      this.appService.getAddresses(address, chainId),
+    ])
+
+    const compswithAddr = components.map((item) => {
+      const componentAddress = addresses.find((addr) => addr.name == item.name)
+      if (componentAddress) item.address = componentAddress.address
+      return item
+    })
+
+    if (adoType) {
+      return compswithAddr.filter((item) => item.ado_type === adoType)
+    }
+
+    return compswithAddr
+  }
+
+  // public async getTokens(address: string, adoType: AdoType, attributes?: SearchAttribute[]): Promise<NftInfo[]> {
+  //   if (adoType === AdoType.App) {
+  //     const cw721Components = await this.getComponents(address, AdoType.CW721)
+  //     const tokens =  await Promise.all(
+  //       cw721Components.map(async (item) => {
+  //         return this.cw721Service.searchTokens(item.address, attributes)
+  //       }),
+  //     )
+
+  //     return tokens
+  //   }
+
+  //   if (adoType === AdoType.CW721) {
+  //     return this.cw721Service.searchTokens(address, attributes)
+  //   }
+
+  //   return []
+  // }
 }

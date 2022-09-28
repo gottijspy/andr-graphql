@@ -1,1 +1,1 @@
-export { AssetResult, AssetFilterArgs } from './assets.result'
+export { AssetResult, AssetFilterArgs, AppComponentFilterArgs } from './assets.result'

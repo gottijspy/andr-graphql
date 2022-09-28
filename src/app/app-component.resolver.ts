@@ -11,7 +11,7 @@ export class AppComponentResolver {
   constructor(private readonly adoService: AdoService, private readonly cw721Service: CW721Service) {}
 
   @ResolveField(() => AdoContract)
-  public async ado(@Parent() component: AppComponent): Promise<AdoContract> {
+  public async component(@Parent() component: AppComponent): Promise<AdoContract> {
     if (!component.address) return {} as AdoContract
     return this.adoService.getContract(component.address)
   }
@@ -19,7 +19,6 @@ export class AppComponentResolver {
   @ResolveField(() => [NftInfo])
   public async tokens(@Parent() component: AppComponent, @Args() filters?: AttributeSearchOptions): Promise<NftInfo[]> {
     if (component.address && component.ado_type === AdoType.CW721) {
-      console.log(component)
       return this.cw721Service.searchTokens(component.address, filters?.attributes)
     }
 

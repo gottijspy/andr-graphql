@@ -1,8 +1,10 @@
+import { getConfigByChainID } from '@andromedaprotocol/andromeda.js'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Injectable } from '@nestjs/common'
 import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { InjectCosmClient } from 'src/cosm'
+import * as chainLookup from './types/configs.json'
 import {
   INTERNAL_CONTRACT_ERR,
   INVALID_QUERY_ERR,
@@ -22,13 +24,15 @@ export class WasmService {
     protected readonly cosmWasmClient: CosmWasmClient,
   ) {}
 
-  public async getContract(address: string): Promise<WasmContract> {
+  public async getContract(address: string, chainId?: string): Promise<WasmContract> {
     try {
-      const contractInfo = await this.cosmWasmClient.getContract(address)
-      return contractInfo as WasmContract
+      const chainUrl = this.getChainUrl(address, chainId)
+      if (!chainUrl) throw new UserInputError(NOT_FOUND_ERR)
 
-      //const queries = await this.getContractQueries(address)
-      //return { ...contractInfo, queries_expected: queries } as WasmContract
+      const queryClient = await CosmWasmClient.connect(chainUrl)
+      const contractInfo = await queryClient.getContract(address)
+
+      return contractInfo as WasmContract
     } catch (err: any) {
       this.logger.error({ err }, LOGGER_ERROR_CONTRACT_TEXT, address)
 
@@ -41,9 +45,14 @@ export class WasmService {
     }
   }
 
-  public async queryContract(address: string, queryMsg: Record<string, unknown>): Promise<any> {
+  public async queryContract(address: string, queryMsg: Record<string, unknown>, chainId?: string): Promise<any> {
     try {
-      const queryResult = await this.cosmWasmClient.queryContractSmart(address, queryMsg)
+      const chainUrl = this.getChainUrl(address, chainId)
+      if (!chainUrl) throw new UserInputError(NOT_FOUND_ERR)
+
+      const queryClient = await CosmWasmClient.connect(chainUrl)
+      const queryResult = await queryClient.queryContractSmart(address, queryMsg)
+
       return queryResult
     } catch (err: any) {
       this.logger.error({ err }, LOGGER_ERROR_QUERY_TEXT, address, queryMsg)
@@ -51,13 +60,18 @@ export class WasmService {
     }
   }
 
-  public async getContractQueries(address: string): Promise<string[]> {
+  public async getContractQueries(address: string, chainId?: string): Promise<string[]> {
     let queries: string[] = []
     const pattern = /`.*?`/g
     let current: any
 
     try {
-      queries = await this.cosmWasmClient.queryContractSmart(address, { query_msgs: {} })
+      const chainUrl = this.getChainUrl(address, chainId)
+      if (!chainUrl) throw new UserInputError(NOT_FOUND_ERR)
+
+      const queryClient = await CosmWasmClient.connect(chainUrl)
+      queries = await queryClient.queryContractSmart(address, { query_msgs: {} })
+
       return queries
     } catch (err: any) {
       const errMsg = err.toString()
@@ -67,26 +81,12 @@ export class WasmService {
       return queries
     }
   }
+
+  private getChainUrl(address: string, chainId?: string): string | undefined {
+    const chainConfig = chainId
+      ? getConfigByChainID(chainId)
+      : chainLookup.find((c) => address.startsWith(c.addressPrefix))
+
+    return chainConfig?.chainUrl
+  }
 }
-
-// private parseError(error: any): WasmContractError {
-//   const emptyError: WasmContractError = { code: -1, error: '' }
-//   try {
-//     const errMsg = error.toString()
-//     if (!errMsg) {
-//       return emptyError
-//     }
-
-//     let errNum = -1
-//     const pattern = /(\d+)/g
-//     const current = pattern.exec(errMsg)
-//     if (current && current[0]) {
-//       errNum = Number(current[0])
-//     }
-
-//     return { code: errNum, error: errMsg } as WasmContractError
-//   } catch (err: any) {
-//     this.logger.error({ err, error }, 'Error parsing error into WasmContractError')
-//     return emptyError
-//   }
-// }

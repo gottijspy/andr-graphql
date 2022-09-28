@@ -32,9 +32,28 @@ export class AppService extends AdoService {
     }
   }
 
-  public async getAddresses(address: string): Promise<AppComponentAddress[]> {
+  public async getComponents(address: string, chainId?: string): Promise<AppComponent[]> {
     try {
-      const addresses = await this.wasmService.queryContract(address, queryMsgs.adoapp.get_addresses)
+      console.log({ chainId: chainId, address: address })
+      const components: AppComponent[] = await this.wasmService.queryContract(
+        address,
+        queryMsgs.adoapp.get_components,
+        chainId,
+      )
+      return components
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
+    }
+  }
+
+  public async getAddresses(address: string, chainId?: string): Promise<AppComponentAddress[]> {
+    try {
+      const addresses = await this.wasmService.queryContract(address, queryMsgs.adoapp.get_addresses, chainId)
       return addresses as AppComponentAddress[]
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
@@ -72,23 +91,6 @@ export class AppService extends AdoService {
       return componentResult
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
-      if (err instanceof UserInputError || err instanceof ApolloError) {
-        throw err
-      }
-
-      throw new ApolloError(INVALID_QUERY_ERR)
-    }
-  }
-
-  public async getComponents(contractAddress: string): Promise<AppComponent[]> {
-    try {
-      const components: AppComponent[] = await this.wasmService.queryContract(
-        contractAddress,
-        queryMsgs.adoapp.get_components,
-      )
-      return components
-    } catch (err: any) {
-      this.logger.error({ err }, DEFAULT_CATCH_ERR, contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {
         throw err
       }
