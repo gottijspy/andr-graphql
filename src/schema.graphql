@@ -358,6 +358,7 @@ type Query {
   ping: String!
   primitive(address: String!): PrimitiveContract!
   rates(address: String!): RatesContract!
+  schema(adoType: String!): SchemaTS!
   splitter(address: String!): SplitterContract!
   timelock(address: String!): TimelockContract!
   tx: TxSearchResult!
@@ -391,6 +392,10 @@ type RatesContract implements BaseAdoContract {
   owner: String!
   payments: [RateInfo!]
   queries_expected: [String!]
+}
+
+type SchemaTS {
+  schema: String!
 }
 
 input SearchAttribute {
