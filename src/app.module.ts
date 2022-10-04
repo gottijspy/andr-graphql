@@ -25,9 +25,9 @@ import { AssetsModule } from './assets/assets.module'
 import { CosmModule } from './cosm'
 import { CW721Module } from './cw721/cw721.module'
 import { validate } from './env.validation'
+import { SchemaModule } from './schema/schema.module'
 import { TxModule } from './tx/tx.module'
 import { WasmModule } from './wasm/wasm.module'
-import { SchemaModule } from './schema/schema.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ cache: true, validate }),

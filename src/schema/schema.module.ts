@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { SchemaService } from './schema.service';
-import { SchemaResolver } from './schema.resolver';
+import { Module } from '@nestjs/common'
+import { SchemaResolver } from './schema.resolver'
+import { SchemaService } from './schema.service'
 
 @Module({
-  providers: [SchemaResolver, SchemaService]
+  providers: [SchemaResolver, SchemaService],
 })
 export class SchemaModule {}

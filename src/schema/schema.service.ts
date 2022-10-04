@@ -1,5 +1,5 @@
-import { fetchSchema, getSchemasByType } from '@andromedaprotocol/andromeda.js';
-import { Injectable } from '@nestjs/common';
+import { fetchSchema, getSchemasByType } from '@andromedaprotocol/andromeda.js'
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class SchemaService {
@@ -8,6 +8,6 @@ export class SchemaService {
     const querySchema = await fetchSchema(schemaUrls.query)
     console.log(querySchema)
     //const tsSchemaObj = await compile(, adoType + 'Schema')
-    return "NONE"
+    return 'NONE'
   }
 }
