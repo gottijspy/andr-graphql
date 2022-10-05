@@ -6,5 +6,6 @@ import { AuctionService } from './auction.service'
 @Module({
   imports: [WasmModule],
   providers: [AuctionResolver, AuctionService],
+  exports: [AuctionService],
 })
 export class AuctionModule {}

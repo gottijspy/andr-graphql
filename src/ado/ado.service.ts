@@ -8,6 +8,7 @@ import {
   ANDR_QUERY,
   ANDR_QUERY_OPERATOR,
   APP_QUERY,
+  AUCTION_QUERY,
   CROWDFUND_QUERY,
   CW20Token_QUERY,
   DEFAULT_CATCH_ERR,
@@ -113,6 +114,8 @@ export class AdoService {
       adoType = AdoType.Factory
     } else if (allowed_quries.includes(NFT_QUERY)) {
       adoType = AdoType.CW721
+    } else if (allowed_quries.includes(AUCTION_QUERY)) {
+      adoType = AdoType.Auction
     } else if (allowed_quries.includes(SPLITTER_QUERY)) {
       adoType = AdoType.Splitter
     } else if (allowed_quries.includes(VAULT_QUERY)) {
