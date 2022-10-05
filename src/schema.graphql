@@ -161,6 +161,47 @@ type AssetResult {
   tokens: [NftInfo!]
 }
 
+type AuctionContract implements BaseAdoContract {
+  address: String!
+  admin: String
+  adoType: AdoType!
+  auctionIDs(tokenAddress: String!, tokenId: String!): AuctionIDsResponse
+  auctionInfosForAddress(tokenAddress: String!): AuctionInfosForAddressResponse
+  auctionState(auctionId: Float!): AuctionStateResponse
+  bids(auctionId: Float!): BidsResponse
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  isOperator(operator: String!): Boolean!
+  label: String!
+  latestAuctionState(tokenAddress: String!, tokenId: String!): AuctionStateResponse
+  operators: [String!]!
+  owner: String!
+  queries_expected: [String!]
+}
+
+type AuctionIDsResponse {
+  auction_ids: [Int!]
+}
+
+type AuctionInfosForAddressResponse {
+  auction_ids: [Int!]
+  token_address: String
+  token_id: String
+}
+
+type AuctionStateResponse {
+  auction_id: Int
+  coin_denom: String
+  end_time: JSON
+  high_bidder_addr: String
+  high_bidder_amount: Int
+  is_cancelled: Boolean
+  min_bid: Int
+  start_time: JSON
+  whitelist: JSON
+}
+
 interface BaseAdoContract {
   address: String!
   admin: String
@@ -181,6 +222,16 @@ interface BaseContract {
   ibcPortId: String
   label: String!
   queries_expected: [String!]
+}
+
+type Bid {
+  amount: Int!
+  bidder: String!
+  timestamp: JSON!
+}
+
+type BidsResponse {
+  bids: [Bid!]
 }
 
 type CW20Contract implements BaseAdoContract {
@@ -351,6 +402,7 @@ type Query {
   ado(address: String!): AdoContract!
   app(address: String!): AppContract!
   assets(adoType: AdoType, limit: Int = 10, offset: Int = 0, walletAddress: String!): [AssetResult!]!
+  auction(address: String!): AuctionContract!
   crowdfund(address: String!): CrowdfundContract!
   cw20(address: String!): CW20Contract!
   cw721(address: String!): CW721Contract!
@@ -358,6 +410,7 @@ type Query {
   ping: String!
   primitive(address: String!): PrimitiveContract!
   rates(address: String!): RatesContract!
+  schema(adoType: String!): SchemaTS!
   splitter(address: String!): SplitterContract!
   timelock(address: String!): TimelockContract!
   tx: TxSearchResult!
@@ -391,6 +444,10 @@ type RatesContract implements BaseAdoContract {
   owner: String!
   payments: [RateInfo!]
   queries_expected: [String!]
+}
+
+type SchemaTS {
+  schema: String!
 }
 
 input SearchAttribute {

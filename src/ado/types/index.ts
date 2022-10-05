@@ -1,6 +1,6 @@
 export { AdoContract, TypeMismatchError, AdoContractError, Coin, AdoResult } from './ado.contract'
 export { AddresslistContract, AddresslistResponse, AddresslistResult } from './addresslist.contract'
-export { AuctionContract, AuctionResult } from './auction.contract'
+export { AuctionContract, AuctionResult } from '../../auction/types/auction.contract'
 export { CrowdfundConfig, CrowdfundState, CrowdfundContract, CrowdfundResult } from './crowdfund.contract'
 export { CW20Contract, TokenInfo, Cw20TokenResult } from './cw20.contract'
 export { FactoryContract } from './factory.contract'

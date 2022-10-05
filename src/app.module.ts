@@ -9,7 +9,6 @@ import { join } from 'path'
 import pino from 'pino'
 import { AddresslistModule } from './ado/addresslist/addresslist.module'
 import { AdoModule } from './ado/ado.module'
-import { AuctionModule } from './ado/auction/auction.module'
 import { CrowdfundModule } from './ado/crowdfund/crowdfund.module'
 import { CW20Module } from './ado/cw20/cw20.module'
 import { FactoryModule } from './ado/factory/factory.module'
@@ -22,9 +21,11 @@ import { VaultModule } from './ado/vault/vault.module'
 import { AppResolver } from './app.resolver'
 import { AppAdoModule } from './app/app-ado.module'
 import { AssetsModule } from './assets/assets.module'
+import { AuctionModule } from './auction/auction.module'
 import { CosmModule } from './cosm'
 import { CW721Module } from './cw721/cw721.module'
 import { validate } from './env.validation'
+import { SchemaModule } from './schema/schema.module'
 import { TxModule } from './tx/tx.module'
 import { WasmModule } from './wasm/wasm.module'
 @Module({
@@ -116,6 +117,7 @@ import { WasmModule } from './wasm/wasm.module'
     TxModule,
     WasmModule,
     AssetsModule,
+    SchemaModule,
   ],
   providers: [AppResolver],
 })
