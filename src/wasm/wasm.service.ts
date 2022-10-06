@@ -1,10 +1,9 @@
-import { getConfigByChainID } from '@andromedaprotocol/andromeda.js'
+import { configs, getConfigByChainID } from '@andromedaprotocol/andromeda.js'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Injectable } from '@nestjs/common'
 import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { InjectCosmClient } from 'src/cosm'
-import * as chainLookup from './types/configs.json'
 import {
   INTERNAL_CONTRACT_ERR,
   INVALID_QUERY_ERR,
@@ -83,9 +82,7 @@ export class WasmService {
   }
 
   private getChainUrl(address: string, chainId?: string): string | undefined {
-    const chainConfig = chainId
-      ? getConfigByChainID(chainId)
-      : chainLookup.find((c) => address.startsWith(c.addressPrefix))
+    const chainConfig = chainId ? getConfigByChainID(chainId) : configs.find((c) => address.startsWith(c.addressPrefix))
 
     return chainConfig?.chainUrl
   }
