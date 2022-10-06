@@ -413,7 +413,7 @@ type Query {
   schema(adoType: String!): SchemaTS!
   splitter(address: String!): SplitterContract!
   timelock(address: String!): TimelockContract!
-  tx: TxSearchResult!
+  tx(chainId: String!): TxSearchResult!
   vault(address: String!): VaultContract!
   wasm(address: String!): WasmContract!
 }
@@ -548,6 +548,7 @@ type TxSearchResult {
   byHeight(height: Float!): [TxInfo!]
   byOwner(maxHeight: Int, minHeight: Int, walletAddress: String!): [TxInfo!]
   byTag(maxHeight: Int, minHeight: Int, tags: JSON!): [TxInfo!]
+  chainId: String!
 }
 
 type VaultContract implements BaseAdoContract {

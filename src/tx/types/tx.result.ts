@@ -87,6 +87,9 @@ export class TxEventAttribute {
 
 @ObjectType()
 export class TxSearchResult {
+  @Field()
+  chainId!: string
+
   @Field(() => TxInfo, { nullable: true })
   byHash?: TxInfo
 
