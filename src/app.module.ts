@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { LoggerModule } from 'nestjs-pino'
 import { join } from 'path'
 import pino from 'pino'
+import { AdoPackageModule } from './ado-package/ado-package.module'
 import { AddresslistModule } from './ado/addresslist/addresslist.module'
 import { AdoModule } from './ado/ado.module'
 import { CrowdfundModule } from './ado/crowdfund/crowdfund.module'
@@ -22,6 +23,7 @@ import { AppResolver } from './app.resolver'
 import { AppAdoModule } from './app/app-ado.module'
 import { AssetsModule } from './assets/assets.module'
 import { AuctionModule } from './auction/auction.module'
+import { ChainConfigModule } from './chain-config/chain-config.module'
 import { CosmModule } from './cosm'
 import { CW721Module } from './cw721/cw721.module'
 import { validate } from './env.validation'
@@ -118,6 +120,8 @@ import { WasmModule } from './wasm/wasm.module'
     WasmModule,
     AssetsModule,
     SchemaModule,
+    ChainConfigModule,
+    AdoPackageModule,
   ],
   providers: [AppResolver],
 })
