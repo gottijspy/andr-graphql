@@ -1,13 +1,15 @@
-import { ArgsType, Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { AdoType } from 'src/ado/types'
 
 export type AdoPackageDocument = AdoPackage & Document
 
 @ObjectType()
 export class ADOPSchemaReceive {
-  @Field()
-  cw721!: string
+  @Field({ nullable: true })
+  cw721?: string
+
+  @Field({ nullable: true })
+  cw20?: string
 }
 
 @ObjectType()
@@ -24,13 +26,6 @@ export class ADOPSchema {
   @Field(() => ADOPSchemaReceive, { nullable: true })
   receive?: ADOPSchemaReceive
 }
-
-@ArgsType()
-export class ADOPArgs {
-  @Field(() => AdoType)
-  adoType!: AdoType
-}
-
 @Schema()
 @ObjectType()
 export class AdoPackage {

@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ADOPQuery {
+  adoTypes: [String!]!
+  package(adoType: AdoType!): AdoPackage!
+}
+
 type ADOPSchema {
   execute: String!
   instantiate: String!
@@ -10,7 +15,8 @@ type ADOPSchema {
 }
 
 type ADOPSchemaReceive {
-  cw721: String!
+  cw20: String
+  cw721: String
 }
 
 type ADORate {
@@ -308,6 +314,11 @@ type ChainConfig {
   registryAddress: String!
 }
 
+type ChainConfigQuery {
+  allConfigs: [ChainConfig!]!
+  config(identifier: String!): ChainConfig!
+}
+
 type Coin {
   amount: String!
   denom: String!
@@ -434,13 +445,13 @@ type PrimitiveResponse {
 }
 
 type Query {
-  ADOP(adoType: AdoType!): AdoPackage!
+  ADOP: ADOPQuery!
   addresslist(address: String!): AddresslistContract!
   ado(address: String!): AdoContract!
   app(address: String!): AppContract!
   assets(adoType: AdoType, limit: Int = 10, offset: Int = 0, walletAddress: String!): [AssetResult!]!
   auction(address: String!): AuctionContract!
-  chainConfig(identifier: String!): ChainConfig!
+  chainConfigs: ChainConfigQuery!
   crowdfund(address: String!): CrowdfundContract!
   cw20(address: String!): CW20Contract!
   cw721(address: String!): CW721Contract!
