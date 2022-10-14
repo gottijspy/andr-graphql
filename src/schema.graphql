@@ -4,7 +4,7 @@
 
 type ADOPQuery {
   adoTypes: [String!]!
-  package(adoType: AdoType!): AdoPackage!
+  package(adoType: String!): AdoPackage!
 }
 
 type ADOPSchema {

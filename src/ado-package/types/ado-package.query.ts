@@ -1,5 +1,4 @@
-import { ArgsType, Field, ObjectType } from '@nestjs/graphql'
-import { AdoType } from 'src/ado/types'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { AdoPackage } from './ado-package.schema'
 
 @ObjectType()
@@ -11,8 +10,3 @@ export class ADOPQuery {
   package!: Promise<AdoPackage>
 }
 
-@ArgsType()
-export class ADOPArgs {
-  @Field(() => AdoType)
-  adoType!: AdoType
-}

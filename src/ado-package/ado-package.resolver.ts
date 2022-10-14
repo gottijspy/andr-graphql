@@ -1,6 +1,7 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { AdoType } from 'src/ado/types'
 import { AdoPackageService } from './ado-package.service'
-import { AdoPackage, ADOPArgs, ADOPQuery } from './types'
+import { AdoPackage, ADOPQuery } from './types'
 
 @Resolver(ADOPQuery)
 export class AdoPackageResolver {
@@ -17,7 +18,7 @@ export class AdoPackageResolver {
   }
 
   @ResolveField(() => AdoPackage)
-  public async package(@Args() args: ADOPArgs): Promise<AdoPackage> {
-    return this.adoPackageService.getPackage(args.adoType)
+  public async package(@Args('adoType') adoType: string): Promise<AdoPackage> {
+    return this.adoPackageService.getPackage(adoType as AdoType)
   }
 }
