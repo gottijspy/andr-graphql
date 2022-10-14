@@ -9,4 +9,3 @@ export class ADOPQuery {
   @Field(() => AdoPackage)
   package!: Promise<AdoPackage>
 }
-
