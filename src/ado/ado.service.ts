@@ -1,25 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError, UserInputError } from 'apollo-server'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { AdoType } from 'src/ado/types/ado.enums'
+import { AdoType, AndrQuery, AndrQuerySchema } from 'src/ado/andr-query/types'
 import { WasmService } from 'src/wasm/wasm.service'
-import { AdoContract } from './types'
-import {
-  ANDR_QUERY,
-  ANDR_QUERY_OPERATOR,
-  APP_QUERY,
-  AUCTION_QUERY,
-  CROWDFUND_QUERY,
-  CW20Token_QUERY,
-  DEFAULT_CATCH_ERR,
-  FACTORY_QUERY,
-  INVALID_ADO_ERR,
-  INVALID_QUERY_ERR,
-  NFT_QUERY,
-  SPLITTER_QUERY,
-  VAULT_QUERY,
-} from './types/ado.constants'
-import { queryMsgs } from './types/ado.querymsg'
+import { ANDR_QUERY_OPERATOR, DEFAULT_CATCH_ERR, INVALID_ADO_ERR, INVALID_QUERY_ERR, TypeMismatchError } from './types'
 
 @Injectable()
 export class AdoService {
@@ -30,22 +14,10 @@ export class AdoService {
     protected readonly wasmService: WasmService,
   ) {}
 
-  public async getContract(address: string, adoType?: AdoType): Promise<AdoContract> {
+  public async getContract(address: string): Promise<AndrQuery> {
     try {
-      const contractInfo = await this.wasmService.getContract(address)
-      const adoContractInfo = contractInfo as AdoContract
-
-      if (!adoType) {
-        contractInfo.queries_expected = await this.wasmService.getContractQueries(address)
-        if (!contractInfo.queries_expected || !contractInfo.queries_expected.includes(ANDR_QUERY)) {
-          throw new UserInputError(INVALID_ADO_ERR)
-        }
-
-        adoType = this.getAdoType(contractInfo.queries_expected)
-      }
-
-      adoContractInfo.adoType = adoType
-      return adoContractInfo
+      const adoContractInfo = await this.wasmService.getContract(address)
+      return adoContractInfo as AndrQuery
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
       if (err instanceof UserInputError || err instanceof ApolloError) {
@@ -56,9 +28,34 @@ export class AdoService {
     }
   }
 
+  // TODO: Revisit unknown type conversion for TAdo
+  public async getAdo<TAdo>(address: string, ado_type: AdoType): Promise<TAdo> {
+    try {
+      const response = await this.wasmService.queryContract(address, AndrQuerySchema.type)
+      if (response.ado_type && response.ado_type === ado_type) {
+        const wasmContract = await this.wasmService.getContract(address)
+        return {
+          address: address,
+          type: response.ado_type,
+          andr: wasmContract as AndrQuery,
+        } as unknown as TAdo
+      }
+
+      const typeError = new TypeMismatchError(ado_type, response.ado_type)
+      throw new UserInputError(typeError.error, { ...typeError })
+    } catch (err: any) {
+      this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
+      if (err instanceof UserInputError || err instanceof ApolloError) {
+        throw err
+      }
+
+      throw new ApolloError(INVALID_QUERY_ERR)
+    }
+  }
+
   public async owner(address: string): Promise<string> {
     try {
-      const queryResponse = await this.wasmService.queryContract(address, queryMsgs.ado.owner)
+      const queryResponse = await this.wasmService.queryContract(address, AndrQuerySchema.owner)
       return queryResponse.owner
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
@@ -72,7 +69,7 @@ export class AdoService {
 
   public async operators(address: string): Promise<string[]> {
     try {
-      const queryResponse = await this.wasmService.queryContract(address, queryMsgs.ado.operators)
+      const queryResponse = await this.wasmService.queryContract(address, AndrQuerySchema.operators)
       return queryResponse.operators
     } catch (err: any) {
       this.logger.error({ err }, DEFAULT_CATCH_ERR, address)
@@ -85,7 +82,7 @@ export class AdoService {
   }
 
   public async isOperator(address: string, operator: string): Promise<boolean> {
-    const queryMsgStr = JSON.stringify(queryMsgs.ado.is_operator).replace(ANDR_QUERY_OPERATOR, operator)
+    const queryMsgStr = JSON.stringify(AndrQuerySchema.is_operator).replace(ANDR_QUERY_OPERATOR, operator)
     const queryMsg = JSON.parse(queryMsgStr)
 
     try {
@@ -99,32 +96,5 @@ export class AdoService {
 
       throw new ApolloError(INVALID_QUERY_ERR)
     }
-  }
-
-  private getAdoType(allowed_quries: string[]): AdoType {
-    let adoType = AdoType.Unknown
-
-    if (allowed_quries.includes(APP_QUERY)) {
-      adoType = AdoType.App
-    } else if (allowed_quries.includes(CW20Token_QUERY)) {
-      adoType = AdoType.CW20
-    } else if (allowed_quries.includes(CROWDFUND_QUERY)) {
-      adoType = AdoType.Crowdfund
-    } else if (allowed_quries.includes(FACTORY_QUERY)) {
-      adoType = AdoType.Factory
-    } else if (allowed_quries.includes(NFT_QUERY)) {
-      adoType = AdoType.CW721
-    } else if (allowed_quries.includes(AUCTION_QUERY)) {
-      adoType = AdoType.Auction
-    } else if (allowed_quries.includes(SPLITTER_QUERY)) {
-      adoType = AdoType.Splitter
-    } else if (allowed_quries.includes(VAULT_QUERY)) {
-      adoType = AdoType.Vault
-    } else if (allowed_quries.length === 1) {
-      // only andr_query exists for Primitive
-      adoType = AdoType.Primitive
-    }
-
-    return adoType
   }
 }

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { ApolloError, UserInputError } from 'apollo-server'
 import { Model } from 'mongoose'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
-import { DEFAULT_CATCH_ERR, MONGO_QUERY_ERROR } from 'src/ado/types'
+import { DEFAULT_CATCH_ERR, MONGO_QUERY_ERROR } from 'src/ado/andr-query/types'
 import { ChainConfig, CHAIN_CONFIGS_NOT_FOUND_ERR, CHAIN_CONFIG_NOT_FOUND_ERR } from './types'
 
 @Injectable()

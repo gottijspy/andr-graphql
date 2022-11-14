@@ -1,5 +1,5 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { AdoType } from 'src/ado/types'
+import { AdoType } from 'src/ado/andr-query/types'
 import { AdoPackageService } from './ado-package.service'
 import { AdoPackage, ADOPQuery } from './types'
 

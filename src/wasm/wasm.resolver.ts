@@ -7,7 +7,9 @@ import { WasmService } from './wasm.service'
 export class WasmResolver {
   constructor(private readonly wasmService: WasmService) {}
 
-  @Query(() => WasmContract)
+  @Query(() => WasmContract, {
+    deprecationReason: 'Moved to `ADO` query resolver, use `wasm` field on `ADO` to resolve this query.',
+  })
   public async wasm(@Args('address') address: string): Promise<WasmContract> {
     const contractInfo = await this.wasmService.getContract(address)
     return contractInfo

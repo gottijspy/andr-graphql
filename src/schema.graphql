@@ -19,52 +19,20 @@ type ADOPSchemaReceive {
   cw721: String
 }
 
-type ADORate {
-  address: String
-  key: String
-}
-
-type AddressPercent {
-  percent: String
-  recipient: JSON
-}
-
-type AddresslistContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  includesAddress(address: String!): AddresslistResponse
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-}
-
-type AddresslistResponse {
-  included: Boolean
-}
-
-type AdoContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
+type AccountsQuery {
+  assets(adoType: AdoType, limit: Int = 10, offset: Int = 0, walletAddress: String!): [AssetResult!]!
+  wallets: String!
 }
 
 type AdoPackage {
   name: String!
   schemas: ADOPSchema!
+}
+
+type AdoQuery {
+  app(address: String!): AppAdo!
+  auction(address: String!): AuctionAdo!
+  cw721(address: String!): CW721Ado!
 }
 
 enum AdoType {
@@ -116,29 +84,54 @@ enum AndrOrderBy {
   Desc
 }
 
+type AndrQuery implements IWasmContract {
+  address: String!
+  admin: String
+  blockHeightUponCreation: Int!
+  codeId: Int!
+  creator: String!
+  ibcPortId: String
+  isOperator(address: String!): Boolean!
+  label: String!
+  operators: [String!]!
+  originalPublisher: String!
+  owner: String!
+  queries_expected: [String!]
+  type: String!
+  version: String!
+}
+
 input AndrSearchOptions {
   limit: Int = 10
   orderBy: AndrOrderBy = Asc
   startAfter: Int = 0
 }
 
-type AndrStrategy {
-  address: String
-  strategyType: AndrStrategyType
-}
-
-enum AndrStrategyType {
-  Anchor
+type AppAdo implements IBaseAdoQuery {
+  address: String!
+  addresses: [AppComponentAddress!]
+  admin: String @deprecated(reason: "Moved to `andr` query resolver, use `admin` field on `andr` to resolve this query.")
+  andr: AndrQuery!
+  codeId: Int @deprecated(reason: "Moved to `andr` query resolver, use `codeId` field on `andr` to resolve this query.")
+  componentExists(name: String!): Boolean
+  components: [AppComponent!]
+  config: AppConfig
+  creator: String @deprecated(reason: "Moved to `andr` query resolver, use `creator` field on `andr` to resolve this query.")
+  getAddress(name: String!): String
+  ibcPortId: String @deprecated(reason: "Moved to `andr` query resolver, use `ibcPortId` field on `andr` to resolve this query.")
+  isOperator: Boolean @deprecated(reason: "Moved to `andr` query resolver, use `operators` field on `andr` to resolve this query.")
+  label: String @deprecated(reason: "Moved to `andr` query resolver, use `label` field on `andr` to resolve this query.")
+  operators: [String!] @deprecated(reason: "Moved to `andr` query resolver, use `operators` field on `andr` to resolve this query.")
+  owner: String @deprecated(reason: "Moved to `andr` query resolver, use `owner` field on `andr` to resolve this query.")
+  queries_expected: [String!] @deprecated(reason: "Moved to `andr` query resolver, use `queries_expected` field on `andr` to resolve this query.")
+  type: String!
 }
 
 type AppComponent {
   address: String
-  ado: AdoContract
   ado_type: String!
-  component: AdoContract!
   instantiate_msg: String!
   name: String!
-  tokens(attributes: [SearchAttribute!]): [NftInfo!]
 }
 
 type AppComponentAddress {
@@ -151,56 +144,37 @@ type AppConfig {
   owner: String!
 }
 
-type AppContract implements BaseAdoContract {
-  address: String!
-  addresses: [AppComponentAddress!]
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  componentExists(name: String!): Boolean
-  components: [AppComponent!]
-  config: AppConfig
-  creator: String!
-  getAddress(name: String!): String
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-}
-
 type AssetResult {
   address: String!
   adoType: String!
   appContract: String
   chainId: String
-  components(componentType: AdoType, limit: Int = 10, offset: Int = 0): [AppComponent!]
+  components(componentType: AdoType, limit: Int = 10, offset: Int = 0): [Component!]
   instantiateHash: String
   instantiateHeight: Int
   lastUpdatedHash: String
   lastUpdatedHeight: Int
   owner: String!
-  tokens: [NftInfo!]
 }
 
-type AuctionContract implements BaseAdoContract {
+type AuctionAdo implements IBaseAdoQuery {
   address: String!
-  admin: String
-  adoType: AdoType!
+  admin: String @deprecated(reason: "Moved to `andr` query resolver, use `admin` field on `andr` to resolve this query.")
+  andr: AndrQuery!
   auctionIDs(tokenAddress: String!, tokenId: String!): AuctionIDsResponse
   auctionInfosForAddress(tokenAddress: String!): AuctionInfosForAddressResponse
   auctionState(auctionId: Float!): AuctionStateResponse
   bids(auctionId: Float!): BidsResponse
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
+  codeId: Int @deprecated(reason: "Moved to `andr` query resolver, use `codeId` field on `andr` to resolve this query.")
+  creator: String @deprecated(reason: "Moved to `andr` query resolver, use `creator` field on `andr` to resolve this query.")
+  ibcPortId: String @deprecated(reason: "Moved to `andr` query resolver, use `ibcPortId` field on `andr` to resolve this query.")
+  isOperator(address: String!): Boolean! @deprecated(reason: "Moved to `andr` query resolver, use `isOperator` field on `andr` to resolve this query.")
+  label: String @deprecated(reason: "Moved to `andr` query resolver, use `label` field on `andr` to resolve this query.")
   latestAuctionState(tokenAddress: String!, tokenId: String!): AuctionStateResponse
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
+  operators: [String!]! @deprecated(reason: "Moved to `andr` query resolver, use `operators` field on `andr` to resolve this query.")
+  owner: String! @deprecated(reason: "Moved to `andr` query resolver, use `owner` field on `andr` to resolve this query.")
+  queries_expected: [String!] @deprecated(reason: "Moved to `andr` query resolver, use `queries_expected` field on `andr` to resolve this query.")
+  type: String!
 }
 
 type AuctionIDsResponse {
@@ -225,26 +199,13 @@ type AuctionStateResponse {
   whitelist: JSON
 }
 
-interface BaseAdoContract {
-  address: String!
-  admin: String
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-}
-
-interface BaseContract {
-  address: String!
-  admin: String
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  label: String!
-  queries_expected: [String!]
+type Bech32Config {
+  bech32PrefixAccAddr: String!
+  bech32PrefixAccPub: String!
+  bech32PrefixConsAddr: String!
+  bech32PrefixConsPub: String!
+  bech32PrefixValAddr: String!
+  bech32PrefixValPub: String!
 }
 
 type Bid {
@@ -257,47 +218,37 @@ type BidsResponse {
   bids: [Bid!]
 }
 
-type CW20Contract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-  tokenInfo: TokenInfo
+type Bip44 {
+  coinType: String!
 }
 
-type CW721Contract implements BaseAdoContract {
+type CW721Ado {
   address: String!
-  admin: String
-  adoType: AdoType!
+  admin: String @deprecated(reason: "Moved to `andr` query resolver, use `admin` field on `andr` to resolve this query.")
   allNftInfo(includeExpired: Boolean!, tokenId: String!): AllNftInfo
   allOperators(includeExpired: Boolean!, options: AndrSearchOptions, owner: String!): [NftApproval!]
   allTokens(options: AndrSearchOptions): [String!]
+  andr: AndrQuery!
   approval(includeExpired: Boolean!, spender: String!, tokenId: String!): NftApproval
   approvals(includeExpired: Boolean!, tokenId: String!): [NftApproval!]
-  codeId: Int!
+  codeId: Int @deprecated(reason: "Moved to `andr` query resolver, use `codeId` field on `andr` to resolve this query.")
   contractInfo: NftContractInfo
-  creator: String!
-  ibcPortId: String
+  creator: String @deprecated(reason: "Moved to `andr` query resolver, use `creator` field on `andr` to resolve this query.")
+  ibcPortId: String @deprecated(reason: "Moved to `andr` query resolver, use `ibcPortId` field on `andr` to resolve this query.")
   isArchived(tokenId: String!): Boolean
-  isOperator(operator: String!): Boolean!
-  label: String!
+  isOperator: Boolean @deprecated(reason: "Moved to `andr` query resolver, use `operators` field on `andr` to resolve this query.")
+  label: String @deprecated(reason: "Moved to `andr` query resolver, use `label` field on `andr` to resolve this query.")
   minter: String
   nftInfo(tokenId: String!): NftInfo
   numTokens: Int
-  operators: [String!]!
-  owner: String!
+  operators: [String!] @deprecated(reason: "Moved to `andr` query resolver, use `operators` field on `andr` to resolve this query.")
+  owner: String @deprecated(reason: "Moved to `andr` query resolver, use `owner` field on `andr` to resolve this query.")
   ownerOf(includeExpired: Boolean!, tokenId: String!): NftOwnerInfo
-  queries_expected: [String!]
+  queries_expected: [String!] @deprecated(reason: "Moved to `andr` query resolver, use `queries_expected` field on `andr` to resolve this query.")
   searchTokens(attributes: [SearchAttribute!]): [NftInfo!]
   tokens(options: AndrSearchOptions, owner: String!): [String!]
   transferAgreement(tokenId: String!): TransferAgreement!
+  type: String!
 }
 
 type ChainConfig {
@@ -324,63 +275,39 @@ type Coin {
   denom: String!
 }
 
-type CrowdfundConfig {
-  can_mint_after_sale: Boolean!
-  token_address: JSON!
+type Component {
+  address: String
+  ado_type: String!
+  instantiate_msg: String!
+  name: String!
 }
 
-type CrowdfundContract implements BaseAdoContract {
+type Currency {
+  coinDecimals: Int!
+  coinDenom: String!
+  coinGeckoId: String!
+  coinMinimalDenom: String!
+}
+
+type GasPriceStep {
+  average: Float!
+  high: Float!
+  low: Float!
+}
+
+interface IBaseAdoQuery {
+  address: String!
+  andr: AndrQuery!
+  type: String!
+}
+
+interface IWasmContract {
   address: String!
   admin: String
-  adoType: AdoType!
-  availableTokens: [String!]
   codeId: Int!
-  config: CrowdfundConfig
   creator: String!
   ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  isTokenAvailable(tokenId: String!): Boolean
   label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-  state: CrowdfundState
-}
-
-type CrowdfundState {
-  amount_sold: Int
-  amount_to_send: Int
-  amount_transferred: Int
-  expiration: JSON
-  max_amount_per_wallet: Int
-  min_tokens_sold: Int
-  price: Coin
-  recipient: JSON
-}
-
-type Escrow {
-  coins: [Coin!]
-  condition: EscrowCondition
-  recipient: JSON
-}
-
-type EscrowCondition {
-  expiration: JSON
-  miniumFunds: [Coin!]
-}
-
-type FactoryContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  code_id(key: String!): Int
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
   queries_expected: [String!]
 }
 
@@ -393,6 +320,25 @@ type IconUrl {
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type KeplrConfig {
+  bech32Config: Bech32Config!
+  bip44: Bip44!
+  chainId: String!
+  chainName: String!
+  coinType: Int!
+  currencies: [Currency!]!
+  feeCurrencies: [Currency!]!
+  gasPriceStep: GasPriceStep!
+  rest: String!
+  rpc: String!
+  stakeCurrency: Currency!
+}
+
+type KeplrConfigQuery {
+  allConfigs: [KeplrConfig!]!
+  config(identifier: String!): KeplrConfig!
+}
 
 type MetadataAttribute {
   display_type: String
@@ -420,124 +366,23 @@ type NftOwnerInfo {
   owner: String
 }
 
-type PercentRate {
-  decimal: Float
-}
-
-type PrimitiveContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  getValue(key: String!): PrimitiveResponse
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-}
-
-type PrimitiveResponse {
-  key: String
-  value: JSON
-}
-
 type Query {
+  ADO: AdoQuery!
   ADOP: ADOPQuery!
-  addresslist(address: String!): AddresslistContract!
-  ado(address: String!): AdoContract!
-  app(address: String!): AppContract!
-  assets(adoType: AdoType, limit: Int = 10, offset: Int = 0, walletAddress: String!): [AssetResult!]!
-  auction(address: String!): AuctionContract!
+  accounts: AccountsQuery!
+  app(address: String!): AppAdo! @deprecated(reason: "Moved to `ADO` query resolver, use `app` field on `ADO` to resolve this query.")
+  assets(adoType: AdoType, limit: Int = 10, offset: Int = 0, walletAddress: String!): [AssetResult!]! @deprecated(reason: "Moved to `Accounts` query resolver, use `assets` field on `Accounts` to resolve this query.")
+  auction(address: String!): AuctionAdo! @deprecated(reason: "Moved to `ADO` query resolver, use `auction` field on `ADO` to resolve this query.")
   chainConfigs: ChainConfigQuery!
-  crowdfund(address: String!): CrowdfundContract!
-  cw20(address: String!): CW20Contract!
-  cw721(address: String!): CW721Contract!
-  factory(address: String!): FactoryContract!
-  ping: String!
-  primitive(address: String!): PrimitiveContract!
-  rates(address: String!): RatesContract!
-  schema(adoType: String!): SchemaTS!
-  splitter(address: String!): SplitterContract!
-  timelock(address: String!): TimelockContract!
+  cw721(address: String!): CW721Ado! @deprecated(reason: "Moved to `ADO` query resolver, use `cw721` field on `ADO` to resolve this query.")
+  keplrConfigs: KeplrConfigQuery!
   tx(chainId: String!): TxSearchResult!
-  vault(address: String!): VaultContract!
-  wasm(address: String!): WasmContract!
-}
-
-type Rate {
-  external: ADORate
-  flat: Coin
-  percent: PercentRate
-}
-
-type RateInfo {
-  description: String
-  is_additive: Boolean
-  rate: Rate
-  receivers: [JSON!]
-}
-
-type RatesContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  payments: [RateInfo!]
-  queries_expected: [String!]
-}
-
-type SchemaTS {
-  schema: String!
+  wasm(address: String!): WasmContract! @deprecated(reason: "Moved to `ADO` query resolver, use `wasm` field on `ADO` to resolve this query.")
 }
 
 input SearchAttribute {
   trait_type: String!
   value: String
-}
-
-type Splitter {
-  locked: Boolean
-  recipients: [AddressPercent!]
-}
-
-type SplitterContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  config: Splitter
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-}
-
-type TimelockContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  codeId: Int!
-  creator: String!
-  getLockedFunds(owner: String!, recipient: String!): Escrow
-  getLockedFundsForRecipient(options: AndrSearchOptions!, recipient: String!): [Escrow!]
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
 }
 
 type TokenExtension {
@@ -550,13 +395,6 @@ type TokenExtension {
   name: String!
   publisher: String!
   youtube_url: String
-}
-
-type TokenInfo {
-  decimals: Int!
-  name: String!
-  symbol: String!
-  total_supply: Float!
 }
 
 type TransferAgreement {
@@ -600,23 +438,7 @@ type TxSearchResult {
   chainId: String!
 }
 
-type VaultContract implements BaseAdoContract {
-  address: String!
-  admin: String
-  adoType: AdoType!
-  balance(address: String!): [Coin!]
-  codeId: Int!
-  creator: String!
-  ibcPortId: String
-  isOperator(operator: String!): Boolean!
-  label: String!
-  operators: [String!]!
-  owner: String!
-  queries_expected: [String!]
-  strategyAddress(strategy: String!): AndrStrategy
-}
-
-type WasmContract implements BaseContract {
+type WasmContract implements IWasmContract {
   address: String!
   admin: String
   codeId: Int!

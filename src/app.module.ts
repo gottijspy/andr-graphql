@@ -7,27 +7,29 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { LoggerModule } from 'nestjs-pino'
 import { join } from 'path'
 import pino from 'pino'
+import { AccountsModule } from './accounts/accounts.module'
+import { AssetsModule } from './accounts/assets/assets.module'
 import { AdoPackageModule } from './ado-package/ado-package.module'
-import { AddresslistModule } from './ado/addresslist/addresslist.module'
 import { AdoModule } from './ado/ado.module'
-import { CrowdfundModule } from './ado/crowdfund/crowdfund.module'
-import { CW20Module } from './ado/cw20/cw20.module'
-import { FactoryModule } from './ado/factory/factory.module'
-import { PrimitiveModule } from './ado/primitive/primitive.module'
-import { RatesModule } from './ado/rates/rates.module'
-import { SplitterModule } from './ado/splitter/splitter.module'
-import { TimelockModule } from './ado/timelock/timelock.module'
+import { AndrQueryModule } from './ado/andr-query/andr-query.module'
+import { AppAdoModule } from './ado/app/app-ado.module'
+//import { AddresslistModule } from './ados/addresslist/addresslist.module'
+//import { BaseAdoModule } from './ados/ado/ado.module'
+import { AuctionModule } from './ado/auction/auction.module'
+// import { CrowdfundModule } from './ados/crowdfund/crowdfund.module'
+// import { CW20Module } from './ados/cw20/cw20.module'
+import { CW721Module } from './ado/cw721/cw721.module'
 import { registerEnums } from './ado/types/ado.enums'
-import { VaultModule } from './ado/vault/vault.module'
-import { AppResolver } from './app.resolver'
-import { AppAdoModule } from './app/app-ado.module'
-import { AssetsModule } from './assets/assets.module'
-import { AuctionModule } from './auction/auction.module'
+// import { FactoryModule } from './ados/factory/factory.module'
+// import { PrimitiveModule } from './ado/primitive/primitive.module'
+// import { RatesModule } from './ados/rates/rates.module'
+// import { SplitterModule } from './ados/splitter/splitter.module'
+// import { TimelockModule } from './ados/timelock/timelock.module'
+// import { VaultModule } from './ados/vault/vault.module'
 import { ChainConfigModule } from './chain-config/chain-config.module'
 import { CosmModule } from './cosm'
-import { CW721Module } from './cw721/cw721.module'
 import { validate } from './env.validation'
-import { SchemaModule } from './schema/schema.module'
+import { KeplrConfigModule } from './keplr-config/keplr-config.module'
 import { TxModule } from './tx/tx.module'
 import { WasmModule } from './wasm/wasm.module'
 @Module({
@@ -103,26 +105,28 @@ import { WasmModule } from './wasm/wasm.module'
         }
       },
     }),
-    AddresslistModule,
-    AdoModule,
+    AndrQueryModule,
+    //AddresslistModule,
+    //BaseAdoModule,
     AppAdoModule,
     AuctionModule,
-    CrowdfundModule,
-    CW20Module,
-    FactoryModule,
+    // CrowdfundModule,
+    // CW20Module,
+    // FactoryModule,
     CW721Module,
-    PrimitiveModule,
-    RatesModule,
-    SplitterModule,
-    TimelockModule,
-    VaultModule,
+    KeplrConfigModule,
+    // PrimitiveModule,
+    // RatesModule,
+    // SplitterModule,
+    // TimelockModule,
+    // VaultModule,
     TxModule,
     WasmModule,
     AssetsModule,
-    SchemaModule,
     ChainConfigModule,
     AdoPackageModule,
+    AdoModule,
+    AccountsModule,
   ],
-  providers: [AppResolver],
 })
 export class AppModule {}
