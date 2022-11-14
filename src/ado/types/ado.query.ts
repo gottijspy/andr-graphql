@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { AddressListAdo } from '../addresslist/types'
 import { AuctionAdo } from '../auction/types'
-// import { AddressListAdo } from '../addresslist/types'
 // import { BaseAdo } from '../ado/types'
 // import { AppAdo } from '../app/types'
 // import { AuctionAdo } from '../auction/types'
-// import { CrowdfundAdo } from '../crowdfund/types'
+import { CrowdfundAdo } from '../crowdfund/types'
 // import { CW20Ado } from '../cw20/types'
 import { CW721Ado } from '../cw721/types'
 // import { PrimitiveAdo } from '../primitive/types'
@@ -30,8 +30,8 @@ export class AdoQuery {
   // @Field(() => RatesAdo)
   // rates!: Promise<RatesAdo>
 
-  // @Field(() => AddressListAdo)
-  // address_list!: Promise<AddressListAdo>
+  @Field(() => AddressListAdo)
+  address_list!: Promise<AddressListAdo>
 
   // @Field()
   // receipt!: string
@@ -48,8 +48,8 @@ export class AdoQuery {
   // @Field()
   // marketplace!: string
 
-  // @Field(() => CrowdfundAdo)
-  // crowdfund!: Promise<CrowdfundAdo>
+  @Field(() => CrowdfundAdo)
+  crowdfund!: Promise<CrowdfundAdo>
 
   // @Field(() => AppAdo)
   // app!: Promise<AppAdo>
