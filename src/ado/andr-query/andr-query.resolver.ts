@@ -6,11 +6,6 @@ import { AndrQuery } from './types/andr.query'
 export class AndrQueryResolver {
   constructor(private readonly andrQueryService: AndrQueryService) {}
 
-  // @Query(() => AndrQuery)
-  // public async andr(@Args('address') address: string): Promise<AndrQuery> {
-  //   return this.andrQueryService.getContract(address)
-  // }
-
   @ResolveField(() => String)
   public async owner(@Parent() andr: AndrQuery): Promise<string> {
     return this.andrQueryService.owner(andr.address)
