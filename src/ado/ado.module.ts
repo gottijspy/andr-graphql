@@ -6,6 +6,5 @@ import { AdoService } from './ado.service'
 @Module({
   imports: [WasmModule],
   providers: [AdoResolver, AdoService],
-  exports: [AdoService],
 })
 export class AdoModule {}

@@ -2,7 +2,7 @@ import { ArgsType, createUnionType, Field, Int, InterfaceType, ObjectType } from
 import GraphQLJSON from 'graphql-type-json'
 
 @InterfaceType()
-export abstract class BaseContract {
+export abstract class IWasmContract {
   @Field(() => String)
   address!: string
 
@@ -33,9 +33,9 @@ export abstract class BaseContract {
 }
 
 @ObjectType({
-  implements: [BaseContract],
+  implements: [IWasmContract],
 })
-export class WasmContract implements BaseContract {
+export class WasmContract implements IWasmContract {
   @Field(() => String)
   address!: string
 
