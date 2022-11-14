@@ -65,10 +65,13 @@ type AdoQuery {
   auction(address: String!): AuctionAdo!
   crowdfund(address: String!): CrowdfundAdo!
   cw20(address: String!): CW20Ado!
+  cw20_staking: String!
   cw721(address: String!): CW721Ado!
   factory(address: String!): FactoryAdo!
+  marketplace: String!
   primitive(address: String!): PrimitiveAdo!
   rates(address: String!): RatesAdo!
+  receipt: String!
   splitter(address: String!): SplitterAdo!
   timelock(address: String!): TimelockAdo!
   vault(address: String!): VaultAdo!
@@ -155,7 +158,7 @@ enum AndrStrategyType {
   Anchor
 }
 
-type AppAdo implements IBaseAdoQuery {
+type AppAdo {
   address: String!
   addresses: [AppComponentAddress!]
   admin: String @deprecated(reason: "Moved to `andr` query resolver, use `admin` field on `andr` to resolve this query.")
@@ -270,7 +273,7 @@ type Bip44 {
   coinType: String!
 }
 
-type CW20Ado implements IBaseAdoQuery {
+type CW20Ado {
   address: String!
   andr: AndrQuery!
   tokenInfo: TokenInfo
@@ -469,7 +472,7 @@ type PercentRate {
   decimal: Float
 }
 
-type PrimitiveAdo implements IBaseAdoQuery {
+type PrimitiveAdo {
   address: String!
   andr: AndrQuery!
   getValue(key: String!): PrimitiveResponse
@@ -508,7 +511,7 @@ type RateInfo {
   receivers: [JSON!]
 }
 
-type RatesAdo implements IBaseAdoQuery {
+type RatesAdo {
   address: String!
   andr: AndrQuery!
   payments: [RateInfo!]
@@ -525,7 +528,7 @@ type Splitter {
   recipients: [AddressPercent!]
 }
 
-type SplitterAdo implements IBaseAdoQuery {
+type SplitterAdo {
   address: String!
   andr: AndrQuery!
   config: Splitter
@@ -600,7 +603,7 @@ type TxSearchResult {
   chainId: String!
 }
 
-type VaultAdo implements IBaseAdoQuery {
+type VaultAdo {
   address: String!
   andr: AndrQuery!
   balance(address: String!): [Coin!]
