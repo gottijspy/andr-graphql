@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { ApolloError, UserInputError } from 'apollo-server'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { AdoType } from 'src/ado/andr-query/types'
 import { Ado, AssetResult } from './assets/types'
@@ -16,14 +16,32 @@ export class AccountsService {
     private adoModel?: Model<Ado>,
   ) {}
 
-  public async getAssets(owner: string, limit: number, offset: number, adoType?: AdoType): Promise<AssetResult[]> {
+  public async getAssets(
+    owner: string,
+    limit: number,
+    offset?: number,
+    startAfter?: string,
+    adoType?: AdoType,
+  ): Promise<AssetResult[]> {
     try {
       const query: any = { owner: owner }
       if (adoType) {
         query.adoType = adoType
       }
 
-      const ados = await this.adoModel?.find(query).limit(limit).skip(offset)
+      if (startAfter) {
+        const id = new Types.ObjectId(startAfter)
+        query._id = {
+          $gt: id,
+        }
+        offset = 0
+      }
+
+      const ados = await this.adoModel
+        ?.find(query)
+        .limit(limit)
+        .skip(offset ?? 0)
+
       if (!ados || !ados.length) return []
 
       return ados
