@@ -83,14 +83,14 @@ export class AssetsService {
     }
   }
 
-  public async getAssets(owner: string, limit: number, offset: number, adoType?: AdoType): Promise<AssetResult[]> {
+  public async getAssets(owner: string, limit: number, offset?: number, adoType?: AdoType): Promise<AssetResult[]> {
     try {
       const query: any = { owner: owner }
       if (adoType) {
         query.adoType = adoType
       }
 
-      const ados = await this.adoModel?.find(query).limit(limit).skip(offset)
+      const ados = await this.adoModel?.find(query).limit(limit).skip(offset ?? 0)
       if (!ados || !ados.length) return []
 
       return ados

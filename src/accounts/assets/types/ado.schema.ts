@@ -7,7 +7,7 @@ export type AdoDocument = Ado & Document
 @ObjectType()
 export class Ado {
   @Field(() => ID)
-  _id!: number
+  _id!: string
 
   @Prop({ reruired: true })
   @Field()
