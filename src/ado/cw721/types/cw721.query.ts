@@ -146,6 +146,9 @@ export class NftInfo {
   @Field({ nullable: true })
   tokenUri?: string
 
+  @Field({ nullable: true })
+  tokenId?: string
+
   @Field(() => TokenExtension, { nullable: true })
   extension?: TokenExtension
 }
