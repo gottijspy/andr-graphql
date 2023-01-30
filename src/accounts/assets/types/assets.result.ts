@@ -4,6 +4,9 @@ import { AdoType } from 'src/ado/andr-query/types'
 @ObjectType()
 export class AssetResult {
   @Field()
+  _id!: string
+
+  @Field()
   owner!: string
 
   @Field()
@@ -66,8 +69,14 @@ export class ComponentAddress {
 
 @ArgsType()
 export class PaginationArgs {
-  @Field(() => Int)
-  offset = 0
+  @Field(() => Int, {
+    nullable: true,
+    deprecationReason: 'Replaced with cursor based pagination argument, use `startAfter`.',
+  })
+  offset? = 0
+
+  @Field(() => String, { nullable: true })
+  startAfter? = ''
 
   @Field(() => Int)
   limit = 10

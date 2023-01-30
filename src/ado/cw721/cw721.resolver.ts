@@ -135,8 +135,12 @@ export class CW721Resolver {
   }
 
   @ResolveField(() => [NftInfo])
-  public async searchTokens(@Parent() cw721: CW721Ado, @Args() filters?: AttributeSearchOptions): Promise<NftInfo[]> {
-    return this.cw721Service.searchTokens(cw721.address, filters?.attributes)
+  public async searchTokens(
+    @Parent() cw721: CW721Ado,
+    @Args() filters?: AttributeSearchOptions,
+    @Args('options', { nullable: true }) options?: AndrSearchOptions,
+  ): Promise<NftInfo[] | undefined> {
+    return this.cw721Service.searchTokens(cw721.address, filters?.attributes, options)
   }
 
   @ResolveField(() => NftContractInfo)

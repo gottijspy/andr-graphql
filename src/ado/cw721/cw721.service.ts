@@ -1,8 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { ApolloError, UserInputError } from 'apollo-server'
+import { Cache } from 'cache-manager'
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
 import { AdoService } from '../ado.service'
+import { AndrOrderBy } from '../andr-query/types'
 import { INVALID_QUERY_ERR, AndrSearchOptions } from '../types'
 import { NftInfo, NftOwnerInfo } from './types'
 import { AllNftInfo, NftApproval, NftContractInfo, TransferAgreement } from './types'
@@ -14,6 +16,7 @@ export class CW721Service extends AdoService {
   constructor(
     @InjectPinoLogger(CW721Service.name)
     protected readonly logger: PinoLogger,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
     @Inject(WasmService)
     protected readonly wasmService: WasmService,
   ) {
@@ -141,6 +144,7 @@ export class CW721Service extends AdoService {
 
     try {
       const nftInfo = await this.wasmService.queryContract(contractAddress, queryMsg)
+      nftInfo.tokenId = tokenId
       return nftInfo as NftInfo
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
@@ -236,33 +240,69 @@ export class CW721Service extends AdoService {
     }
   }
 
-  public async searchTokens(contractAddress: string, attributes?: SearchAttribute[]): Promise<NftInfo[]> {
+  public async searchTokens(
+    contractAddress: string,
+    attributes?: SearchAttribute[],
+    options?: AndrSearchOptions,
+  ): Promise<NftInfo[]> {
     try {
       const response = await this.wasmService.queryContract(contractAddress, CW721Schema.all_tokens)
-      const tokens: NftInfo[] = await Promise.all(
-        response.tokens.map(async (tokenId: string) => {
-          return this.nftInfo(contractAddress, tokenId)
-        }),
+
+      // get tokens from cache
+      let cacheData: any = await this.cacheService.get(contractAddress)
+
+      if (!(cacheData && (cacheData as any).tokens)) {
+        const tokens: NftInfo[] = await Promise.all(
+          response.tokens.map(async (tokenId: string) => {
+            return this.nftInfo(contractAddress, tokenId)
+          }),
+        )
+        if (!cacheData) cacheData = { tokens: tokens }
+        if (!cacheData?.tokens.length) cacheData.tokens = tokens
+
+        // set tokens in cache
+        await this.cacheService.set(contractAddress, cacheData)
+      }
+
+      if (!(attributes?.length || options)) return cacheData.tokens
+
+      const limit = options?.limit ?? 10
+      const orderBy = options?.orderBy ?? AndrOrderBy.Asc
+      const startAfter = options?.startAfter ?? ''
+
+      let filteredTokens = cacheData.tokens
+
+      if (attributes?.length) {
+        // filter tokens by search attributes
+        filteredTokens = cacheData.tokens.filter((token: NftInfo) => {
+          const containsAttribute = token.extension?.attributes.some((tokenAttr) => {
+            return attributes.some((attr) => {
+              if (attr.value !== undefined) {
+                return attr.trait_type === tokenAttr.trait_type && attr.value === tokenAttr.value
+              }
+
+              return attr.trait_type === tokenAttr.trait_type
+            })
+          })
+
+          return containsAttribute
+        })
+      }
+
+      // sorting
+      filteredTokens.sort((a: { tokenId: string }, b: { tokenId: string }) =>
+        orderBy === AndrOrderBy.Desc
+          ? parseInt(b.tokenId) - parseInt(a.tokenId)
+          : parseInt(a.tokenId) - parseInt(b.tokenId),
       )
 
-      if (!attributes?.length) return tokens
+      // paginaton
+      const offset: number =
+        startAfter !== ''
+          ? filteredTokens.findIndex((token: { tokenId: string }) => token.tokenId === startAfter) + 1
+          : 0
 
-      // filter tokens by search attributes
-      const filteredTokens = tokens.filter((token) => {
-        const containsAttribute = token.extension?.attributes.some((tokenAttr) => {
-          return attributes.some((attr) => {
-            if (attr.value !== undefined) {
-              return attr.trait_type === tokenAttr.trait_type && attr.value === tokenAttr.value
-            }
-
-            return attr.trait_type === tokenAttr.trait_type
-          })
-        })
-
-        return containsAttribute
-      })
-
-      return filteredTokens
+      return filteredTokens.slice(offset, offset + limit)
     } catch (err: any) {
       this.logger.error({ err }, 'Error getting the wasm contract %s query.', contractAddress)
       if (err instanceof UserInputError || err instanceof ApolloError) {

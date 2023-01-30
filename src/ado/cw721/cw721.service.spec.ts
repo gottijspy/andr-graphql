@@ -1,3 +1,4 @@
+import { CACHE_MANAGER } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getLoggerToken } from 'nestjs-pino'
 import { WasmService } from 'src/wasm/wasm.service'
@@ -15,6 +16,10 @@ describe('CW721Service', () => {
           useValue: {
             error: jest.fn(),
           },
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {},
         },
         {
           provide: WasmService,

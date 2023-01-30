@@ -1,5 +1,5 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
-import { Module } from '@nestjs/common'
+import { CacheModule, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -31,6 +31,8 @@ import { validate } from './env.validation'
 import { KeplrConfigModule } from './keplr-config/keplr-config.module'
 import { TxModule } from './tx/tx.module'
 import { WasmModule } from './wasm/wasm.module'
+// import * as redisStore from 'cache-manager-redis-store'
+
 @Module({
   imports: [
     ConfigModule.forRoot({ cache: true, validate }),
@@ -89,6 +91,25 @@ import { WasmModule } from './wasm/wasm.module'
           introspection: config.get<string>('GRAPHQL_INTROSPECTION', 'true') === 'true',
         }
       },
+    }),
+
+    /**
+    //Redis Cache
+    CacheModule.register({
+        isGlobal: true,
+        ttl: 900000,
+        store: redisStore,
+        host: 'localhost',
+        port: '6379',
+        username: '',
+        password: 'Xcube#567',
+        no_ready_check: true,
+    }), */
+
+    //In Memory Cache
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 900000, //milliseconds
     }),
     CosmModule.forRootAsync({
       imports: [ConfigModule],
